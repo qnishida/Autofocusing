@@ -1,7 +1,7 @@
 # DeltaP
 
-DeltaP is a C++ implementation of the auto-focusing workflow used to
-estimate source locations from Hi-net seismic array data.
+DeltaP is a C++ implementation of the auto-focusing workflow used to estimate
+source locations from seismic array data in HDF5 format.
 
 This repository contains the analysis code and small helper scripts. Large
 waveform inputs, Global CMT catalog files, converted earthquake catalogs, and
@@ -73,6 +73,10 @@ WIN/WIN32 seismic data downloaded from NIED. The conversion used:
 > https://doi.org/10.5281/zenodo.19879657
 
 See `NOTICE` for data provenance and citation notes.
+
+Although the published analysis used Hi-net data, the workflow can be adapted
+to other seismic array data if they are converted to the HDF5 layout expected by
+the code.
 
 The repository includes `vel_Nishida2008.dat`, a station-correction velocity
 model derived from Nishida et al. (2008, JGR, doi:10.1029/2007JB005395).

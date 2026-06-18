@@ -1,7 +1,8 @@
 # DeltaP Manual
 
 This manual describes the practical steps needed to build and run DeltaP with
-external Hi-net waveform data and a Global CMT-derived earthquake catalog.
+external seismic array waveform data in HDF5 format and a Global CMT-derived
+earthquake catalog.
 
 ## 1. Build and Install
 
@@ -46,6 +47,11 @@ data downloaded from NIED. The conversion used:
 > https://doi.org/10.5281/zenodo.19879657
 
 See `NOTICE` for data provenance and citation notes.
+
+The workflow is not limited to Hi-net in principle. Other seismic array data,
+such as USArray data, can be used if they are converted to the HDF5 layout
+expected by `cal_ccf_gcc`. This repository does not currently include a
+maintained conversion script for those other data sets.
 
 `cal_ccf_gcc` expects the waveform archive to be arranged by year and day:
 
