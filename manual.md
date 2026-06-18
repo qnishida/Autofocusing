@@ -1,8 +1,8 @@
-# DeltaP Manual
+# Autofocusing Manual
 
-This manual describes the practical steps needed to build and run DeltaP with
-external seismic array waveform data in HDF5 format and a Global CMT-derived
-earthquake catalog.
+This manual describes the practical steps needed to build and run Autofocusing
+with external seismic array waveform data in HDF5 format and a Global
+CMT-derived earthquake catalog.
 
 ## 1. Build and Install
 

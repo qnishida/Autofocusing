@@ -1,7 +1,7 @@
-# DeltaP
+# Autofocusing
 
-DeltaP is a C++ implementation of the auto-focusing workflow used to estimate
-source locations from seismic array data in HDF5 format.
+Autofocusing is a C++ implementation of the auto-focusing workflow used to
+estimate source locations from seismic array data in HDF5 format.
 
 This repository contains the analysis code and small helper scripts. Large
 waveform inputs, Global CMT catalog files, converted earthquake catalogs, and
