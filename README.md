@@ -9,6 +9,28 @@ generated outputs are not distributed as part of the source tree.
 
 For detailed usage, input layout, and troubleshooting notes, see `manual.md`.
 
+## Method Background
+
+For a compact Python demonstration of the underlying centroid single-force and
+auto-focusing ideas, see `CSF_supplement`:
+
+```text
+https://github.com/qnishida/CSF_supplement
+```
+
+The auto-focusing method was introduced for a global centroid single-force
+catalog of P-wave microseisms in:
+
+> Nishida, K., & Takagi, R. (2022). A global centroid single force catalog of
+> P-wave microseisms. Journal of Geophysical Research: Solid Earth, 127,
+> e2021JB023484. https://doi.org/10.1029/2021JB023484
+
+A preprint describing an improved application to S-wave microseisms is
+available as:
+
+> Kato, S., Nishida, K., & Takagi, R. (2026). Origin of S-wave microseisms.
+> https://doi.org/10.22541/essoar.15002647/v1
+
 ## Requirements
 
 The build uses CMake and C++11. Dependency discovery uses `find_package` where
