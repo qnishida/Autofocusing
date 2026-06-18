@@ -1,7 +1,7 @@
-DeltaP
+Autofocusing
 Copyright (C) Kiwamu Nishida
 
-DeltaP is distributed under the GNU General Public License, version 2
+Autofocusing is distributed under the GNU General Public License, version 2
 or, at your option, any later version. See LICENSE.
 
 This notice summarizes third-party code, libraries, and data sources that
@@ -58,10 +58,11 @@ Hi-net waveform HDF5 inputs
   distributed as part of this source repository.
 
 Global CMT
-  The Global Centroid Moment Tensor catalog is not distributed under the
-  DeltaP software license. Raw Global CMT catalog files and converted
-  DeltaP catalog files should be obtained or generated separately.
-  Users should cite Global CMT following the guidance at:
+    The Global Centroid Moment Tensor catalog is not distributed under the
+    Autofocusing software license. Raw Global CMT catalog files and CMT catalogs
+    converted for use with Autofocusing should be obtained or generated
+    separately.
+    Users should cite Global CMT following the guidance at:
 
     https://www.globalcmt.org/CMTcite.html
 
@@ -83,6 +84,6 @@ Generated research outputs
 --------------------------
 
 Generated outputs, including centroid pickle files or converted catalogs,
-are not automatically covered by the DeltaP software license. Each public
+are not automatically covered by the Autofocusing software license. Each public
 data product should include its own provenance metadata, input data
 description, generation command, and citation requirements.

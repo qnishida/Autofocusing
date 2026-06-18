@@ -6,7 +6,9 @@ authors:
     given-names: "Kiwamu"
 version: "1.0.0"
 license: "GPL-2.0-or-later"
+doi: "10.5281/zenodo.20742021"
 repository-code: "https://github.com/qnishida/Autofocusing"
+date-released: "2026-06-18"
 abstract: "C++ implementation of the auto-focusing workflow used to estimate source locations from seismic array data in HDF5 format."
 keywords:
   - seismology

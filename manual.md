@@ -26,7 +26,7 @@ GCC produces `cal_ccf_gcc`.
 
 ## 2. Required Input Data
 
-DeltaP requires two external inputs:
+Autofocusing requires two external inputs:
 
 - `HINET_ROOT`: root directory of the Hi-net HDF5 waveform archive.
 - `CMT_CATALOG`: whitespace-separated earthquake catalog generated from Global
@@ -91,7 +91,7 @@ repository. Use the helper and notes under `Scripts/GlobalCMT/` to regenerate
 the local catalog input from Global CMT data, and cite Global CMT following
 their guidance.
 
-## 5. Running DeltaP
+## 5. Running Autofocusing 
 
 The standard wrapper is `run.sh`:
 
@@ -148,7 +148,18 @@ Generated outputs are not distributed as part of the source repository. If
 final data products are published separately, include their provenance,
 generation command, column definitions, units, and relation to the manuscript.
 
-## 7. Troubleshooting
+## 7. Citation
+
+If you use Autofocusing, please cite the Zenodo release:
+
+```text
+https://doi.org/10.5281/zenodo.20742021
+```
+
+See `CITATION.cff` for machine-readable citation metadata.
+
+
+## 8. Troubleshooting
 
 If `hdf5.h` is missing during compilation, install the HDF5 development package
 or point CMake to the HDF5 installation prefix:

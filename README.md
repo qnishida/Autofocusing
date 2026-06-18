@@ -4,8 +4,9 @@ Autofocusing is a C++ implementation of the auto-focusing workflow used to
 estimate source locations from seismic array data in HDF5 format.
 
 This repository contains the analysis code and small helper scripts. Large
-waveform inputs, Global CMT catalog files, converted earthquake catalogs, and
-generated outputs are not distributed as part of the source tree.
+waveform inputs, Global CMT raw catalog files and CMT catalogs converted 
+for use with Autofocusing are not distributed under the Autofocusing 
+software license.
 
 For detailed usage, input layout, and troubleshooting notes, see `manual.md`.
 
@@ -183,13 +184,22 @@ with `git describe --tags --always`.
 - `local_config.sh`, `bin/`, `build/`, waveform data, generated catalogs, and
   output products are intentionally not tracked.
 
+## Citation
+
+If you use this software, please cite the Zenodo release:
+
+> Nishida, K. (2026). Autofocusing (Version 1.0.0) [Software].
+> https://doi.org/10.5281/zenodo.20742021
+
+Citation metadata are also provided in `CITATION.cff`.
+
 ## License and Attribution
 
-DeltaP is distributed under the GNU General Public License, version 2 or, at
+Autofocusing is distributed under the GNU General Public License, version 2 or, at
 your option, any later version. See `LICENSE`.
 
 Third-party code, external library licenses, and data provenance notes are
-summarized in `NOTICE`. Global CMT raw catalog files and converted DeltaP
-catalog files are not distributed under the DeltaP software license. Use
-`Scripts/GlobalCMT/` to regenerate the local catalog input from Global CMT data
-and cite Global CMT following their guidance.
+summarized in `NOTICE`. Global CMT raw catalog files and CMT catalogs 
+converted for use with Autofocusing are not distributed under the Autofocusing 
+software license. Use `Scripts/GlobalCMT/` to regenerate the local catalog input 
+from Global CMT data and cite Global CMT following their guidance.
