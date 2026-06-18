@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+title: "DeltaP"
+authors:
+  - family-names: "Nishida"
+    given-names: "Kiwamu"
+version: "1.0.0"
+license: "GPL-2.0-or-later"
+repository-code: "https://github.com/USER/Autofocusing"
+abstract: "C++ implementation of the auto-focusing workflow used to estimate source locations from Hi-net seismic array data."
+keywords:
+  - seismology
+  - auto-focusing
+  - Hi-net
+  - source location

@@ -1,0 +1,2 @@
+BraceWrapping:
+  AfterControlStatement: true
