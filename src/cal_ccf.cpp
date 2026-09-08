@@ -8,6 +8,7 @@
 #include <boost/foreach.hpp>
 #include <boost/math/statistics/univariate_statistics.hpp>
 #include <chrono>
+#include <cstdlib>
 #include <complex>
 #include <fstream>
 #include <iostream>
@@ -40,6 +41,7 @@ static int event_number = 30;
 static const Geodesic &geod = Geodesic::WGS84();
 
 #include "calTT.h"
+#include "slant_stack.h"
 #include "station_info.h"
 #include "util.h"
 #include <math.h>
@@ -294,6 +296,8 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+  if (std::getenv("AUTOFOCUSING_PROFILE"))
+    std::cerr << "#PROFILE accepted_windows_total=" << count0 << std::endl;
   H5Pclose(fapl);
   return 0;
 }
@@ -320,6 +324,11 @@ int main(int argc, char *argv[]) {
 static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
                          const int iseg, const int num_segments,
                          std::ofstream &ofs) {
+  const auto profile_start = std::chrono::steady_clock::now();
+  double profile_qc = 0, profile_pack = 0, profile_stack = 0;
+  auto elapsed = [](std::chrono::steady_clock::time_point start) {
+    return std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
+  };
   ptime t1, t2;
   SPCTRM specE, specN, specZ;
   double median0, median1;
@@ -343,33 +352,12 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
   array3c buf_aryENU(boost::extents[3][(int)sta0.size()]
                                    [range3c(STATION::if1, STATION::if2 + 1)]);
 
-  array4c sENU(boost::extents[3][range4c(-ipmax, ipmax + 1)][range4c(
-      -ipmax, ipmax + 1)][range4c(STATION::if1, STATION::if2 + 1)]);
-  array2d er_x(
-      boost::extents[range2d(-ipmax, ipmax + 1)][range2d(-ipmax, ipmax + 1)]);
-  array2d er_y(
-      boost::extents[range2d(-ipmax, ipmax + 1)][range2d(-ipmax, ipmax + 1)]);
-  for (int i = -ipmax; i <= ipmax; i++)
-    for (int j = -ipmax; j <= ipmax; j++)
-      if (i != 0 || j != 0) {
-        double px = px0 + i * dp;
-        double py = py0 + j * dp;
-        er_x[i][j] = px / sqrt(px * px + py * py);
-        er_y[i][j] = py / sqrt(px * px + py * py);
-      } else { // To avoid singularity
-        er_x[i][j] = sqrt(2.) / 2.;
-        er_y[i][j] = sqrt(2.) / 2.;
-      }
-
   dvector dx_ary((int)sta0.size()), dy_ary((int)sta0.size());
   std::vector<double> integH_tmp(2 * (int)sta0.size()),
       integV_tmp((int)sta0.size());
 
   long len = STATION::len * STATION::dt_msec;
   long stride_msec = STATION::stride * STATION::dt_msec;
-
-  dvector msE(STATION::if2 + 1, 0.), msEN(STATION::if2 + 1, 0.),
-      msN(STATION::if2 + 1, 0.), msZ(STATION::if2 + 1, 0.);
 
   int num_ss = 0;
   std::vector<int> flag_nl((int)sta0.size(), 0);
@@ -399,13 +387,9 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
   for (long int_t = pos_start; int_t < pos_end; int_t += stride_msec) {
     t1 = t0 + milliseconds(int_t);
     t2 = t1 + milliseconds(len);
-    msZ.clear();
-    msE.clear();
-    msEN.clear();
-    msN.clear();
-    fill_n(sENU.data(), sENU.num_elements(), 0.);
 
     if (CMT(t1, t2) == 0) {
+      const auto qc_start = std::chrono::steady_clock::now();
 #pragma omp parallel for private(specE, specN, specZ)
       for (int ist = 0; ist < (int)sta0.size(); ist++) {
         flag_nl[ist] = 0;
@@ -460,8 +444,10 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
                 << " " << count_est / (double)sta0.size() << " " << flag_deri
                 << " " << median0 << " " << median1 << std::endl;
 #endif
+      profile_qc += elapsed(qc_start);
       if (flag_deri && count_ss > 1 && count_ss > count_all * .8 &&
           count_est > 0.8 * (int)(sta0.size())) {
+        const auto pack_start = std::chrono::steady_clock::now();
         // Copy of specZ for further loop of the parameter search
         int num_ary = 0;
         for (int ist = 0; ist < (int)sta0.size(); ist++) {
@@ -493,82 +479,30 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
           }
         }
         num_ss++;
-// Using dynamic scheduling to balance the load among threads as the iterations
-// may have varying execution times. The collapse(2) clause is used to collapse
-// the nested loops into a single loop for better load balancing. The
-// schedule(dynamic) clause is used to dynamically distribute iterations to
-// threads to handle varying execution times.
-#pragma omp parallel for collapse(2)                                           \
-    schedule(dynamic) ////private(specE,specN,specZ)
-        for (int ipy = -ipmax; ipy <= ipmax; ipy++) {
-          for (int ipx = -ipmax; ipx <= ipmax; ipx++) {
-            for (int ist = 0; ist < num_ary; ++ist) {
-              double px = px0 + ipx * dp;
-              double py = py0 + ipy * dp;
-
-              for (int icmp = 0; icmp < 3; ++icmp) {
-                double tau = -(px * dx_ary[ist] + py * dy_ary[ist]);
-                double phase = tau * 2. * M_PI * STATION::df;
-                double dc = cos(phase);
-                double ds = sin(phase);
-                double cp0 = cos(phase * STATION::if1);
-                double sp0 = sin(phase * STATION::if1);
-                for (int k = STATION::if1; k <= STATION::if2; ++k) {
-                  double cp1 = cp0 * dc - sp0 * ds;
-                  double sp1 = sp0 * dc + cp0 * ds;
-                  sENU[icmp][ipx][ipy][k] += (buf_aryENU[icmp][ist][k] *
-                                              std::complex<double>(cp0, sp0));
-                  cp0 = cp1;
-                  sp0 = sp1;
-                }
-              }
-            }
-          }
-        }
-
-        for (int ist = 0; ist < (int)sta0.size(); ist++) {
-          if (flag_ss[ist] == 1) {
-            sta0[ist].print_spec(specE, specN, specZ);
-            for (int k = STATION::if1; k <= STATION::if2; ++k) {
-              msE[k] += norm(specE.spec[k]);
-              msN[k] += norm(specN.spec[k]);
-              msZ[k] += norm(specZ.spec[k]);
-              msEN[k] += real(conj(specE.spec[k]) * specN.spec[k]);
-            }
-          }
-        }
-
+        profile_pack += elapsed(pack_start);
+        const auto stack_start = std::chrono::steady_clock::now();
+        const SlantStackGrid grid{ipmax, dp, px0, py0, STATION::if1,
+                                  STATION::if2, STATION::df, STATION::horizontal_only};
+        slant_stack_cpu(buf_aryENU.data(), sta0.size(), num_ary,
+                        &dx_ary[0], &dy_ary[0], grid, ssRTU.data());
         std::cerr << t1 << " " << median0 << " " << median1 << " " << flag_deri
                   << " " << count_ss << std::endl;
-        double fctr = 1. / (count_ss * (count_ss - 1)) /
-                      (STATION::if2 - STATION::if1 + 1);
-        for (int ipx = -ipmax; ipx <= ipmax; ipx++) {
-          for (int ipy = -ipmax; ipy <= ipmax; ipy++) {
-            for (int k = STATION::if1; k <= STATION::if2; ++k) {
-              ssRTU[0][ipx][ipy] +=
-                  ((norm((er_x[ipx][ipy] * sENU[0][ipx][ipy][k] +
-                          er_y[ipx][ipy] * sENU[1][ipx][ipy][k])) -
-                    er_x[ipx][ipy] * er_x[ipx][ipy] * msE[k] -
-                    2 * er_x[ipx][ipy] * er_y[ipx][ipy] * msEN[k] -
-                    er_y[ipx][ipy] * er_y[ipx][ipy] * msN[k]) *
-                   fctr);
-              ssRTU[1][ipx][ipy] +=
-                  ((norm((er_y[ipx][ipy] * sENU[0][ipx][ipy][k] -
-                          er_x[ipx][ipy] * sENU[1][ipx][ipy][k])) -
-                    er_y[ipx][ipy] * er_y[ipx][ipy] * msE[k] +
-                    2 * er_x[ipx][ipy] * er_y[ipx][ipy] * msEN[k] -
-                    er_x[ipx][ipy] * er_x[ipx][ipy] * msN[k]) *
-                   fctr);
-              ssRTU[2][ipx][ipy] +=
-                  ((norm(sENU[2][ipx][ipy][k]) - msZ[k]) * fctr);
-            }
-          }
-        }
+        profile_stack += elapsed(stack_start);
       }
     }
   }
-  if (num_ss == 0)
+  const auto fit_start = std::chrono::steady_clock::now();
+  auto report_profile = [&]() {
+    if (std::getenv("AUTOFOCUSING_PROFILE"))
+      std::cerr << "#PROFILE segment=" << iseg << " windows=" << num_ss
+                << " fft_qc_s=" << profile_qc << " pack_s=" << profile_pack
+                << " stack_s=" << profile_stack << " fit_s=" << elapsed(fit_start)
+                << " total_s=" << elapsed(profile_start) << std::endl;
+  };
+  if (num_ss == 0) {
+    report_profile();
     return (0);
+  }
   for (int icmp = 0; icmp < 3; ++icmp) {
     for (int ipx = -ipmax; ipx <= ipmax; ipx++) {
       for (int ipy = -ipmax; ipy <= ipmax; ipy++) {
@@ -673,6 +607,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
       }
     }
   }
+  report_profile();
   return (num_ss);
 }
 

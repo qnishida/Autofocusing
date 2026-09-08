@@ -1,5 +1,5 @@
 # 実行ファイルを作成
-add_executable(${TARGET_NAME1} cal_ccf.cpp station_info.cpp util.cpp calTT.cpp)
+add_executable(${TARGET_NAME1} cal_ccf.cpp slant_stack.cpp station_info.cpp util.cpp calTT.cpp)
 add_executable(${TARGET_NAME2} cal_ccf_eq.cpp station_info.cpp util.cpp calTT.cpp)
 
 foreach(target ${TARGET_NAME1} ${TARGET_NAME2})

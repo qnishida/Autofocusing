@@ -232,3 +232,17 @@ against a specified Git revision:
 ```bash
 python3 tests/compare_legacy.py build-clang 149995f
 ```
+
+## 10. CPU performance profiling
+
+Slant stacking uses double precision with OpenMP. To enable per-segment timings,
+set `AUTOFOCUSING_PROFILE=1`; `OMP_NUM_THREADS` controls worker count. These
+variables can be exported before invoking the launcher or in the parent local
+configuration. Timings cover FFT/QC, packing, slant stack, fitting and total
+segment processing; existing read logs report initialization/loading separately.
+
+Compare equivalent runs using `python3 Scripts/compare_profiles.py old.log new.log`.
+Use a bounded input tree and a distinct parameter/version ID when benchmarking
+so an experiment does not launch the full archive or replace previous results.
+The CPU optimization, numerical checks, measurements and Metal follow-up
+boundary are documented in [the performance report](docs/cpu-slant-stack-performance.md).
