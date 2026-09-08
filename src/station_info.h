@@ -55,6 +55,7 @@ class STATION{
   STATION(const STATION& obj);
   virtual ~STATION();
   void operator=(const STATION& src);
+  static bool horizontal_only; // Read LE/LN (or E/N), without requiring U.
   static int dt_msec;  // in millisec 
   static int len; // Length in number of segments (2^n)
   static int stride;
@@ -81,7 +82,7 @@ class STATION{
   int countE,countN,countZ;
   SPCTRM specE,specN,specZ;
 
-  SAC_data sacE,sacN,sacZ;
+  SAC_data sacE{},sacN{},sacZ{};
   int num_sac;
 };
 

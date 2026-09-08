@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
-project(DeltaP LANGUAGES CXX)
+project(DeltaP LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -15,7 +15,7 @@ option(DELTAP_ENABLE_NATIVE_ARCH "Build with -march=native on compilers that sup
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     message(STATUS "Using GCC")
     set(COMPILER_SUFFIX "gcc")
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message(STATUS "Using Clang")
     set(COMPILER_SUFFIX "clang")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -29,7 +29,7 @@ else()
     set(COMPILER_SUFFIX "unknown")
 endif()
 
-find_package(Boost REQUIRED COMPONENTS system filesystem date_time math_c99)
+find_package(Boost REQUIRED COMPONENTS filesystem date_time math_c99)
 find_package(Eigen3 REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS C HL)
 find_package(OpenMP REQUIRED)
@@ -53,7 +53,6 @@ set(DELTAP_INCLUDE_DIRS
 )
 
 set(DELTAP_LIBS
-    Boost::system
     Boost::filesystem
     Boost::date_time
     Boost::math_c99
@@ -90,3 +89,17 @@ set(TARGET_NAME2 "cal_ccf_eq_${COMPILER_SUFFIX}")
 add_subdirectory(src)
 
 install(TARGETS ${TARGET_NAME1} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(test_horizontal tests/horizontal.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
+    target_include_directories(test_horizontal PRIVATE ${DELTAP_INCLUDE_DIRS})
+    target_link_libraries(test_horizontal PRIVATE ${DELTAP_LIBS})
+    add_test(NAME horizontal_components COMMAND test_horizontal ${CMAKE_CURRENT_BINARY_DIR}/horizontal-fixture.h5)
+    find_package(Python3 QUIET COMPONENTS Interpreter)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME parent_launcher COMMAND ${Python3_EXECUTABLE}
+            ${PROJECT_SOURCE_DIR}/tests/launcher.py ${PROJECT_SOURCE_DIR}
+            $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+endif()

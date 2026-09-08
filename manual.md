@@ -91,62 +91,81 @@ repository. Use the helper and notes under `Scripts/GlobalCMT/` to regenerate
 the local catalog input from Global CMT data, and cite Global CMT following
 their guidance.
 
-## 5. Running Autofocusing 
+## 5. Running Autofocusing
 
-The standard wrapper is `run.sh`:
+Deploy `Scripts/run.sh` to the parent of `repo/`, and copy
+`Scripts/local_config.example.sh` to the parent's `local_config.sh` for a new
+workspace. The local configuration is outside this repository. Launch with
+`../run.sh` from the repository or an absolute path from elsewhere.
 
-```bash
-HINET_ROOT=/path/to/hdf5 \
-CMT_CATALOG=/path/to/moment_loc_76_24 \
-./run.sh
-```
-
-For repeated local runs, create a git-ignored `local_config.sh` in the
-repository root:
+The script resolves paths relative to its workspace and changes into `repo/`
+for runtime model files. It discovers installed `cal_ccf_gcc` or
+`cal_ccf_clang`; `AUTOFOCUSING_BIN` can override the executable.
 
 ```bash
-export HINET_ROOT="/path/to/hdf5"
-export CMT_CATALOG="/path/to/moment_loc_76_24"
+export HINET_ROOT="/Volumes/Seismic_Data/hdf5/Hi-net_tilt"
+export CMT_CATALOG="moment_loc_76_24"
+export COMPONENT_MODE="horizontal"
+export PARAM_ID="tilt_horizontal"
+export START_YEAR="2004"
 ```
 
-Then run:
+These settings belong in the parent's `local_config.sh`, which is sourced by
+the launcher. Relative input/output paths refer to the parent directory.
+`RESULTS_ROOT` defaults to its `results/` directory. `OMP_NUM_THREADS` optionally
+limits parallelism. The launcher does not build the program automatically.
 
-```bash
-./run.sh
+### Horizontal input and processing
+
+`horizontal` selects a complete `LE/LN` pair, falling back to `E/N`. U is not
+read or required. Waveforms must be 2 Hz integer samples with `unit="nm/s"`;
+`sample * sensitivity * 1e-9` converts to m/s. This mode accepts velocity
+already converted from tilt, and does not perform that conversion again.
+
+The two sensor axes must be orthogonal, with E azimuth equal to N azimuth
+plus 90 degrees (within 0.01 degrees). The existing N azimuth rotation converts
+sensor coordinates to geographic E/N. Already rotated waveforms must carry
+geographic azimuths E=90 and N=0 to avoid a second rotation.
+
+Each component must provide the existing sensitivity, azimuth, sampling,
+length, and time metadata. Invalid lengths, rates, units, or incomplete pairs
+are rejected. The existing requirement for more than half a day's samples
+is retained. The `gap` attribute does not describe individual missing intervals;
+this change retains the existing waveform/QC handling of gaps.
+
+Horizontal amplitude checks use E and N only. Stability checks use their mean
+band power instead of U. Existing thresholds, frequency band, window length,
+and array selection are retained. Candidate searches use R and T only; no
+vertical candidates or vertical-derived horizontal seeds are used.
+
+### Direct invocation and compatibility
+
+```text
+cal_ccf_<compiler> YYYY <param-id> <git-version> <hinet-root> <cmt-catalog> [output-root] [3c|horizontal]
 ```
 
-The direct command is:
+Omitting the optional arguments retains `output/` and `3c`. The parent launcher
+uses `horizontal` and a separate result directory by default. `cal_ccf_eq` has
+not been extended with horizontal mode.
 
-```bash
-./bin/cal_ccf_gcc 2004 param_set_A "$(git describe --tags --always)" \
-  /path/to/hdf5 /path/to/moment_loc_76_24
-```
-
-The first argument, `YYYY`, is the analysis start year. For example, `2004`
-starts the daily scan at `2004-01-01`. The current `cal_ccf_gcc` workflow scans
-forward day by day until the built-in end date.
+The start year defaults to 2004 in the launcher. The existing scan stops at
+2024-12-31 or its original 366 × 20.75-day iteration bound, whichever comes
+first. This change does not add support for 2025 or a date-range interface.
 
 ## 6. Output
 
-`run.sh` writes results under:
+The launcher writes `results/<param-id>/<git-version>/` under the workspace.
+The filename retains `YYYY_<segment length>_<min frequency>-<max frequency>.dat`.
+A direct invocation defaults to `output/` if no output root is supplied.
 
-```text
-output/<param-id>/<git-version>/
-```
+The 38-column format remains unchanged. Horizontal events use component
+numbers R=0 and T=1. Columns 34–35 contain R/T matrix diagonal values;
+columns 36–38 (U power and real/imaginary R–U cross-power) are `nan` in
+horizontal mode. These values indicate missing observations, not zero power.
 
-The main output file name follows:
-
-```text
-YYYY_<segment length>_<min frequency>-<max frequency>.dat
-```
-
-Here `YYYY` is the analysis start year passed to `cal_ccf_gcc`. With the
-default `run.sh`, `<param-id>` is `param_set_A`, and `<git-version>` is resolved
-with `git describe --tags --always`.
-
-Generated outputs are not distributed as part of the source repository. If
-final data products are published separately, include their provenance,
-generation command, column definitions, units, and relation to the manuscript.
+Each invocation truncates its output file. Use distinct parameter IDs for
+separate experiments. Git identifiers include a `-dirty` suffix for tracked
+uncommitted changes; they do not uniquely identify each uncommitted edit.
 
 ## 7. Citation
 
@@ -178,7 +197,7 @@ cmake -S . -B build
 cmake --build build -j
 ```
 
-If `./run.sh` cannot find `./bin/cal_ccf_gcc`, run the install step:
+If the parent launcher cannot find an installed executable, run the install step:
 
 ```bash
 cmake --install build
@@ -186,3 +205,30 @@ cmake --install build
 
 If no output is produced for expected days, check that each day directory exists
 and contains exactly one regular HDF5 file under `HINET_ROOT/YYYY/MMDD/`.
+
+## 9. macOS with Homebrew libraries
+
+Use Clang with Homebrew's C++ libraries. GCC can compile this project on macOS
+but mixing its libstdc++ with Homebrew Boost's libc++ can break filesystem
+operations at runtime. A consistent Homebrew LLVM build is:
+
+```bash
+cmake -S . -B build-clang \
+  -DCMAKE_C_COMPILER="$(brew --prefix llvm)/bin/clang" \
+  -DCMAKE_CXX_COMPILER="$(brew --prefix llvm)/bin/clang++" \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-clang -j 4
+ctest --test-dir build-clang --output-on-failure
+cmake --install build-clang
+```
+
+This requires the dependencies listed in README plus LLVM/OpenMP. Current
+Boost/Eigen require C++14. The C language is enabled for HDF5 discovery;
+Boost.System is header-only in modern Boost and is not requested separately.
+
+The synthetic regression check can additionally compare the current 3c loader
+against a specified Git revision:
+
+```bash
+python3 tests/compare_legacy.py build-clang 149995f
+```

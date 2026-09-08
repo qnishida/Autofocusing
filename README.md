@@ -34,7 +34,7 @@ available as:
 
 ## Requirements
 
-The build uses CMake and C++11. Dependency discovery uses `find_package` where
+The build uses CMake and C++14. Dependency discovery uses `find_package` where
 available and `find_path`/`find_library` for FFTW3 and GeographicLib.
 
 Required libraries:
@@ -118,71 +118,65 @@ citation notes.
 
 ## Run
 
-Set the input paths and run:
-
-```bash
-HINET_ROOT=/path/to/hdf5 \
-CMT_CATALOG=/path/to/moment_loc_76_24 \
-./run.sh
-```
-
-For repeated local runs, create a git-ignored `local_config.sh` in the
-repository root:
-
-```bash
-export HINET_ROOT="/path/to/hdf5"
-export CMT_CATALOG="/path/to/moment_loc_76_24"
-```
-
-When `local_config.sh` exists, `run.sh` loads it automatically.
-
-The direct command is:
-
-```bash
-./bin/cal_ccf_gcc 2004 param_set_A "$(git describe --tags --always)" \
-  /path/to/hdf5 /path/to/moment_loc_76_24
-```
-
-The first argument, `YYYY`, is the analysis start year. For example, `2004`
-starts the daily scan at `2004-01-01`. The current `cal_ccf_gcc` workflow scans
-forward day by day until the built-in end date.
-
-For each day, the program looks for a Hi-net directory under:
+The local analysis workspace uses this layout:
 
 ```text
-HINET_ROOT/YYYY/MMDD/
+Autofocusing/
+├── run.sh
+├── local_config.sh
+├── moment_loc_76_24
+├── repo/
+└── results/
 ```
 
-Missing day directories are skipped. If a day directory exists, it is processed
-only when the directory contains exactly one regular HDF5 file. Empty day
-directories, day directories with multiple files, and missing files are skipped.
-Malformed or unreadable HDF5 files may still cause HDF5 errors instead of being
-treated as ordinary missing data.
+From the repository root, deploy the tracked launcher and configure the inputs:
+
+```bash
+cp Scripts/run.sh ../run.sh
+# For a new workspace; preserve an existing local_config.sh.
+cp -n Scripts/local_config.example.sh ../local_config.sh
+../run.sh
+```
+
+The launcher defaults to horizontal-only analysis of `Hi-net_tilt`, starting
+in 2004. Set `HINET_ROOT`, `CMT_CATALOG`, `START_YEAR`, `COMPONENT_MODE`, and
+`PARAM_ID` in the parent `local_config.sh`. Relative paths are resolved against
+that parent. For three-component data, set `COMPONENT_MODE=3c` and use a distinct
+parameter ID. See [manual.md](manual.md) for mode details and macOS build notes.
+
+Direct execution remains available from the repository root:
+
+```bash
+./bin/cal_ccf_clang 2004 tilt_horizontal "$(git describe --tags --always --dirty)" \
+  /path/to/hdf5 /path/to/moment_loc_76_24 ../results horizontal
+```
+
+The compiler determines the executable suffix (`gcc` or `clang`). The two
+optional trailing arguments are `[output-root] [3c|horizontal]`; omitting both
+preserves three-component mode and the `output/` destination.
+
+The existing daily scan ends at its built-in limit (2024-12-31, also bounded
+by 366 × 20.75 days from the start year). It has not been extended to 2025.
+Daily input directories use `HINET_ROOT/YYYY/MMDD/` and must contain exactly
+one regular HDF5 file. Missing/empty/multiple-file days are skipped.
 
 ## Output
 
-`run.sh` writes results under:
+The parent launcher writes to:
 
 ```text
-output/<param-id>/<git-version>/
+results/<param-id>/<git-version>/YYYY_2048_0.099609-0.250000.dat
 ```
 
-The main output file name follows:
+Here `YYYY` is the start year, not the year of each individual event.
+The default parameter ID is `tilt_horizontal`. Horizontal mode preserves the
+38-column format, emits R=0 and T=1 events, and writes `nan` for U-related
+matrix values (columns 36–38). Use a separate parameter ID for each experiment;
+reusing the same destination overwrites the existing `.dat` file.
 
-```text
-YYYY_<segment length>_<min frequency>-<max frequency>.dat
-```
-
-Here `YYYY` is the analysis start year passed to `cal_ccf_gcc`. For the default
-`run.sh` settings, `<param-id>` is `param_set_A` and `<git-version>` is resolved
-with `git describe --tags --always`.
-
-## Repository Notes
-
-- `Scripts/GlobalCMT/` contains only the conversion helper and instructions
-  needed to regenerate the local CMT catalog input.
-- `local_config.sh`, `bin/`, `build/`, waveform data, generated catalogs, and
-  output products are intentionally not tracked.
+Generated build directories, binaries, and outputs are not tracked.
+[Verification notes](docs/horizontal-verification.md) describe the input
+checks, tests, and remaining limitations.
 
 ## Citation
 

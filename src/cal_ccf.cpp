@@ -2,6 +2,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/directory.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
@@ -10,6 +11,8 @@
 #include <complex>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include <unistd.h>
 #include <string>
 #include <vector>
 
@@ -67,9 +70,11 @@ void prefetchFile(const std::string &dir_Hinet, const date &d) {
     return;
   }
   // Tell the OS to “read the entire file sequentially
+#if defined(POSIX_FADV_WILLNEED)
   if (posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED) != 0) {
     perror("posix_fadvise");
   }
+#endif
   close(fd);
   return;
 }
@@ -155,7 +160,16 @@ int main(int argc, char *argv[]) {
   std::string dir_Hinet;
   std::string cmt_catalog;
 
-  if (argc == 6) {
+  if (argc >= 6 && argc <= 8) {
+    if (argc >= 8) {
+      const std::string mode = argv[7];
+      if (mode != "horizontal" && mode != "3c") {
+        std::cerr << "Component mode must be horizontal or 3c\n";
+        H5Pclose(fapl);
+        return 1;
+      }
+      STATION::horizontal_only = mode == "horizontal";
+    }
     yr0 = std::stoi(argv[1]);
 
     std::string param_id = argv[2];
@@ -164,10 +178,13 @@ int main(int argc, char *argv[]) {
     if (!dir_Hinet.empty() && dir_Hinet[dir_Hinet.size() - 1] != '/')
       dir_Hinet += "/";
     cmt_catalog = argv[5];
-    ofs.open("output/" + param_id + "/" + git_version + "/" +
+    const std::string output_root = argc >= 7 ? argv[6] : "output";
+    const fs::path output_dir = fs::path(output_root) / param_id / git_version;
+    fs::create_directories(output_dir);
+    ofs.open((output_dir / (
              std::to_string(yr0) + "_" + std::to_string(STATION::len) + "_" +
              std::to_string(STATION::if1 * STATION::df) + "-" +
-             std::to_string(STATION::if2 * STATION::df) + ".dat");
+             std::to_string(STATION::if2 * STATION::df) + ".dat")).string());
     if (!ofs.is_open()) {
       std::cerr << "Cannot open output file for param-id=" << param_id
                 << " git-version=" << git_version << " year=" << yr0
@@ -177,7 +194,7 @@ int main(int argc, char *argv[]) {
     }
   } else {
     std::cerr << "Usage:   ./bin/cal_ccf YYYY <param-id> <GIT_version> "
-                 "<hinet-root> <cmt-catalog>"
+                 "<hinet-root> <cmt-catalog> [output-root] [3c|horizontal]"
               << std::endl;
     std::cerr << "Output:  ./output/<param-id>/<GIT_version>/YYYY.*.dat"
               << std::endl;
@@ -185,7 +202,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (init_CMT(2004, cmt_catalog) != 0) {
+  if (init_CMT(yr0, cmt_catalog) != 0) {
     H5Pclose(fapl);
     return 1;
   }
@@ -268,8 +285,12 @@ int main(int argc, char *argv[]) {
 
       const int num_segments = 4;
       for (int iloc = 0; iloc < num_segments; iloc++) {
-        if (sta_num > 0)
-          count0 += search_events(sta0, ssRTU, iloc, num_segments, ofs);
+        if (sta_num > 0) {
+          const int accepted = search_events(sta0, ssRTU, iloc, num_segments, ofs);
+          count0 += accepted;
+          std::cerr << "#Segment " << d << " " << iloc
+                    << " accepted_windows=" << accepted << std::endl;
+        }
       }
     }
   }
@@ -306,7 +327,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
   ptime t0;
   bool flag = 0;
   for (int i = 0; i < (int)sta0.size(); i++) {
-    if (sta0[i].print_sta_num() == 3) {
+    if (sta0[i].print_sta_num() == (STATION::horizontal_only ? 2 : 3)) {
       if (flag == 0) {
         t0 = sta0[i].print_sacE().ts;
         flag = 1;
@@ -317,6 +338,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
       }
     }
   }
+  if (!flag) return 0;
   // Definition for buffer for slant stack
   array3c buf_aryENU(boost::extents[3][(int)sta0.size()]
                                    [range3c(STATION::if1, STATION::if2 + 1)]);
@@ -389,9 +411,9 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
         flag_nl[ist] = 0;
         if (sta0[ist].print_sta_num() && sta0[ist].cal_spec(t1)) {
           sta0[ist].print_spec(specE, specN, specZ);
-          if (1.0 < specZ.integ[0] && specZ.integ[0] < 4E6    // 4E6
+          if ((STATION::horizontal_only || (1.0 < specZ.integ[0] && specZ.integ[0] < 4E6    // 4E6
               && 1.0 < specZ.integ[1] && specZ.integ[1] < 4E5 // 4E5
-              && 1.0 < specZ.integ[2] && specZ.integ[2] < 4E5 // 4E5
+              && 1.0 < specZ.integ[2] && specZ.integ[2] < 4E5)) // 4E5
               && 1.0 < specE.integ[0] && specE.integ[0] < 4E6 &&
               1.0 < specE.integ[1] && specE.integ[1] < 4E5 &&
               1.0 < specE.integ[2] && specE.integ[2] < 4E5 &&
@@ -414,7 +436,8 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
       double medianV = boost::math::statistics::median(integV_tmp);
       for (int ist = 0; ist < (int)sta0.size(); ist++) {
         sta0[ist].print_spec(specE, specN, specZ);
-        if (specZ.integ[2] > medianV * 20 || specE.integ[2] > medianH * 20 ||
+        if ((!STATION::horizontal_only && specZ.integ[2] > medianV * 20) ||
+            specE.integ[2] > medianH * 20 ||
             specN.integ[2] > medianH * 20) {
           flag_nl[ist] = 0;
         }
@@ -437,13 +460,13 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
                 << " " << count_est / (double)sta0.size() << " " << flag_deri
                 << " " << median0 << " " << median1 << std::endl;
 #endif
-      if (flag_deri && count_ss > count_all * .8 &&
+      if (flag_deri && count_ss > 1 && count_ss > count_all * .8 &&
           count_est > 0.8 * (int)(sta0.size())) {
         // Copy of specZ for further loop of the parameter search
         int num_ary = 0;
         for (int ist = 0; ist < (int)sta0.size(); ist++) {
           for (int icmp = 0; icmp < 3; ++icmp) {
-            if (flag_nl[ist] == 1)
+            if (flag_nl[ist] == 1 && !(STATION::horizontal_only && icmp == 2))
               w_specENURT[icmp][num_ss][ist] = 1.;
             else
               w_specENURT[icmp][num_ss][ist] = 0.;
@@ -569,7 +592,8 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
 
   // Search for maximum events in the slant stack results in vertical
   // components. icmp = 2
-  int l2V = search_max(ssRTU, pxV, pyV, event_number, mad, quartile, 2);
+  int l2V = STATION::horizontal_only ? 0 :
+      search_max(ssRTU, pxV, pyV, event_number, mad, quartile, 2);
   for (int i = 0; i < l2V; i++) {
     double max =
         ssRTU[2][round(pxV[i] / dp + 1E-10)][round(pyV[i] / dp + 1E-10)];
@@ -812,7 +836,7 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
   double S0 = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 0);
-  PARAM prm0 = prm, prm_init, prm_tmp;
+  PARAM prm0 = prm, prm_init = prm, prm_tmp;
   dvector dS(4, 0.);
   dmatrix ddS(4, 4, 0.);
 
@@ -1206,6 +1230,12 @@ static cmatrix cal_S_matrix(const PARAM prm, const array4c &buf_specENURT,
   // Compute the matrix S_RTU
   for (int icmp1 = 0; icmp1 < 3; icmp1++) {
     for (int icmp2 = 0; icmp2 < 3; icmp2++) {
+      if (STATION::horizontal_only && (icmp1 == 2 || icmp2 == 2)) {
+        S_RTU(icmp1, icmp2) = std::complex<double>(
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN());
+        continue;
+      }
       S_RTU(icmp1, icmp2) =
           (S_RTU(icmp1, icmp2) / weight(icmp1, icmp2) /
            (double)(STATION::if2 - STATION::if1 + 1)); // * (STATION::df));
@@ -1257,8 +1287,8 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
     for (int k = STATION::if1; k < STATION::nfreq; ++k)
       psd[k] += real(conj(phi[k]) * phi[k]);
   }
-  auto itr = max_element(psd.begin(), psd.end());
-  size_t ifmax = distance(psd.begin(), itr);
+  auto itr = std::max_element(psd.begin(), psd.end());
+  size_t ifmax = std::distance(psd.begin(), itr);
 
   return (ifmax * STATION::df);
 }
@@ -1413,8 +1443,10 @@ int eval_deri(std::vector<STATION> &sta0, double th, double &median0,
   for (int ist = 0; ist < (int)sta0.size(); ist++) { // Calculation of spectra
     sta0[ist].print_spec(specE, specN, specZ);
 
-    tmp_integ0[ist] = specZ.integ[0];
-    tmp_integ1[ist] = specZ.integ[1];
+    tmp_integ0[ist] = STATION::horizontal_only
+        ? (specE.integ[0] + specN.integ[0]) / 2. : specZ.integ[0];
+    tmp_integ1[ist] = STATION::horizontal_only
+        ? (specE.integ[1] + specN.integ[1]) / 2. : specZ.integ[1];
   }
 
   std::sort(tmp_integ0, tmp_integ0 + sta0.size());

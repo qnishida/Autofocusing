@@ -40,12 +40,12 @@ cd Scripts/GlobalCMT
 cat /path/to/*.ndk | perl ndk_to_moment_loc.pl > /path/to/moment_loc_76_24
 ```
 
-Then pass the generated file to DeltaP:
+Then, from the repository root, pass the generated file to DeltaP:
 
 ```bash
 HINET_ROOT=/path/to/hdf5 \
 CMT_CATALOG=/path/to/moment_loc_76_24 \
-./run.sh
+../run.sh
 ```
 
 or call the executable directly:
