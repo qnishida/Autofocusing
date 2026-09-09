@@ -252,3 +252,56 @@ boundary are documented in [the performance report](docs/cpu-slant-stack-perform
 日単位の HDF5 読み込み後に波形フィルタを CPU 並列処理します。
 スレッド数は `OMP_NUM_THREADS`、内訳の計測ログは `AUTOFOCUSING_PROFILE=1` で設定できます。
 実装範囲と検証状況は [共通 CPU I/O 最適化](docs/cpu-io-optimization.md) を参照してください。
+
+## 11. Metal GPU slant stacking
+
+On macOS, CMake builds the optional Metal backend by default. Use the Clang
+configuration above; Apple Metal/Foundation frameworks and an accessible Metal
+GPU are required. Shaders compile from embedded source at startup, so the
+standalone `metal` compiler/full Xcode installation is unnecessary. On other
+platforms the Metal backend is disabled by default. To build only the portable
+CPU path, configure with `-DDELTAP_ENABLE_METAL=OFF`.
+
+The runtime default is still `AUTOFOCUSING_BACKEND=cpu`. To use the GPU, add
+these exports to the parent's `local_config.sh`, or export them before launching
+if that file does not override them:
+
+```bash
+export AUTOFOCUSING_BACKEND=metal
+export OMP_NUM_THREADS=16
+export PARAM_ID=tilt_horizontal_metal
+```
+
+Both `horizontal` and `3c` are supported. Only slant stacking and its power
+reduction use float on the GPU. Input loading, rotation, FFT, QC and subsequent
+estimation retain the existing double CPU path. GPU powers are promoted and
+accumulated into the existing double result array. Startup logs identify the
+backend/device; an explicit Metal request fails if no GPU is accessible or the
+backend was not built. It does not silently switch to CPU. Sandboxed execution
+may require GPU access permission even when the same executable works normally
+in a terminal. This backend applies to `cal_ccf`, not `cal_ccf_eq`.
+
+Grid settings apply equally to CPU and Metal, without recompilation:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `AUTOFOCUSING_SLOWNESS_STEP` | `0.005` | Grid spacing, s/km |
+| `AUTOFOCUSING_SLOWNESS_MAX` | `0.165` | Maximum absolute px/py, s/km |
+
+For example, spacing `0.0025` and maximum `0.25` produce a 201×201 grid
+instead of the default 67×67. The upper limit is rounded down to a grid multiple;
+the actual grid is logged. Positive finite settings and a half-width from 1 to
+1024 are required. Finer/wider grids change the search itself and may change
+detected events. Use distinct `PARAM_ID` values for backend/grid experiments;
+the output format and file-overwrite behavior remain as described in section 6.
+
+`AUTOFOCUSING_PROFILE=1` measures normal processing, including float packing,
+submission, GPU completion and result accumulation in `stack_s`. Startup shader
+compilation is outside that stage. For numerical diagnosis only, export
+`AUTOFOCUSING_VERIFY_METAL=1`: every window also runs the double CPU kernel,
+logs maximum scaled/L2 error and peak mismatches, and fails on error exceeding
+5e-4 (with a 1e-30 absolute floor for maximum error). Unset this variable for
+speed measurements; setting it to `0` still enables the check.
+
+Validation commands, measured speedups and numerical limits are recorded in
+[the Metal report](docs/metal-slant-stack-performance.md).

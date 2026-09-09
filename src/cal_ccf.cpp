@@ -134,7 +134,26 @@ static int count_gap = 0;
 std::vector<ptime> CMT_ptime;
 std::vector<double> CMT_slat, CMT_slon, CMT_sdep, CMT_moment;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) try {
+  std::cerr << "#SlantStack backend=" << slant_stack_backend_name() << '\n';
+  // Both backends use exactly the same requested grid, in seconds/km.
+  auto positive_setting = [](const char *name, double fallback) {
+    const char *value = std::getenv(name);
+    if (!value) return fallback;
+    std::size_t end = 0;
+    double result = std::stod(value, &end);
+    if (end != std::string(value).size() || !std::isfinite(result) || result <= 0)
+      throw std::invalid_argument(std::string(name) + " must be a positive finite number");
+    return result;
+  };
+  dp = positive_setting("AUTOFOCUSING_SLOWNESS_STEP", 5e-3);
+  const double slowness_max = positive_setting("AUTOFOCUSING_SLOWNESS_MAX", 1.65e-1);
+  const double half_width = std::floor(slowness_max / dp + 1e-10);
+  if (half_width < 1 || half_width > 1024)
+    throw std::invalid_argument("Slowness grid half-width must be between 1 and 1024");
+  ipmax = static_cast<int>(half_width);
+  std::cerr << "#SlantStack step_s_per_km=" << dp << " max_s_per_km=" << ipmax*dp
+            << " grid=" << 2*ipmax+1 << 'x' << 2*ipmax+1 << '\n';
   STATION::dt_msec = 500;  // Sampling interval in millisecond
   STATION::len = 1024 * 2; // 2^x
   STATION::stride = 928;   // 667*2; //667*2*128 = (86400*2-1024*2) //824;
@@ -289,6 +308,9 @@ int main(int argc, char *argv[]) {
     std::cerr << "#PROFILE accepted_windows_total=" << count0 << std::endl;
   H5Pclose(fapl);
   return 0;
+} catch (const std::exception &error) {
+  std::cerr << "Error: " << error.what() << '\n';
+  return 1;
 }
 
 /**
@@ -472,7 +494,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
         const auto stack_start = std::chrono::steady_clock::now();
         const SlantStackGrid grid{ipmax, dp, px0, py0, STATION::if1,
                                   STATION::if2, STATION::df, STATION::horizontal_only};
-        slant_stack_cpu(buf_aryENU.data(), sta0.size(), num_ary,
+        slant_stack(buf_aryENU.data(), sta0.size(), num_ary,
                         &dx_ary[0], &dy_ary[0], grid, ssRTU.data());
         std::cerr << t1 << " " << median0 << " " << median1 << " " << flag_deri
                   << " " << count_ss << std::endl;

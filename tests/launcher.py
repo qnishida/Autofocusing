@@ -31,6 +31,18 @@ with tempfile.TemporaryDirectory(prefix='launcher-', dir=build) as tmp:
                               'catalog', 'results', 'bad-mode'],
                              cwd=workspace, capture_output=True, text=True)
     assert invalid.returncode != 0 and 'Component mode' in invalid.stderr
+    for key, value, message in [
+        ('AUTOFOCUSING_BACKEND', 'invalid', 'AUTOFOCUSING_BACKEND'),
+        ('AUTOFOCUSING_SLOWNESS_STEP', '0', 'positive finite'),
+        ('AUTOFOCUSING_SLOWNESS_MAX', 'nan', 'positive finite'),
+        ('AUTOFOCUSING_SLOWNESS_STEP', '.005junk', 'positive finite'),
+        ('AUTOFOCUSING_SLOWNESS_STEP', '1e-10', 'half-width'),
+    ]:
+        invalid_env = env.copy()
+        invalid_env[key] = value
+        invalid = subprocess.run([str(executable)], env=invalid_env,
+                                 capture_output=True, text=True)
+        assert invalid.returncode != 0 and message in invalid.stderr, invalid.stderr
     (workspace / 'catalog').unlink()
     result = subprocess.run(['bash', str(workspace / 'run.sh')], cwd=tempfile.gettempdir(),
                             env=env, capture_output=True, text=True)

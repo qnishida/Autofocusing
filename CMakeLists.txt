@@ -10,6 +10,24 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 option(DELTAP_ENABLE_NATIVE_ARCH "Build with -march=native on compilers that support it" OFF)
+option(DELTAP_ENABLE_METAL "Build the optional Apple Metal slant-stack backend" ${APPLE})
+add_library(slant_stack_backend STATIC src/slant_stack_backend.cpp)
+if(DELTAP_ENABLE_METAL)
+    if(NOT APPLE)
+        message(FATAL_ERROR "DELTAP_ENABLE_METAL requires Apple Metal; use OFF on other platforms")
+    endif()
+    enable_language(OBJCXX)
+    target_sources(slant_stack_backend PRIVATE src/slant_stack_metal.mm)
+    target_compile_definitions(slant_stack_backend PRIVATE AUTOFOCUSING_HAVE_METAL=1)
+    target_compile_options(slant_stack_backend PRIVATE $<$<COMPILE_LANGUAGE:OBJCXX>:-fobjc-arc>)
+    set_target_properties(slant_stack_backend PROPERTIES OBJCXX_STANDARD 14 OBJCXX_STANDARD_REQUIRED ON)
+    find_library(METAL_FRAMEWORK Metal)
+    find_library(FOUNDATION_FRAMEWORK Foundation)
+    if(NOT METAL_FRAMEWORK OR NOT FOUNDATION_FRAMEWORK)
+        message(FATAL_ERROR "Metal and Foundation frameworks are required")
+    endif()
+    target_link_libraries(slant_stack_backend PUBLIC ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
+endif()
 
 # コンパイラごとにオプションを設定
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -53,6 +71,7 @@ set(DELTAP_INCLUDE_DIRS
 )
 
 set(DELTAP_LIBS
+    slant_stack_backend
     Boost::filesystem
     Boost::date_time
     Boost::math_c99
@@ -96,6 +115,11 @@ if(BUILD_TESTING)
     target_include_directories(test_io PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_io PRIVATE ${DELTAP_LIBS})
     add_test(NAME io_equivalence COMMAND test_io ${CMAKE_CURRENT_BINARY_DIR}/io-fixture.h5)
+    if(DELTAP_ENABLE_METAL)
+        add_executable(test_metal_slant_stack tests/metal_slant_stack.cpp src/slant_stack.cpp)
+        target_link_libraries(test_metal_slant_stack PRIVATE slant_stack_backend OpenMP::OpenMP_CXX)
+        # GPU access is required; run this executable explicitly on a Metal host.
+    endif()
     add_executable(test_horizontal tests/horizontal.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
     target_include_directories(test_horizontal PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_horizontal PRIVATE ${DELTAP_LIBS})
