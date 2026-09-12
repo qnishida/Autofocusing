@@ -1,0 +1,112 @@
+{
+  "reference": "51f60a7",
+  "current": "46dd8e0",
+  "checks": "station order, coordinates, acceptance, metadata, all stored waveform bytes; repeated read and separate init/read APIs",
+  "records": [
+    {
+      "mode": "horizontal",
+      "threads": "1",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "4",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "16",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "1",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-02"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "4",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-02"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "16",
+      "stations": "653",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-02"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "1",
+      "stations": "652",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-03"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "4",
+      "stations": "652",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-03"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "16",
+      "stations": "652",
+      "full_waveforms": "bitwise_equal",
+      "day": "2004-01-03"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "1",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2014-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "4",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2014-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "16",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2014-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "1",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2024-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "4",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2024-01-01"
+    },
+    {
+      "mode": "horizontal",
+      "threads": "16",
+      "stations": "725",
+      "full_waveforms": "bitwise_equal",
+      "day": "2024-01-01"
+    }
+  ]
+}

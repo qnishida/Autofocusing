@@ -1,0 +1,507 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "input": "/Volumes/Seismic_Data/hdf5/Hi-net_tilt/2004/0101/20040010000.h5",
+  "baseline": "51f60a7",
+  "cache": "warmed by full equivalence check; not a cold USB throughput measurement",
+  "rss_unit": "bytes on macOS, KiB on Linux; per-process high water",
+  "records": [
+    {
+      "reference": true,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.118566083,
+      "cpu_s": 2.118314,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030717440,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.079523084,
+      "cpu_s": 2.079348,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008943104,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.077087834,
+      "cpu_s": 2.0769119999999996,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1011089408,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.129933959,
+      "cpu_s": 2.129689,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1025114112,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.116555959,
+      "cpu_s": 2.116314,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1031258112,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.082944791,
+      "cpu_s": 2.08278,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008943104,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.080464667,
+      "cpu_s": 2.080293,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008975872,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.126552917,
+      "cpu_s": 2.126298,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1032830976,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.11679175,
+      "cpu_s": 2.1165610000000004,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030766592,
+      "trial": 4
+    },
+    {
+      "reference": false,
+      "threads": 1,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.07992025,
+      "cpu_s": 2.0797570000000003,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008910336,
+      "trial": 4
+    },
+    {
+      "reference": true,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.124475292,
+      "cpu_s": 2.124219,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1032437760,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.29848825,
+      "cpu_s": 2.230794,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009074176,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.3008955,
+      "cpu_s": 2.233683,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009205248,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.122434041,
+      "cpu_s": 2.1221989999999997,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1034682368,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.129212792,
+      "cpu_s": 2.128973,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1031012352,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.300709125,
+      "cpu_s": 2.231922,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009123328,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.289557167,
+      "cpu_s": 2.221758,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009909760,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.129039958,
+      "cpu_s": 2.128791,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030520832,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.118381584,
+      "cpu_s": 2.118134,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1026293760,
+      "trial": 4
+    },
+    {
+      "reference": false,
+      "threads": 4,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.297897667,
+      "cpu_s": 2.227992,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009254400,
+      "trial": 4
+    },
+    {
+      "reference": true,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.117691791,
+      "cpu_s": 2.1174370000000002,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030045696,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.140111875,
+      "cpu_s": 2.207993,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1010958336,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.143733084,
+      "cpu_s": 2.2096790000000004,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009287168,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.117085791,
+      "cpu_s": 2.116851,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030815744,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.117467792,
+      "cpu_s": 2.1171949999999997,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1026785280,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.143979458,
+      "cpu_s": 2.211279,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008828416,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.143532875,
+      "cpu_s": 2.21049,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009221632,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.116526292,
+      "cpu_s": 2.1162439999999996,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1025966080,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.124524125,
+      "cpu_s": 2.124279,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030586368,
+      "trial": 4
+    },
+    {
+      "reference": false,
+      "threads": 8,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.140169917,
+      "cpu_s": 2.206506,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1008844800,
+      "trial": 4
+    },
+    {
+      "reference": true,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.115393166,
+      "cpu_s": 2.115139,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1032355840,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.080042833,
+      "cpu_s": 2.405589,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1010499584,
+      "trial": 0
+    },
+    {
+      "reference": false,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.080068125,
+      "cpu_s": 2.404273,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009467392,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.106727959,
+      "cpu_s": 2.1064670000000003,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1025310720,
+      "trial": 1
+    },
+    {
+      "reference": true,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.123256083,
+      "cpu_s": 2.123054,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1024360448,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.086531042,
+      "cpu_s": 2.407677,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1009926144,
+      "trial": 2
+    },
+    {
+      "reference": false,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.071294583,
+      "cpu_s": 2.397061,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1010401280,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.121036209,
+      "cpu_s": 2.120791,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1030144000,
+      "trial": 3
+    },
+    {
+      "reference": true,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 2.1273705,
+      "cpu_s": 2.1271199999999997,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1032880128,
+      "trial": 4
+    },
+    {
+      "reference": false,
+      "threads": 16,
+      "repeat": 0,
+      "stations": 653,
+      "wall_s": 1.088758083,
+      "cpu_s": 2.4072720000000003,
+      "disk_read_bytes": 0,
+      "max_rss_native": 1010155520,
+      "trial": 4
+    }
+  ],
+  "summary": [
+    {
+      "threads": 1,
+      "reference": {
+        "median_s": 2.118566083,
+        "min_s": 2.116555959,
+        "max_s": 2.129933959
+      },
+      "current": {
+        "median_s": 2.07992025,
+        "min_s": 2.077087834,
+        "max_s": 2.082944791
+      },
+      "speedup": 1.0185804398029206
+    },
+    {
+      "threads": 4,
+      "reference": {
+        "median_s": 2.124475292,
+        "min_s": 2.118381584,
+        "max_s": 2.129212792
+      },
+      "current": {
+        "median_s": 1.29848825,
+        "min_s": 1.289557167,
+        "max_s": 1.3008955
+      },
+      "speedup": 1.6361143753129843
+    },
+    {
+      "threads": 8,
+      "reference": {
+        "median_s": 2.117467792,
+        "min_s": 2.116526292,
+        "max_s": 2.124524125
+      },
+      "current": {
+        "median_s": 1.143532875,
+        "min_s": 1.140111875,
+        "max_s": 1.143979458
+      },
+      "speedup": 1.851689477663683
+    },
+    {
+      "threads": 16,
+      "reference": {
+        "median_s": 2.121036209,
+        "min_s": 2.106727959,
+        "max_s": 2.1273705
+      },
+      "current": {
+        "median_s": 1.080068125,
+        "min_s": 1.071294583,
+        "max_s": 1.088758083
+      },
+      "speedup": 1.9637985418743844
+    }
+  ]
+}
