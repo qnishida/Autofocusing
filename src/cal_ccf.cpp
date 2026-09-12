@@ -42,6 +42,7 @@ static const Geodesic &geod = Geodesic::WGS84();
 
 #include "calTT.h"
 #include "slant_stack.h"
+#include "metal_power.h"
 #include "station_info.h"
 #include "util.h"
 #include <math.h>
@@ -709,9 +710,60 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
  * @param num_ss Number of slant stacks.
  * @return int Number of iterations performed during the estimation process.
  */
+// New objectives remain opt-in, and real-data qualification currently covers horizontal input.
+static bool power_enabled(const char *stage) {
+  const char *value=std::getenv("AUTOFOCUSING_METAL_POWER");
+  const std::string mode=value?value:"off";
+  if(mode!="off" && mode!="bootstrap" && mode!="grid" && mode!="all")
+    throw std::invalid_argument("AUTOFOCUSING_METAL_POWER must be off, bootstrap, grid or all");
+  const char *backend=std::getenv("AUTOFOCUSING_BACKEND");
+  return STATION::horizontal_only && backend && std::string(backend)=="metal" && (mode==stage || mode=="all");
+}
+struct PowerTimer {
+  const char *stage;
+  std::chrono::steady_clock::time_point start=std::chrono::steady_clock::now();
+  explicit PowerTimer(const char *name):stage(name) {}
+  ~PowerTimer() {
+    if(std::getenv("AUTOFOCUSING_PROFILE"))
+      std::cerr << "#POWER_PROFILE stage=" << stage << " total_s="
+        << std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count() << '\n';
+  }
+};
+static PowerPoint power_point(const PARAM &p) { return {p.p,p.θ,p.Δ,p.dp_Δ}; }
+static PowerData power_data(const array3c &spec,const dvector &dx,const dvector &dy,int windows) {
+  PowerData d{unsigned(windows),unsigned(spec.shape()[1]),unsigned(STATION::if2-STATION::if1+1),unsigned(STATION::if1),STATION::df,{}, {}};
+  d.spectra.reserve(size_t(d.windows)*d.stations*d.bins); d.xy.reserve(2*d.stations);
+  for(unsigned i=0;i<d.stations;++i) { d.xy.push_back(dx[i]);d.xy.push_back(dy[i]); }
+  for(unsigned w=0;w<d.windows;++w) for(unsigned i=0;i<d.stations;++i)
+    for(int k=STATION::if1;k<=STATION::if2;++k) d.spectra.push_back(spec[w][i][k]);
+  return d;
+}
+static void append_weights(std::vector<double> &out,const array2d &weights,int windows,int stations) {
+  for(int w=0;w<windows;++w) for(int i=0;i<stations;++i) out.push_back(weights[w][i]);
+}
+static void grid_powers(dvector &values,const std::vector<PARAM> &points,int count,
+    const array3c &spec,const array2d &weights,const dvector &dx,const dvector &dy,int windows) {
+  auto data=power_data(spec,dx,dy,windows);
+  std::vector<PowerPoint> params;
+  for(int i=0;i<count;++i) params.push_back(power_point(points[i]));
+  std::vector<double> packed_weights;
+  append_weights(packed_weights,weights,windows,data.stations);
+  auto gpu=metal_power_batch(data,params,packed_weights,true,false,false);
+  const double peak=*std::max_element(gpu.begin(),gpu.end());
+  // Conservative candidate band: calibrated independently of held-out event days.
+  const double band=2e-3*std::abs(peak)+1e-30;
+  for(int i=0;i<count;++i) values[i]=gpu[i];
+  // Re-evaluate potential winners in double, preserving CPU tie order.
+  for(int i=0;i<count;++i) {
+    if(gpu[i]>=peak-band) values[i]=cal_S(points[i],spec,weights,dx,dy,windows,0);
+    else values[i]=-std::numeric_limits<double>::infinity();
+  }
+}
+
 static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
+  PowerTimer timer("grid");
   double maxS = 0;
 
   prm.Δ = -1;
@@ -891,11 +943,15 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss,
                          const double bias) {
+  PowerTimer timer("bootstrap");
+  const bool gpu=power_enabled("bootstrap");
+  std::vector<double> packed_weights;
   // Estimate the cov. matrix
   const int loop_num = 100;
   dvector S(loop_num);
   const int num_sta = buf_spec.shape()[1];
   (void)bias;
+  if(gpu) packed_weights.reserve(size_t(loop_num+1)*num_ss*num_sta);
 
   Eigen::Matrix4f S_tmp;
   dvector dS(4, 0.);
@@ -936,7 +992,16 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
         w_bootstrap[isg][ist] = w_spec[isg][ist] * bootstrap[ist];
     }
 
-    S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+    if(gpu) append_weights(packed_weights,w_bootstrap,num_ss,num_sta);
+    else S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+  }
+  double S_est;
+  if(gpu) {
+    append_weights(packed_weights,w_spec,num_ss,num_sta);
+    auto data=power_data(buf_spec,dx,dy,num_ss);
+    auto result=metal_power_batch(data,std::vector<PowerPoint>(loop_num+1,power_point(prm)),packed_weights,false,true,true);
+    for(int i=0;i<loop_num;++i) S[i]=result[i];
+    S_est=result.back();
   }
   double mean = 0, sigma = 0;
   for (int i = 0; i < loop_num; i++)
@@ -955,7 +1020,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
       prm.cov[i][j] = -Cov(i, j) * W(i) * W(j);
 
   /// Estimation of max beam power without the bias
-  double S_est = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 1);
+  if(!gpu) S_est = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 1);
   double weight = 0.;
   for (int isg = 0; isg < num_ss; isg++) {
     double sum1 = 0;
