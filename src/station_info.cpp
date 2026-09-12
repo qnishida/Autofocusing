@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <chrono>
 #include <complex>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -423,6 +424,9 @@ int get_station_num(std::vector<STATION> &sta0,std::string sta,std::string net){
 }
 
 int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
+  struct FilterJob { float *data; int count; float cutoff; };
+  std::vector<FilterJob> filter_jobs;
+  filter_jobs.reserve(sta0.size() * (STATION::horizontal_only ? 2 : 3));
   int number=0;
   for (auto &station : sta0) station.clear_sac();
   int *ibuf = new int [STATION::npts];
@@ -514,8 +518,12 @@ int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
 	  else{
 	    if (H5LTread_dataset_int(file_id, dataset.c_str(), ibuf) < 0) continue;
 	    for(int k=0;k<sac_buf.npts;k++) sac_buf.sgram[k]=ibuf[k]*a0*1E-9;
-	    hp_filt(sac_buf.sgram,sac_buf.sgram,sac_buf.npts, 3E-2/(sr*1.));
-            sta0[istnm].set_SAC_data(cmps[j].substr(cmps[j].size()-1),sac_buf);
+            const std::string component = cmps[j].substr(cmps[j].size()-1);
+            if (sta0[istnm].set_SAC_data(component, sac_buf) == 1) {
+              const SAC_data stored = component == "E" ? sta0[istnm].print_sacE()
+                  : component == "N" ? sta0[istnm].print_sacN() : sta0[istnm].print_sacZ();
+              filter_jobs.push_back({stored.sgram, stored.npts, float(3E-2/(sr*1.))});
+            }
 	  }
 	}
         if (STATION::horizontal_only && sta0[istnm].print_sta_num() == 2) {
@@ -534,6 +542,13 @@ int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
   H5Fclose(file_id);
   delete[] ibuf;
   delete[] sac_buf.sgram;
+  // All HDF5 calls and metadata updates finish before worker threads start.
+  // Jobs retain the original lengths even if subsequent QC clears a station.
+#pragma omp parallel for schedule(static) if(filter_jobs.size() > 1)
+  for (int i = 0; i < static_cast<int>(filter_jobs.size()); ++i) {
+    const auto &job = filter_jobs[i];
+    hp_filt(job.data, job.data, job.count, job.cutoff);
+  }
   return(number);
 }    
   

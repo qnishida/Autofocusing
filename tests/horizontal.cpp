@@ -145,6 +145,7 @@ static void real_data(const std::string &file) {
   std::cout << file << " selected=" << sta.size() << " loaded=" << loaded
             << " first-window-spectra=" << valid << " amplitude-QC=" << quality << '\n';
 }
+#ifndef AUTOFOCUSING_IO_TEST
 int main(int argc,char **argv) {
   try {
     configure();
@@ -152,3 +153,5 @@ int main(int argc,char **argv) {
     else { require(argc==2,"provide temporary fixture path or --real HDF5"); synthetic(argv[1]); }
   } catch(const std::exception &e) { std::cerr << e.what() << '\n'; return 1; }
 }
+
+#endif
