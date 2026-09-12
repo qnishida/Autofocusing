@@ -266,23 +266,12 @@ int main(int argc, char *argv[]) {
     const fs::path path(h5file);
     if (count_files == 1 && fs::exists(path)) {
       std::vector<STATION> sta0;
-      init_station(h5file, sta0, rad0, rad1, fapl);
-
-      // Clear sac information
-      for (int i = 0; i < (int)sta0.size(); i++)
-        sta0[i].clear_sac();
+      sta_num = load_h5(sta0, h5file, rad0, rad1, fapl);
       std::fill_n(ssRTU.data(), ssRTU.num_elements(), 0.);
 
       now_tm = std::chrono::system_clock::now();
       elapsed_seconds = now_tm - start_tm;
-      std::cerr << "#Read data: init_station " << h5file << " " << sta_num
-                << " " << elapsed_seconds.count() << "s\n";
-
-      sta_num = read_h5(sta0, h5file, fapl);
-
-      now_tm = std::chrono::system_clock::now();
-      elapsed_seconds = now_tm - start_tm;
-      std::cerr << "#Read data: read_h5 " << h5file << " " << sta_num << " "
+      std::cerr << "#Read data: load_h5 " << h5file << " " << sta_num << " "
                 << elapsed_seconds.count() << "s\n";
 
       const int num_segments = 4;

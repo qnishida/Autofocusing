@@ -10,8 +10,7 @@
 #endif
 
 static int load_current(const std::string &file, std::vector<STATION> &sta, hid_t fapl) {
-  init_station(file,sta,1800,1800,fapl);
-  return read_h5(sta,file,fapl);
+  return load_h5(sta,file,1800,1800,fapl);
 }
 static int load_reference(const std::string &file, std::vector<STATION> &sta, hid_t fapl) {
   io_reference::init_station(file,sta,1800,1800,fapl);
@@ -44,7 +43,32 @@ static void equivalence(const std::string &file,bool horizontal) {
     require(load_current(file,current,H5P_DEFAULT)==count,"loaded count differs");
     require(lat==STATION::lat_ary && lon==STATION::lon_ary,"array center differs");
     compare(reference,current);
+    require(read_h5(current,file,H5P_DEFAULT)==count,"repeated read count differs");
+    compare(reference,current);
     std::cout<<"PASS mode="<<(horizontal?"horizontal":"3c")<<" threads="<<threads<<" stations="<<count<<" full_waveforms=bitwise_equal\n";
+  }
+  std::vector<STATION> separate;
+  init_station(file,separate,1800,1800,H5P_DEFAULT);
+  require(read_h5(separate,file,H5P_DEFAULT)==count,"separate API count differs");
+  compare(reference,separate);
+}
+static void errors(const std::string &file) {
+  STATION::horizontal_only=true;
+  const auto open_files=H5Fget_obj_count(H5F_OBJ_ALL,H5F_OBJ_FILE);
+  for (int mode=0;mode<3;++mode) {
+    if(mode==2) {
+      hid_t f=H5Fopen(file.c_str(),H5F_ACC_RDWR,H5P_DEFAULT);
+      require(f>=0,"open malformed fixture");
+      require(H5Adelete_by_name(f,"/TILT","stla",H5P_DEFAULT)>=0,"remove coordinate");
+      H5Fclose(f);
+    }
+    bool failed=false;
+    try {
+      std::vector<STATION> stations;
+      load_h5(stations,mode==0?file+".missing":file,1800,mode==1?0:1800,H5P_DEFAULT);
+    } catch(const std::runtime_error &) { failed=true; }
+    require(failed,"invalid input must fail");
+    require(H5Fget_obj_count(H5F_OBJ_ALL,H5F_OBJ_FILE)==open_files,"HDF5 file leak on error");
   }
 }
 static long long disk_bytes() {
@@ -88,6 +112,7 @@ int main(int argc,char **argv) try {
     equivalence(argv[1],true);equivalence(argv[1],false);
     std::vector<STATION> empty;
     require(read_h5(empty,std::string(argv[1])+".missing",H5P_DEFAULT)==-1,"missing input handling");
+    errors(argv[1]);
   }
   return 0;
 } catch(const std::exception &e) {std::cerr<<e.what()<<'\n';return 1;}

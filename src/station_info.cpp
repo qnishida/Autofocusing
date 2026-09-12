@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <vector>
 #include <chrono>
+#include <unordered_map>
+#include <cstdlib>
 #include <complex>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
@@ -344,31 +346,56 @@ static std::vector<std::string> component_names(hid_t file_id, const std::string
   return {};
 }
 
-void init_station(const std::string h5_file,std::vector<STATION> &sta0,const double rad0,const double rad1, hid_t fapl){//rad0 > rad1
-  hid_t file_id = H5Fopen(h5_file.c_str(),H5F_ACC_RDONLY,fapl);//H5P_DEFAULT); //Open the file if it exists.
-  if (file_id < 0) throw std::runtime_error("Cannot open HDF5: " + h5_file);
-  hsize_t sta_num;
-  H5Gget_num_objs(file_id,&sta_num);
-
-  for(int i=0;i< (int)(sta_num);++i){
-    char ctmp[100];
-    H5Gget_objname_by_idx(file_id,(hsize_t)i, ctmp,sizeof(ctmp));
-    std::string stnm = ctmp;
-    
-    if(H5Gget_objtype_by_idx(file_id,(hsize_t)i)==0 &&
-       (!STATION::horizontal_only || !component_names(file_id, stnm).empty())){
-      float stlo, stla,stel;
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stlo",&stlo);
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stla",&stla);
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stel",&stel);
-      
-      STATION sbuf;
-      sbuf.set_station("Hi-net",(std::string) stnm,stla,stlo,stel);
-      sta0.push_back(sbuf);
+namespace {
+struct H5File {
+  hid_t id;
+  H5File(const std::string &path, hid_t fapl)
+      : id(H5Fopen(path.c_str(), H5F_ACC_RDONLY, fapl)) {}
+  ~H5File() { if (id >= 0) H5Fclose(id); }
+  H5File(const H5File &) = delete;
+  H5File &operator=(const H5File &) = delete;
+};
+struct StationMetadata {
+  std::string name;
+  std::vector<std::string> components;
+  float latitude = 0, longitude = 0, elevation = 0;
+};
+std::vector<StationMetadata> station_metadata(hid_t file, bool locations) {
+  hsize_t count = 0;
+  if (H5Gget_num_objs(file, &count) < 0)
+    throw std::runtime_error("Cannot enumerate HDF5 stations");
+  std::vector<StationMetadata> result;
+  result.reserve(count);
+  for (hsize_t i = 0; i < count; ++i) {
+    if (H5Gget_objtype_by_idx(file, i) != H5G_GROUP) continue;
+    char name[100] = {};
+    if (H5Gget_objname_by_idx(file, i, name, sizeof(name)) < 0)
+      throw std::runtime_error("Cannot read HDF5 station name");
+    StationMetadata item;
+    item.name = name;
+    item.components = component_names(file, item.name);
+    if (locations && (!STATION::horizontal_only || !item.components.empty())) {
+      const std::string group = "/" + item.name;
+      if (H5LTget_attribute_float(file, group.c_str(), "stlo", &item.longitude) < 0 ||
+          H5LTget_attribute_float(file, group.c_str(), "stla", &item.latitude) < 0 ||
+          H5LTget_attribute_float(file, group.c_str(), "stel", &item.elevation) < 0 ||
+          !std::isfinite(item.longitude) || !std::isfinite(item.latitude) ||
+          !std::isfinite(item.elevation))
+        throw std::runtime_error("Invalid station coordinates: " + item.name);
     }
+    result.push_back(std::move(item));
   }
-  H5Fclose(file_id);
-
+  return result;
+}
+void initialize_stations(const std::string &h5_file, std::vector<STATION> &sta0,
+                         double rad0, double rad1,
+                         const std::vector<StationMetadata> &metadata) {
+  sta0.reserve(sta0.size() + metadata.size());
+  for (const auto &item : metadata) {
+    if (STATION::horizontal_only && item.components.empty()) continue;
+    sta0.emplace_back();
+    sta0.back().set_station("Hi-net", item.name, item.latitude, item.longitude, item.elevation);
+  }
   //Selection of stations and definition of station locations in Cartesian coordinate.
   //if(STATION::flag_ary==0){
   double arrlo=0.,arrla=0.;
@@ -410,6 +437,15 @@ void init_station(const std::string h5_file,std::vector<STATION> &sta0,const dou
   }
 }//exit(0);
 
+} // namespace
+
+void init_station(const std::string h5_file, std::vector<STATION> &sta0,
+                  const double rad0, const double rad1, hid_t fapl) {
+  H5File file(h5_file, fapl);
+  if (file.id < 0) throw std::runtime_error("Cannot open HDF5: " + h5_file);
+  initialize_stations(h5_file, sta0, rad0, rad1, station_metadata(file.id, true));
+}
+
 int get_station_num(std::vector<STATION> &sta0,std::string sta,std::string net){
   int i=-1;
 
@@ -423,41 +459,28 @@ int get_station_num(std::vector<STATION> &sta0,std::string sta,std::string net){
   return(-1);
 }
 
-int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
+static int read_station_waveforms(std::vector<STATION> &sta0, hid_t file_id,
+                                  const std::vector<StationMetadata> &metadata,
+                                  double &filter_seconds) {
   struct FilterJob { float *data; int count; float cutoff; };
   std::vector<FilterJob> filter_jobs;
   filter_jobs.reserve(sta0.size() * (STATION::horizontal_only ? 2 : 3));
   int number=0;
   for (auto &station : sta0) station.clear_sac();
-  int *ibuf = new int [STATION::npts];
-  std::string stnm;
-  SAC_data sac_buf;
-  sac_buf.sgram = new float [STATION::npts];
+  std::vector<int> ibuf(STATION::npts);
+  std::vector<float> samples(STATION::npts);
+  SAC_data sac_buf{};
+  sac_buf.sgram = samples.data();
+  std::unordered_map<std::string, int> index;
+  for (size_t i = 0; i < sta0.size(); ++i)
+    if (sta0[i].print_net() == "Hi-net") index.emplace(sta0[i].print_sta(), int(i));
 
-  hid_t file_id = H5Fopen(h5_file.c_str(),H5F_ACC_RDONLY,fapl);//H5P_DEFAULT); //Open the file if it exists.
-  if(file_id<0){
-    delete[] ibuf;
-    delete[] sac_buf.sgram;
-    fprintf(stderr,"Cannot open file %s\n",h5_file.c_str());
-    return(-1);
-  }
-  hsize_t sta_num;
-  H5Gget_num_objs(file_id,&sta_num);
-
-  for(int i=0;i< (int)(sta_num);i++){
-    char cbuf[100];
-
-    H5Gget_objname_by_idx(file_id,(hsize_t)i, cbuf,sizeof(cbuf));
-    stnm = cbuf;
-    const auto cmps = component_names(file_id, stnm);
-    if(H5Gget_objtype_by_idx(file_id,(hsize_t)i)==0 && !cmps.empty()){
-      float stlo, stla,stel;
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stlo",&stlo);
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stla",&stla);
-      H5LTget_attribute_float(file_id,("/"+stnm).c_str(),"stel",&stel);
-
-      int istnm = get_station_num(sta0,stnm,"Hi-net");//sta,net
-
+  for (const auto &item : metadata) {
+    const auto &stnm = item.name;
+    const auto &cmps = item.components;
+    if (!cmps.empty()) {
+      const auto found = index.find(stnm);
+      const int istnm = found == index.end() ? -1 : found->second;
       if(istnm !=-1){
 	//components
 	for(size_t j = 0;j<cmps.size();j++){
@@ -516,13 +539,14 @@ int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
 	    sac_buf.npts = 0;
 	  }
 	  else{
-	    if (H5LTread_dataset_int(file_id, dataset.c_str(), ibuf) < 0) continue;
+	    if (H5LTread_dataset_int(file_id, dataset.c_str(), ibuf.data()) < 0) continue;
 	    for(int k=0;k<sac_buf.npts;k++) sac_buf.sgram[k]=ibuf[k]*a0*1E-9;
             const std::string component = cmps[j].substr(cmps[j].size()-1);
             if (sta0[istnm].set_SAC_data(component, sac_buf) == 1) {
               const SAC_data stored = component == "E" ? sta0[istnm].print_sacE()
                   : component == "N" ? sta0[istnm].print_sacN() : sta0[istnm].print_sacZ();
-              filter_jobs.push_back({stored.sgram, stored.npts, float(3E-2/(sr*1.))});
+              if (stored.npts > 0)
+                filter_jobs.push_back({stored.sgram, stored.npts, float(3E-2/(sr*1.))});
             }
 	  }
 	}
@@ -539,9 +563,7 @@ int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
     }
   }
 
-  H5Fclose(file_id);
-  delete[] ibuf;
-  delete[] sac_buf.sgram;
+  const auto filter_start = std::chrono::steady_clock::now();
   // All HDF5 calls and metadata updates finish before worker threads start.
   // Jobs retain the original lengths even if subsequent QC clears a station.
 #pragma omp parallel for schedule(static) if(filter_jobs.size() > 1)
@@ -549,8 +571,40 @@ int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl){
     const auto &job = filter_jobs[i];
     hp_filt(job.data, job.data, job.count, job.cutoff);
   }
+  filter_seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - filter_start).count();
   return(number);
 }    
   
 //init: location of the center of an array
 //    : ibuf[86400*sr]?
+
+int read_h5(std::vector<STATION> &sta0, std::string h5_file, hid_t fapl) {
+  for (auto &station : sta0) station.clear_sac();
+  H5File file(h5_file, fapl);
+  if (file.id < 0) {
+    fprintf(stderr, "Cannot open file %s\n", h5_file.c_str());
+    return -1;
+  }
+  double filter_seconds = 0;
+  return read_station_waveforms(sta0, file.id, station_metadata(file.id, false), filter_seconds);
+}
+
+int load_h5(std::vector<STATION> &sta0, const std::string &h5_file,
+            double rad0, double rad1, hid_t fapl) {
+  const auto start = std::chrono::steady_clock::now();
+  H5File file(h5_file, fapl);
+  if (file.id < 0) throw std::runtime_error("Cannot open HDF5: " + h5_file);
+  const auto metadata = station_metadata(file.id, true);
+  initialize_stations(h5_file, sta0, rad0, rad1, metadata);
+  const auto initialized = std::chrono::steady_clock::now();
+  double filter_seconds = 0;
+  const int count = read_station_waveforms(sta0, file.id, metadata, filter_seconds);
+  const double init_seconds = std::chrono::duration<double>(initialized - start).count();
+  const double read_seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - initialized).count();
+  if (std::getenv("AUTOFOCUSING_PROFILE"))
+    std::cerr << "#LOAD_PROFILE init_s=" << init_seconds
+              << " read_decode_copy_s=" << read_seconds - filter_seconds
+              << " filter_s=" << filter_seconds
+              << " total_s=" << init_seconds + read_seconds << '\n';
+  return count;
+}

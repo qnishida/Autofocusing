@@ -90,3 +90,8 @@ class STATION{
 int get_station_num(std::vector<STATION> &sta0,std::string sta,std::string net);
 void init_station(const std::string h5file, std::vector<STATION> &sta0,const double rad0, const double rad1, hid_t fapl);
 int read_h5(std::vector<STATION> &sta0,std::string h5_file, hid_t fapl);
+
+// Initialize and load a day using one HDF5 handle. Like init_station, throws
+// on an unreadable file or invalid station geometry; returns loaded stations.
+int load_h5(std::vector<STATION> &stations, const std::string &h5_file,
+            double rad0, double rad1, hid_t fapl);
