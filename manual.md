@@ -246,3 +246,9 @@ Use a bounded input tree and a distinct parameter/version ID when benchmarking
 so an experiment does not launch the full archive or replace previous results.
 The CPU optimization, numerical checks, measurements and Metal follow-up
 boundary are documented in [the performance report](docs/cpu-slant-stack-performance.md).
+
+### 共通 I/O の処理と検証
+
+日単位の HDF5 読み込み後に波形フィルタを CPU 並列処理します。
+スレッド数は `OMP_NUM_THREADS`、内訳の計測ログは `AUTOFOCUSING_PROFILE=1` で設定できます。
+実装範囲と検証状況は [共通 CPU I/O 最適化](docs/cpu-io-optimization.md) を参照してください。
