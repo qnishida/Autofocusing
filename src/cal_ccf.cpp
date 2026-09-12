@@ -754,6 +754,8 @@ static void grid_powers(dvector &values,const std::vector<PARAM> &points,int cou
   const double band=2e-3*std::abs(peak)+1e-30;
   for(int i=0;i<count;++i) values[i]=gpu[i];
   // Re-evaluate potential winners in double, preserving CPU tie order.
+  const int refine_count=std::count_if(gpu.begin(),gpu.end(),[&](double v){return v>=peak-band;});
+#pragma omp parallel for if(refine_count>1)
   for(int i=0;i<count;++i) {
     if(gpu[i]>=peak-band) values[i]=cal_S(points[i],spec,weights,dx,dy,windows,0);
     else values[i]=-std::numeric_limits<double>::infinity();

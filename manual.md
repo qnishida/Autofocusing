@@ -305,3 +305,13 @@ speed measurements; setting it to `0` still enables the check.
 
 Validation commands, measured speedups and numerical limits are recorded in
 [the Metal report](docs/metal-slant-stack-performance.md).
+
+### Optional Metal fitting objectives
+
+For validated horizontal inputs, `AUTOFOCUSING_METAL_POWER` selects additional
+GPU power evaluations: `off` (default), `bootstrap`, `grid`, or `all`.
+Set `AUTOFOCUSING_BACKEND=metal` as well. CPU and three-component runs retain
+the existing CPU objectives. Final gradient fitting and Hessians are unchanged.
+See [Metal power evaluation](docs/metal-power-optimization.md) for numerical
+limits, measurements and reproduction commands. Use a distinct result ID when
+enabling these options; they do not change the existing overwrite policy.

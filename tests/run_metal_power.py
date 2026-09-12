@@ -15,11 +15,13 @@ p.add_argument('binary',type=Path)
 p.add_argument('hinet',type=Path)
 p.add_argument('catalog',type=Path)
 p.add_argument('output',type=Path)
+p.add_argument('--modes',nargs='+',choices=('off','bootstrap','grid','all'),default=['off','bootstrap','grid','all'])
 p.add_argument('--days',type=int,default=3,choices=(3,5))
 p.add_argument('--repeats',type=int,default=5)
 p.add_argument('--legacy-run',type=Path,help='reuse a completed legacy-0 run from this script')
 p.add_argument('--legacy',type=Path,help='optional frozen f745119 driver')
 a=p.parse_args()
+if a.repeats<1 or len(set(a.modes))!=len(a.modes): p.error('positive repeats and distinct modes required')
 out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
 for day in range(1,a.days+1):
     source=a.hinet.resolve()/'2004'/f'010{day}'/f'200400{day}0000.h5'
@@ -37,7 +39,7 @@ if a.legacy_run:
     reference=[line.split() for line in files[0].read_text().splitlines()]
     reference_choices=[line for line in (a.legacy_run/'legacy-0.log').read_text().splitlines() if line.startswith(('#deg max=','#dp_Δ max='))]
     report['legacy_event_sha256']=hashlib.sha256(files[0].read_bytes()).hexdigest()
-modes=['off','bootstrap','grid','all']
+modes=a.modes
 jobs=([('legacy',0)] if a.legacy else [])+[(mode,r) for r in range(a.repeats) for mode in (modes if r%2==0 else list(reversed(modes)))]
 for mode,repeat in jobs:
     tag=f'{mode}-{repeat}';exe=(a.legacy if mode=='legacy' else a.binary).resolve()
@@ -85,9 +87,10 @@ for mode in modes:
     r=[x for x in report['runs'] if x['mode']==mode]
     summary[mode]={'median_s':statistics.median(x['wall_s'] for x in r),'min_s':min(x['wall_s'] for x in r),'max_s':max(x['wall_s'] for x in r),
                    'stages':{stage:statistics.median(x['stages'][stage] for x in r) for stage in ('grid','bootstrap')}}
-for mode in modes[1:]:
+for mode in (m for m in modes if m!='off' and 'off' in summary):
     stage='bootstrap' if mode=='bootstrap' else 'grid'
-    summary[mode]['stage_speedup']=summary['off']['stages'][stage]/summary[mode]['stages'][stage]
+    stages=('grid','bootstrap') if mode=='all' else (stage,)
+    summary[mode]['stage_speedup']=sum(summary['off']['stages'][s] for s in stages)/sum(summary[mode]['stages'][s] for s in stages)
     summary[mode]['end_to_end_pass']=summary[mode]['median_s']<=1.05*summary['off']['median_s']
 report['summary']=summary
 (out/'report.json').write_text(json.dumps(report,indent=2)+'\n')

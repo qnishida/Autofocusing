@@ -6,9 +6,11 @@ export PARAM_ID="tilt_horizontal"
 export START_YEAR="2004"
 # Optional: export OMP_NUM_THREADS=4
 # Optional: export RESULTS_ROOT="results"
-# Apple Metal: only slant stack uses float on the GPU; CPU remains the default.
+# Apple Metal: slant stack uses float on the GPU; CPU remains the default.
 # export AUTOFOCUSING_BACKEND="metal"
 # export OMP_NUM_THREADS=16
+# Additional horizontal fitting objectives (default off): bootstrap / grid / all.
+# export AUTOFOCUSING_METAL_POWER="all"
 # Finer/wider grid, in seconds/km (defaults: 0.005, 0.165).
 # Use a distinct PARAM_ID for each backend/grid experiment to preserve results.
 # export AUTOFOCUSING_SLOWNESS_STEP=0.0025
