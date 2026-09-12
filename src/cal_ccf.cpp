@@ -764,6 +764,7 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
   PowerTimer timer("grid");
+  const bool gpu=power_enabled("grid");
   double maxS = 0;
 
   prm.Δ = -1;
@@ -776,9 +777,10 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
     for (int ideg = 0; ideg < 180 / ddeg - 1; ideg++) {
       prm1[ideg] = prm;
       prm1[ideg].Δ = (ideg + 1) * ddeg / 180. * M_PI;
-      S[ideg] = cal_S(prm1[ideg], buf_spec, w_spec, dx, dy, num_ss, 0);
+      if(!gpu) S[ideg] = cal_S(prm1[ideg], buf_spec, w_spec, dx, dy, num_ss, 0);
     }
 
+    if(gpu) grid_powers(S,prm1,180/ddeg-1,buf_spec,w_spec,dx,dy,num_ss);
     for (int ideg = 0; ideg < 180 / ddeg - 1; ideg++) {
       if (maxS < S[ideg]) {
         maxS = S[ideg];
@@ -805,9 +807,10 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
       prm1[i] = prm;
       prm1[i].dp_Δ = (dp_Δ1 - dp_Δ0) * i / 40. +
                      dp_Δ0; // prm1[i].dp_Δ = (i-20)* .04/ (30.*111)/30.;
-      S[i] = cal_S(prm1[i], buf_spec, w_spec, dx, dy, num_ss, 0);
+      if(!gpu) S[i] = cal_S(prm1[i], buf_spec, w_spec, dx, dy, num_ss, 0);
     }
 
+    if(gpu) grid_powers(S,prm1,40,buf_spec,w_spec,dx,dy,num_ss);
     for (int i = 0; i < 40; i++) {
       if (maxS < S[i]) {
         maxS = S[i];
