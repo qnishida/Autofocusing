@@ -21,6 +21,8 @@ def main():
     p.add_argument('--threads', type=int, default=16)
     p.add_argument('--days', type=int, choices=(3, 5), default=3)
     p.add_argument('--repeats', type=int, default=5)
+    p.add_argument('--warmups', type=int, choices=(0, 1), default=1,
+                   help='use 0 for correctness-only qualification, 1 for timing')
     p.add_argument('--target', choices=('hessian', 'objective', 'rotation'))
     a = p.parse_args()
     if min(a.threads, a.repeats) < 1:
@@ -40,11 +42,11 @@ def main():
         link.symlink_to(path)
     report = dict(platform=platform.platform(), backend=a.backend, power=a.power,
                   threads=a.threads, days=a.days, target=a.target,
-                  cache='one excluded warmup per binary; OS cache not purged; alternating fresh processes',
+                  cache=f'{a.warmups} excluded warmup per binary; OS cache not purged; alternating fresh processes',
                   timing='inclusive function time; outer-parallel time is worker-call sum, not wall time',
                   fftw='ESTIMATE | UNALIGNED', seed='1837 + 104729 * replicate', runs=[])
     reference_rows = reference_windows = reference_choices = None
-    jobs = [('reference', -1), ('current', -1)] + [
+    jobs = ([('reference', -1), ('current', -1)] if a.warmups else []) + [
         (mode, repeat) for repeat in range(a.repeats)
         for mode in (('reference', 'current') if repeat % 2 == 0 else ('current', 'reference'))]
     for mode, repeat in jobs:
