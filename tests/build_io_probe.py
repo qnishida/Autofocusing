@@ -1,6 +1,6 @@
 """Build a test-only deterministic event driver using an existing CMake build.
 
-Run from a CPU or Metal checkout after configuring CMAKE_EXPORT_COMPILE_COMMANDS.
+Run from a CPU, Metal or CUDA checkout after configuring CMAKE_EXPORT_COMPILE_COMMANDS.
 --reference selects the pre-I/O commit for cal_ccf.cpp and station_info.cpp;
 other objects/headers must match that backend. Production sources are untouched.
 """

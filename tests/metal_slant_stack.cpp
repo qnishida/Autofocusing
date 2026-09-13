@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <omp.h>
@@ -36,18 +37,21 @@ void run(int count, int half, int nf, bool horizontal, bool coherent,
   // Warm both paths; compilation is reported separately at startup.
   slant_stack_cpu(spectra.data(), capacity, count, dx.data(), dy.data(), g,
                   cpu.data());
-  slant_stack_metal(spectra.data(), capacity, count, dx.data(), dy.data(), g,
+  slant_stack(spectra.data(), capacity, count, dx.data(), dy.data(), g,
                     gpu.data());
   for (int r = 0; r < repeats; ++r) {
-    auto t = Clock::now();
-    slant_stack_cpu(spectra.data(), capacity, count, dx.data(), dy.data(), g,
-                    cpu.data());
-    tc += std::chrono::duration<double>(Clock::now() - t).count();
-    t = Clock::now();
-    slant_stack_metal(spectra.data(), capacity, count, dx.data(), dy.data(), g,
-                      gpu.data());
-    tg += std::chrono::duration<double>(Clock::now() - t).count();
+    for (int order=0; order<2; ++order) {
+      const bool use_gpu=(order+r%2)%2;
+      auto t = Clock::now();
+      if (use_gpu)
+        slant_stack(spectra.data(), capacity, count, dx.data(), dy.data(), g, gpu.data());
+      else
+        slant_stack_cpu(spectra.data(), capacity, count, dx.data(), dy.data(), g, cpu.data());
+      const double elapsed=std::chrono::duration<double>(Clock::now()-t).count();
+      (use_gpu ? tg : tc) += elapsed;
+    }
   }
+
   double scale = 0, error = 0, sq = 0, ref = 0;
   for (size_t i = 0; i < cpu.size(); ++i) {
     if (!std::isfinite(gpu[i]))
@@ -61,7 +65,11 @@ void run(int count, int half, int nf, bool horizontal, bool coherent,
       throw std::runtime_error("horizontal changed U");
   }
   auto previous = gpu;
-  slant_stack_metal(spectra.data(), capacity, 1, dx.data(), dy.data(), g,
+  auto empty_grid=g;
+  empty_grid.last_bin=empty_grid.first_bin-1;
+  slant_stack(spectra.data(), capacity, count, dx.data(), dy.data(), empty_grid, gpu.data());
+  if (previous != gpu) throw std::runtime_error("empty-frequency guard");
+  slant_stack(spectra.data(), capacity, 1, dx.data(), dy.data(), g,
                     gpu.data());
   if (previous != gpu)
     throw std::runtime_error("one-station guard");
@@ -79,7 +87,7 @@ void run(int count, int half, int nf, bool horizontal, bool coherent,
             << " stations=" << count << " grid=" << 2 * half + 1
             << " step=" << step << " bins=" << nf << " coherent=" << coherent
             << " offset=" << offset << " cpu_s=" << tc / repeats
-            << " metal_s=" << tg / repeats << " speedup=" << tc / tg
+            << " " << AUTOFOCUSING_TEST_BACKEND << "_s=" << tg / repeats << " speedup=" << tc / tg
             << " max_scaled_error=" << error / scale
             << " relative_l2=" << std::sqrt(sq / ref)
             << " peak_mismatches=" << peak_errors << std::endl;
@@ -88,10 +96,11 @@ void run(int count, int half, int nf, bool horizontal, bool coherent,
     throw std::runtime_error("GPU accuracy threshold exceeded");
 }
 int main(int argc, char **argv) try {
+  setenv("AUTOFOCUSING_BACKEND",AUTOFOCUSING_TEST_BACKEND,1);
   omp_set_dynamic(0);
   omp_set_num_threads(argc >= 5 ? std::stoi(argv[3]) : 16);
   auto start = Clock::now();
-  std::cout << "device=" << slant_stack_metal_device() << " init_s="
+  std::cout << "device=" << slant_stack_backend_name() << " init_s="
             << std::chrono::duration<double>(Clock::now() - start).count()
             << std::endl;
   if (argc == 5 || argc == 6) {
@@ -104,6 +113,16 @@ int main(int argc, char **argv) try {
         for (bool offset : {false, true})
           for (int bins : {1, 31, 155, 257})
             run(17, 6, bins, h, coherent, offset, 2);
+    if (std::string(AUTOFOCUSING_TEST_BACKEND)=="cuda") {
+      setenv("AUTOFOCUSING_VERIFY_CUDA","1",1);
+      run(17, 6, 31, true, true, false, 1);
+      unsetenv("AUTOFOCUSING_VERIFY_CUDA");
+      // Invalid dimensions fail before touching the input or CUDA allocations.
+      SlantStackGrid invalid{-1,.005,0,0,102,256,1./1024,true};
+      try { slant_stack_cuda(nullptr,2,2,nullptr,nullptr,invalid,nullptr); }
+      catch (const std::invalid_argument &) { return 0; }
+      throw std::runtime_error("Invalid CUDA grid was accepted");
+    }
   }
 } catch (const std::exception &e) {
   std::cerr << e.what() << '\n';

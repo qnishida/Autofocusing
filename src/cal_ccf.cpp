@@ -42,7 +42,7 @@ static const Geodesic &geod = Geodesic::WGS84();
 
 #include "calTT.h"
 #include "slant_stack.h"
-#include "metal_power.h"
+#include "power.h"
 #include "station_info.h"
 #include "util.h"
 #include <math.h>
@@ -137,7 +137,8 @@ std::vector<double> CMT_slat, CMT_slon, CMT_sdep, CMT_moment;
 
 int main(int argc, char *argv[]) try {
   std::cerr << "#SlantStack backend=" << slant_stack_backend_name() << '\n';
-  // Both backends use exactly the same requested grid, in seconds/km.
+  std::cerr << "#Power mode=" << gpu_power_mode() << '\n';
+  // All backends use exactly the same requested grid, in seconds/km.
   auto positive_setting = [](const char *name, double fallback) {
     const char *value = std::getenv(name);
     if (!value) return fallback;
@@ -712,12 +713,7 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
  */
 // New objectives remain opt-in, and real-data qualification currently covers horizontal input.
 static bool power_enabled(const char *stage) {
-  const char *value=std::getenv("AUTOFOCUSING_METAL_POWER");
-  const std::string mode=value?value:"off";
-  if(mode!="off" && mode!="bootstrap" && mode!="grid" && mode!="all")
-    throw std::invalid_argument("AUTOFOCUSING_METAL_POWER must be off, bootstrap, grid or all");
-  const char *backend=std::getenv("AUTOFOCUSING_BACKEND");
-  return STATION::horizontal_only && backend && std::string(backend)=="metal" && (mode==stage || mode=="all");
+  return gpu_power_enabled(stage, STATION::horizontal_only);
 }
 struct PowerTimer {
   const char *stage;
@@ -748,7 +744,7 @@ static void grid_powers(dvector &values,const std::vector<PARAM> &points,int cou
   for(int i=0;i<count;++i) params.push_back(power_point(points[i]));
   std::vector<double> packed_weights;
   append_weights(packed_weights,weights,windows,data.stations);
-  auto gpu=metal_power_batch(data,params,packed_weights,true,false,false);
+  auto gpu=gpu_power_batch(data,params,packed_weights,true,false,false);
   const double peak=*std::max_element(gpu.begin(),gpu.end());
   // Conservative candidate band: calibrated independently of held-out event days.
   const double band=2e-3*std::abs(peak)+1e-30;
@@ -1004,7 +1000,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
   if(gpu) {
     append_weights(packed_weights,w_spec,num_ss,num_sta);
     auto data=power_data(buf_spec,dx,dy,num_ss);
-    auto result=metal_power_batch(data,std::vector<PowerPoint>(loop_num+1,power_point(prm)),packed_weights,false,true,true);
+    auto result=gpu_power_batch(data,std::vector<PowerPoint>(loop_num+1,power_point(prm)),packed_weights,false,true,true);
     for(int i=0;i<loop_num;++i) S[i]=result[i];
     S_est=result.back();
   }

@@ -6,7 +6,7 @@
 #include <random>
 
 static int grid_benchmark() {
-  omp_set_num_threads(16); STATION::df=1./1024;STATION::if1=102;STATION::if2=256;
+  STATION::df=1./1024;STATION::if1=102;STATION::if2=256;
   const int n=650,windows=3;
   array3c spec(boost::extents[windows][n][range3c(STATION::if1,STATION::if2+1)]);
   array2d weights(boost::extents[windows][n]); dvector x(n),y(n);
@@ -45,21 +45,24 @@ static int grid_benchmark() {
     }
     if(results[0].Δ!=results[1].Δ || results[0].dp_Δ!=results[1].dp_Δ) throw std::runtime_error("Expanded grid winner mismatch");
     std::cout<<std::setprecision(17)<<"{\"factor\":"<<factor<<",\"wider\":"<<(wider?"true":"false")<<",\"repeat\":"<<repeat
-      <<",\"cpu_s\":"<<times[0]<<",\"metal_s\":"<<times[1]<<",\"same_winner\":true}"<<std::endl;
+      <<",\"cpu_s\":"<<times[0]<<",\""<<AUTOFOCUSING_TEST_BACKEND<<"_s\":"<<times[1]<<",\"same_winner\":true}"<<std::endl;
   }
   return 0;
 }
 
 int main(int argc,char **argv) try {
+  omp_set_dynamic(0);
+  if(!std::getenv("OMP_NUM_THREADS")) omp_set_num_threads(16);
+  setenv("AUTOFOCUSING_BACKEND",AUTOFOCUSING_TEST_BACKEND,1);
   if(argc==2 && std::string(argv[1])=="--benchmark-grid") return grid_benchmark();
-  setenv("AUTOFOCUSING_METAL_POWER","all",1);
+  setenv("AUTOFOCUSING_GPU_POWER","all",1);
   setenv("AUTOFOCUSING_BACKEND","cpu",1); STATION::horizontal_only=true;
   if(power_enabled("bootstrap")) throw std::runtime_error("CPU must retain CPU objectives");
-  setenv("AUTOFOCUSING_BACKEND","metal",1); STATION::horizontal_only=false;
+  setenv("AUTOFOCUSING_BACKEND",AUTOFOCUSING_TEST_BACKEND,1); STATION::horizontal_only=false;
   if(power_enabled("grid")) throw std::runtime_error("Unqualified 3c must retain CPU objectives");
   STATION::horizontal_only=true;
   if(!power_enabled("bootstrap") || !power_enabled("grid")) throw std::runtime_error("Opt-in dispatch");
-  setenv("AUTOFOCUSING_METAL_POWER","off",1);
+  setenv("AUTOFOCUSING_GPU_POWER","off",1);
   if(power_enabled("grid")) throw std::runtime_error("Off dispatch");
   STATION::df=1./1024;
   STATION::if1=102; STATION::if2=256;
@@ -92,7 +95,7 @@ int main(int argc,char **argv) try {
           double reference=cal_S(prm,spectra,weights,dx,dy,windows,bias);
           auto data=power_data(spectra,dx,dy,windows);
           std::vector<double> packed; append_weights(packed,weights,windows,stations);
-          double fp32=metal_power_batch(data,{power_point(prm)},packed,true,true,bias)[0];
+          double fp32=gpu_power_batch(data,{power_point(prm)},packed,true,true,bias)[0];
           double a=std::abs(fp32-reference)/reference_scale;
           if(!std::isfinite(a)||a>5e-4)
             throw std::runtime_error("Objective smoke-test tolerance exceeded");
@@ -117,14 +120,44 @@ int main(int argc,char **argv) try {
       append_weights(packed,weight,windows,n);
       refs.push_back(cal_S(p,spec,weight,x,y,windows,1));scales.push_back(cal_S(p,spec,weight,x,y,windows,0));
     }
-    auto values=metal_power_batch(data,points,packed,false,false,true);
+    auto values=gpu_power_batch(data,points,packed,false,false,true);
     for(int b=0;b<65;++b) if(std::abs(values[b]-refs[b])>5e-4*scales[b]+1e-30)
       throw std::runtime_error("Batched objective indexing/precision");
+    // Every sharing combination spans multiple 32-candidate chunks, including
+    // Bootstrap's shared geometry with different weights for each replicate.
+    for (bool shared_weights:{false,true}) for (bool shared_geometry:{false,true}) {
+      auto shared_points=points;
+      if(shared_geometry) std::fill(shared_points.begin(),shared_points.end(),points[0]);
+      std::vector<double> input_weights=packed;
+      if(shared_weights) input_weights.resize(windows*n);
+      auto batch=gpu_power_batch(data,shared_points,input_weights,shared_weights,shared_geometry,true);
+      for(int b=0;b<65;++b) {
+        const auto &v=shared_points[b]; PARAM p{};p.p=v.p;p.θ=v.theta;p.Δ=v.delta;p.dp_Δ=v.curvature;
+        for(int w=0;w<windows;++w) for(int i=0;i<n;++i)
+          weight[w][i]=input_weights[(shared_weights?0:b*windows*n)+w*n+i];
+        double reference=cal_S(p,spec,weight,x,y,windows,1);
+        double scale=cal_S(p,spec,weight,x,y,windows,0);
+        if(!std::isfinite(batch[b]) || std::abs(batch[b]-reference)>5e-4*scale+1e-30)
+          throw std::runtime_error("Shared geometry/weight chunk boundary");
+      }
+    }
     // Exact ties and zero signal must preserve the original strict-max policy.
     std::fill_n(spec.data(),spec.num_elements(),std::complex<double>(0,0));
     std::vector<PARAM> tied(40);for(auto &p:tied) {p.p=.06;p.θ=.2;p.Δ=1.;p.dp_Δ=0;}
     dvector values_tied(40);grid_powers(values_tied,tied,40,spec,weight,x,y,windows);
     for(double v:values_tied) if(v!=0) throw std::runtime_error("Zero/tie objective");
+  }
+  if(std::string(AUTOFOCUSING_TEST_BACKEND)=="cuda") {
+    PowerData invalid{};
+    bool rejected=false;
+    try { cuda_power_batch(invalid,{}, {},true,true,false); }
+    catch(const std::invalid_argument &) { rejected=true; }
+    if(!rejected) throw std::runtime_error("Invalid CUDA power dimensions accepted");
+    PowerData overflow{UINT32_MAX,UINT32_MAX,UINT32_MAX,0,1.,{}, {}};
+    rejected=false;
+    try { cuda_power_batch(overflow,{{.1,0,1,0}}, {},true,true,false); }
+    catch(const std::invalid_argument &) { rejected=true; }
+    if(!rejected) throw std::runtime_error("CUDA power dimension overflow accepted");
   }
   std::cout<<std::setprecision(17)<<"cases="<<cases<<" max_float_scaled="<<max_float
            <<" (scaled by uncorrected double power)\n";

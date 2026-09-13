@@ -16,3 +16,10 @@ export START_YEAR="2004"
 # export AUTOFOCUSING_SLOWNESS_STEP=0.0025
 # export AUTOFOCUSING_SLOWNESS_MAX=0.25
 # export PARAM_ID="tilt_horizontal_metal_dp0025_p025"
+
+# NVIDIA CUDA (configure DELTAP_ENABLE_CUDA=ON; set this path to your build).
+# export AUTOFOCUSING_BIN="/path/to/build-cuda/src/cal_ccf_gcc"
+# export AUTOFOCUSING_BACKEND="cuda"
+# export AUTOFOCUSING_GPU_POWER="bootstrap"  # off (default) / bootstrap / grid / all
+# export PARAM_ID="tilt_horizontal_cuda"
+# AUTOFOCUSING_GPU_POWER also applies to Metal and overrides AUTOFOCUSING_METAL_POWER.
