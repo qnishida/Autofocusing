@@ -7,8 +7,10 @@ from pathlib import Path
 import platform
 import statistics
 import subprocess
+import sys
 import time
 
+sys.dont_write_bytecode = True
 from run_metal_power import compare_power
 
 
@@ -42,6 +44,7 @@ def main():
         link.symlink_to(path)
     report = dict(platform=platform.platform(), backend=a.backend, power=a.power,
                   threads=a.threads, days=a.days, target=a.target,
+                  adoption_protocol=a.warmups == 1 and a.repeats >= 5,
                   cache=f'{a.warmups} excluded warmup per binary; OS cache not purged; alternating fresh processes',
                   timing='inclusive function time; outer-parallel time is worker-call sum, not wall time',
                   fftw='ESTIMATE | UNALIGNED', seed='1837 + 104729 * replicate', runs=[])
@@ -125,6 +128,9 @@ def main():
                                     for key in runs[0]['power']})
     report['summary'] = summary
     report['whole_run_pass'] = summary['current']['median_s'] <= 1.05*summary['reference']['median_s']
+    if 'grid' in summary['reference']['power']:
+        report['grid_regression_pass'] = (summary['current']['power']['grid']
+                                          <= 1.05*summary['reference']['power']['grid'])
     if a.target:
         key = a.target+'/serial_caller'
         report['target_stage_pass'] = summary['current']['cpu'][key] <= .9*summary['reference']['cpu'][key]

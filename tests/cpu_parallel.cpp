@@ -137,23 +137,47 @@ int main(int argc,char **argv) try {
   if(argc!=1) throw std::runtime_error("usage: test_cpu_parallel [--benchmark STAGE THREADS REPEATS WINDOWS]");
   for(int w : {0,1,3,16,17,48}) for(int bins : {1,155}) for(bool coherent : {false,true}) {
     Fixture f(w,31,bins,coherent);
-    for(int threads : {1,4,8,16}) { omp_set_num_threads(threads);compare(f); }
-    for(bool horizontal : {false,true}) { STATION::horizontal_only=horizontal;rotation_check(f); }
+    for(int threads : {1,4,8,16}) {
+      omp_set_num_threads(threads); compare(f);
+      for(bool horizontal : {false,true}) { STATION::horizontal_only=horizontal;rotation_check(f); }
+    }
   }
   for(int n : {1,2,650}) for(bool zero : {false,true}) {
     Fixture f(17,n,155,false,zero);
-    for(int threads : {1,4,8,16}) { omp_set_num_threads(threads);compare(f); }
+    for(int threads : {1,4,8,16}) {
+      omp_set_num_threads(threads); compare(f); rotation_check(f);
+    }
   }
   // Concurrent outer callers must use local scratch without nested teams.
   Fixture nested(17,31,31,true);
-  double actual[8], expected[8];
+  double actual[8][23], expected[8][23];
+  std::vector<std::unique_ptr<Rotation>> rotations, references;
+  for(int i=0;i<8;++i) {
+    rotations.emplace_back(new Rotation(nested));
+    references.emplace_back(new Rotation(nested));
+    references.back()->run(true);
+  }
 #pragma omp parallel for num_threads(4)
   for(int i=0;i<8;++i) {
     dvector d(4); dmatrix dd(4,4);
-    actual[i]=hessian(nested,false,d,dd)+objective(nested,false);
-    expected[i]=hessian(nested,true,d,dd)+objective(nested,true);
+    for(bool reference : {false,true}) {
+      double *result = reference ? expected[i] : actual[i];
+      result[0]=hessian(nested,reference,d,dd);
+      result[1]=objective(nested,reference,0);
+      result[2]=objective(nested,reference,1);
+      for(int m=0;m<4;++m) {
+        result[3+m]=d[m];
+        for(int n=0;n<4;++n) result[7+4*m+n]=dd(m,n);
+      }
+    }
+    rotations[i]->run(false);
   }
-  for(int i=0;i<8;++i) check(actual[i],expected[i]);
+  for(int i=0;i<8;++i) {
+    for(int j=0;j<23;++j) check(actual[i][j],expected[i][j]);
+    const auto &a=*rotations[i], &b=*references[i];
+    for(size_t j=0;j<a.spec.num_elements();++j) check_complex(a.spec.data()[j],b.spec.data()[j]);
+    for(size_t j=0;j<a.weights.num_elements();++j) check(a.weights.data()[j],b.weights.data()[j]);
+  }
   std::cout << std::setprecision(17) << "PASS CPU parallel: checked=" << checked << " unequal=" << unequal
             << " max_abs=" << max_abs << " max_relative=" << max_scaled << '\n';
   return 0;
