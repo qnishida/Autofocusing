@@ -43,6 +43,7 @@ static const Geodesic &geod = Geodesic::WGS84();
 #include "calTT.h"
 #include "slant_stack.h"
 #include "power.h"
+#include "cpu_profile.h"
 #include "station_info.h"
 #include "util.h"
 #include <math.h>
@@ -669,6 +670,7 @@ void output_result(std::ostream &ofs, const PARAM &prm, int icmp, double max,
 static int rotate_EN_RT(const std::vector<STATION> &sta0,
                         array4c &buf_specENURT, array3d &w_specENURT,
                         const PARAM prm) {
+  cpu_profile::Timer cpu_timer(cpu_profile::rotation);
   std::vector<double> cosbaz2(sta0.size()), sinbaz2(sta0.size());
   double evlat, evlon;
   geod.ArcDirect(STATION::lat_ary, STATION::lon_ary, 90 - prm.θ / M_PI * 180.,
@@ -834,6 +836,7 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
 static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
+  cpu_profile::Timer cpu_timer(cpu_profile::fitting);
   double S0 = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 0);
   PARAM prm0 = prm, prm_init = prm, prm_tmp;
   dvector dS(4, 0.);
@@ -1068,6 +1071,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
 static double cal_S(const PARAM prm, const array3c &buf_spec,
                     const array2d &w_spec, const dvector &dx, const dvector &dy,
                     const int num_ss, const int flag_red) {
+  cpu_profile::Timer cpu_timer(cpu_profile::objective);
   const int num_sta = buf_spec.shape()[1];
   cvector phi(STATION::if2 + 1);
 
@@ -1321,6 +1325,7 @@ static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
                            const array2d &w_spec, const dvector &dx,
                            const dvector &dy, dvector &dS, dmatrix &ddS,
                            const int num_ss) {
+  cpu_profile::Timer cpu_timer(cpu_profile::hessian);
   const int num_sta = buf_spec.shape()[1];
 
   dvector tau(num_sta);
