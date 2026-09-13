@@ -224,3 +224,7 @@ from Global CMT data and cite Global CMT following their guidance.
 build time (`DELTAP_ENABLE_CUDA=ON`) and runtime (`AUTOFOCUSING_BACKEND=cuda`).
 See [CUDA setup](manual.md#12-nvidia-cuda-gpu-backend) and
 [validation results](docs/cuda-performance.md). Metal settings remain supported.
+
+The `gpu` branch also parallelizes CPU Hessian evaluation and RT rotation.
+See [CPU parallelization and validation](docs/cpu-fitting-parallel.md) for
+thread settings, numerical checks, measurements, and the pending Mac validation.
