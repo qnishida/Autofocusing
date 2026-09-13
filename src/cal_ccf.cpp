@@ -688,6 +688,9 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
   }
   const int num_buffers = static_cast<int>((buf_specENURT.shape())[1]);
   const int num_stations = static_cast<int>((buf_specENURT.shape())[2]);
+  // Each window/station owns disjoint RT spectra and weights. This preserves
+  // every scalar operation and does not introduce a floating-point reduction.
+#pragma omp parallel for collapse(2) schedule(static) if(num_buffers > 1 && !omp_in_parallel())
   for (int ibuf = 0; ibuf < num_buffers; ++ibuf) {
     for (int ist = 0; ist < num_stations; ++ist) {
       for (int k = STATION::if1; k <= STATION::if2; ++k) { // clang-format off
