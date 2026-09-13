@@ -179,6 +179,44 @@ independent experiments, the held objective change, and synthetic timings.
 The ignored `build-cuda/cpu-parallel/` directory retains local fixed drivers,
 logs and event files for inspection.
 
+### Cumulative comparison with the original CPU implementation
+
+A separate same-host comparison uses `393a93e`, before the first CPU slant-stack
+optimization, against the integrated CUDA/bootstrap implementation (`c3be328`).
+Both use the 3990X with 16 OpenMP threads; the current version also uses the
+RTX PRO 2000 Blackwell. GCC 13.3 Release flags and inputs are identical. Only
+the test drivers fix Bootstrap seeds and FFTW plans, as described above.
+
+| Version | Whole-run median | Measured range |
+| --- | --- | --- |
+| Original CPU (`393a93e`) | 155.805 s | 155.647–155.992 s |
+| Current CUDA + CPU optimizations | 27.416 s | 27.267–27.417 s |
+
+The cumulative speedup is **5.683×**, or **82.40% less elapsed time**. This
+includes CPU slant-stack and I/O optimization, GPU acceleration, and the latest
+CPU parallelization. It is a direct paired comparison, not multiplied speedups
+from different machines or workloads.
+
+The protocol uses January 1–3, 2004 horizontal data, one excluded warmup per
+binary and three measured pairs with alternating order. Profiling is disabled
+in both binaries; wall time includes startup, input loading, GPU transfers and
+output. No agent-started builds or tests run alongside the timings. OS caches
+are not purged, so these results do not represent cold NAS throughput.
+
+All runs retain 20 events, 433 accepted windows and identical initial candidate
+choices. Each backend produces repeatable event bytes. CPU-versus-GPU outputs
+pass the existing bounds: beam maximum/MAD `rtol=1e-4`, Bootstrap columns 21–33
+`rtol=1e-3`, residual `atol=1e-12`, and other fields exact. Observed maximum
+relative differences are `9.00657e-6` for beam maximum/MAD and `1.19376e-5` for
+Bootstrap. The legacy build also passes its two CTest cases.
+
+[The full measurement record](benchmarks/cpu-legacy-total-20260914.json) retains
+all eight runs, including excluded warmups, event and binary hashes, RSS,
+accepted windows and summary statistics. Its `event_file` entries refer to
+local artifacts under the ignored `build-cuda/cpu-parallel/legacy-total-events/`
+directory. The detached legacy checkout and generated deterministic drivers
+remain under `build-cuda/`; production sources were not modified for this run.
+
 The user explicitly deferred Mac qualification on 2026-09-14. `main` remains
 unchanged pending M4 Max CPU/Metal validation. Real three-component event data
 has not been qualified here; synthetic rotation and GPU tests cover both
