@@ -1,0 +1,29 @@
+[ 26%] Building CXX object CMakeFiles/test_horizontal.dir/tests/horizontal.cpp.o
+[ 26%] Building CXX object CMakeFiles/test_horizontal.dir/src/station_info.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/cal_ccf_clang.dir/cal_ccf.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/cal_ccf_eq_clang.dir/cal_ccf_eq.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/cal_ccf_eq_clang.dir/station_info.cpp.o
+/private/tmp/autofocusing-metal-paired-20260914/legacy/src/cal_ccf_eq.cpp:138:7: warning: variable 'count0' set but not used [-Wunused-but-set-variable]
+  138 |   int count0 = 0;
+      |       ^
+/private/tmp/autofocusing-metal-paired-20260914/legacy/src/cal_ccf_eq.cpp:355:16: warning: variable 'normZ' set but not used [-Wunused-but-set-variable]
+  355 |         double normZ;
+      |                ^
+/private/tmp/autofocusing-metal-paired-20260914/legacy/src/cal_ccf.cpp:219:7: warning: variable 'count0' set but not used [-Wunused-but-set-variable]
+  219 |   int count0 = 0;
+      |       ^
+[ 40%] Building CXX object CMakeFiles/test_horizontal.dir/src/util.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/cal_ccf_eq_clang.dir/util.cpp.o
+2 warnings generated.
+[ 53%] Building CXX object src/CMakeFiles/cal_ccf_eq_clang.dir/calTT.cpp.o
+[ 60%] Building CXX object CMakeFiles/test_horizontal.dir/src/calTT.cpp.o
+1 warning generated.
+[ 66%] Linking CXX executable cal_ccf_eq_clang
+[ 73%] Building CXX object src/CMakeFiles/cal_ccf_clang.dir/station_info.cpp.o
+[ 80%] Building CXX object src/CMakeFiles/cal_ccf_clang.dir/util.cpp.o
+[ 86%] Linking CXX executable test_horizontal
+[ 86%] Built target cal_ccf_eq_clang
+[ 93%] Building CXX object src/CMakeFiles/cal_ccf_clang.dir/calTT.cpp.o
+[ 93%] Built target test_horizontal
+[100%] Linking CXX executable cal_ccf_clang
+[100%] Built target cal_ccf_clang

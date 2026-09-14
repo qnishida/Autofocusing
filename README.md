@@ -227,4 +227,6 @@ See [CUDA setup](manual.md#12-nvidia-cuda-gpu-backend) and
 
 The `gpu` branch also parallelizes CPU Hessian evaluation and RT rotation.
 See [CPU parallelization and validation](docs/cpu-fitting-parallel.md) for
-thread settings, numerical checks, measurements, and the pending Mac validation.
+thread settings and numerical checks. The [M4 Max Metal measurements](docs/metal-cpu-parallel-performance-20260914.md)
+show 1.60× speedup from CPU parallelization and 8.89× cumulative speedup against
+the pre-optimization CPU implementation, with the remaining validation scope documented.

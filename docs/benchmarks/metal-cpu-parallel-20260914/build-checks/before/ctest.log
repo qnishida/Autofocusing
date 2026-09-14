@@ -1,0 +1,19 @@
+Test project /private/tmp/autofocusing-metal-paired-20260914/before/build
+    Start 1: cpu_parallel_equivalence
+1/7 Test #1: cpu_parallel_equivalence .........   Passed    1.24 sec
+    Start 2: io_equivalence
+2/7 Test #2: io_equivalence ...................   Passed    0.49 sec
+    Start 3: backend_configuration
+3/7 Test #3: backend_configuration ............   Passed    0.35 sec
+    Start 4: horizontal_components
+4/7 Test #4: horizontal_components ............   Passed    0.45 sec
+    Start 5: slant_stack_equivalence
+5/7 Test #5: slant_stack_equivalence ..........   Passed    0.45 sec
+    Start 6: gpu_qualification_tools
+6/7 Test #6: gpu_qualification_tools ..........   Passed    1.51 sec
+    Start 7: parent_launcher
+7/7 Test #7: parent_launcher ..................   Passed    1.03 sec
+
+100% tests passed out of 7
+
+Total Test time (real) =   5.53 sec

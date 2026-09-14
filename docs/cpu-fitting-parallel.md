@@ -217,7 +217,11 @@ local artifacts under the ignored `build-cuda/cpu-parallel/legacy-total-events/`
 directory. The detached legacy checkout and generated deterministic drivers
 remain under `build-cuda/`; production sources were not modified for this run.
 
-The user explicitly deferred Mac qualification on 2026-09-14. `main` remains
-unchanged pending M4 Max CPU/Metal validation. Real three-component event data
-has not been qualified here; synthetic rotation and GPU tests cover both
-horizontal and three-component layouts.
+Mac qualification was initially deferred on 2026-09-14, then partially completed
+later that day. The [M4 Max Metal report](metal-cpu-parallel-performance-20260914.md)
+records passing builds, regressions and three-day real-event comparisons:
+Hessian + rotation parallelism gives 1.600× whole-run speedup, and the direct
+pre-optimization CPU comparison gives 8.887× cumulative speedup. `main` remains
+unchanged. Five-day pre/post Metal qualification, additional one-thread timing
+checks and real three-component event data remain outside that measurement;
+synthetic rotation and GPU tests cover both horizontal and three-component layouts.

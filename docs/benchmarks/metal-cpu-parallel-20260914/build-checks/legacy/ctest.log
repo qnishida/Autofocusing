@@ -1,0 +1,9 @@
+Test project /private/tmp/autofocusing-metal-paired-20260914/legacy/build
+    Start 1: horizontal_components
+1/2 Test #1: horizontal_components ............   Passed    0.08 sec
+    Start 2: parent_launcher
+2/2 Test #2: parent_launcher ..................   Passed    0.74 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.83 sec
