@@ -1,0 +1,222 @@
+{
+  "legacy_commit": "393a93e",
+  "current_production_commit": "c3be328",
+  "cpu": "AMD Ryzen Threadripper 3990X",
+  "gpu": "NVIDIA RTX PRO 2000 Blackwell",
+  "threads": 16,
+  "dates": [
+    "2004-01-01",
+    "2004-01-03"
+  ],
+  "events_per_run": 20,
+  "compiler": "GCC 13.3 Release -O3 -DNDEBUG; native arch OFF",
+  "fftw": "ESTIMATE | UNALIGNED",
+  "seed": "1837 + 104729 * replicate",
+  "profile": "disabled in both; wall time includes startup, I/O, transfers and outputs",
+  "protocol": "one excluded warmup per binary; three alternating measured pairs; no concurrent agent builds/tests; OS cache not purged",
+  "numerical_bounds": "existing GPU bounds: columns 12/13 rtol=1e-4; 21..33 rtol=1e-3; residual column15 atol=1e-12; remaining fields exact",
+  "runs": [
+    {
+      "mode": "legacy",
+      "repeat": -1,
+      "wall_s": 155.09680483298143,
+      "event_sha256": "20d52198db760bd47cc7c72ccfa418e2c1567da6345fe55861fd457f6dcc7565",
+      "binary_sha256": "45bfde7548d9fef63fb543535cdbfb9b6cf50da61b856f471a51cfc3a63b71c4",
+      "max_rss_bytes": 2363174912,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/legacy--1/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "current",
+      "repeat": -1,
+      "wall_s": 27.36749360495014,
+      "event_sha256": "3785f2c0f7313ebc5aff64ca430a49cd51aebad139b0d7c1593767654426302a",
+      "binary_sha256": "1c7774556ba57a1922895e8b4b367c03e75ca9382a97824b70d9e515b8feb482",
+      "max_rss_bytes": 2248536064,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/current--1/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "legacy",
+      "repeat": 0,
+      "wall_s": 155.64651211898308,
+      "event_sha256": "20d52198db760bd47cc7c72ccfa418e2c1567da6345fe55861fd457f6dcc7565",
+      "binary_sha256": "45bfde7548d9fef63fb543535cdbfb9b6cf50da61b856f471a51cfc3a63b71c4",
+      "max_rss_bytes": 2362580992,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/legacy-0/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "current",
+      "repeat": 0,
+      "wall_s": 27.416870229004417,
+      "event_sha256": "3785f2c0f7313ebc5aff64ca430a49cd51aebad139b0d7c1593767654426302a",
+      "binary_sha256": "1c7774556ba57a1922895e8b4b367c03e75ca9382a97824b70d9e515b8feb482",
+      "max_rss_bytes": 2247467008,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/current-0/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "current",
+      "repeat": 1,
+      "wall_s": 27.267229243007023,
+      "event_sha256": "3785f2c0f7313ebc5aff64ca430a49cd51aebad139b0d7c1593767654426302a",
+      "binary_sha256": "1c7774556ba57a1922895e8b4b367c03e75ca9382a97824b70d9e515b8feb482",
+      "max_rss_bytes": 2243751936,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/current-1/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "legacy",
+      "repeat": 1,
+      "wall_s": 155.99162590800552,
+      "event_sha256": "20d52198db760bd47cc7c72ccfa418e2c1567da6345fe55861fd457f6dcc7565",
+      "binary_sha256": "45bfde7548d9fef63fb543535cdbfb9b6cf50da61b856f471a51cfc3a63b71c4",
+      "max_rss_bytes": 2360786944,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/legacy-1/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "legacy",
+      "repeat": 2,
+      "wall_s": 155.805086680979,
+      "event_sha256": "20d52198db760bd47cc7c72ccfa418e2c1567da6345fe55861fd457f6dcc7565",
+      "binary_sha256": "45bfde7548d9fef63fb543535cdbfb9b6cf50da61b856f471a51cfc3a63b71c4",
+      "max_rss_bytes": 2357055488,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/legacy-2/2004_2048_0.099609-0.250000.dat"
+    },
+    {
+      "mode": "current",
+      "repeat": 2,
+      "wall_s": 27.415707923995797,
+      "event_sha256": "3785f2c0f7313ebc5aff64ca430a49cd51aebad139b0d7c1593767654426302a",
+      "binary_sha256": "1c7774556ba57a1922895e8b4b367c03e75ca9382a97824b70d9e515b8feb482",
+      "max_rss_bytes": 2248691712,
+      "windows": [
+        "#Segment 2004-Jan-01 0 accepted_windows=47",
+        "#Segment 2004-Jan-01 1 accepted_windows=19",
+        "#Segment 2004-Jan-01 2 accepted_windows=26",
+        "#Segment 2004-Jan-01 3 accepted_windows=42",
+        "#Segment 2004-Jan-02 0 accepted_windows=46",
+        "#Segment 2004-Jan-02 1 accepted_windows=21",
+        "#Segment 2004-Jan-02 2 accepted_windows=41",
+        "#Segment 2004-Jan-02 3 accepted_windows=34",
+        "#Segment 2004-Jan-03 0 accepted_windows=45",
+        "#Segment 2004-Jan-03 1 accepted_windows=48",
+        "#Segment 2004-Jan-03 2 accepted_windows=40",
+        "#Segment 2004-Jan-03 3 accepted_windows=24"
+      ],
+      "event_file": "build-cuda/cpu-parallel/legacy-total-events/results/legacy-total/current-2/2004_2048_0.099609-0.250000.dat"
+    }
+  ],
+  "max_bootstrap_relative": 1.1937604528609825e-05,
+  "max_beam_mad_relative": 9.006574799647375e-06,
+  "summary": {
+    "legacy": {
+      "median_s": 155.805086680979,
+      "min_s": 155.64651211898308,
+      "max_s": 155.99162590800552,
+      "event_bytes_repeatable": true
+    },
+    "current": {
+      "median_s": 27.415707923995797,
+      "min_s": 27.267229243007023,
+      "max_s": 27.416870229004417,
+      "event_bytes_repeatable": true
+    }
+  },
+  "speedup": 5.683059037283129,
+  "time_reduction_percent": 82.4038428346494
+}

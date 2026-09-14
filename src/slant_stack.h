@@ -3,6 +3,7 @@
 
 #include <complex>
 #include <cstddef>
+#include <string>
 
 struct SlantStackGrid {
   int half_width;
@@ -20,4 +21,16 @@ void slant_stack_cpu(const std::complex<double> *spectra,
                      std::size_t station_capacity, std::size_t station_count,
                      const double *dx, const double *dy,
                      const SlantStackGrid &grid, double *rtu);
+// Explicit GPU requests fail if unavailable; CPU remains the default.
+enum class SlantStackBackend { Cpu, Metal, Cuda };
+SlantStackBackend slant_stack_backend();
+std::string slant_stack_cuda_device();
+void slant_stack_cuda(const std::complex<double> *, std::size_t, std::size_t,
+                      const double *, const double *, const SlantStackGrid &, double *);
+std::string slant_stack_metal_device();
+std::string slant_stack_backend_name();
+void slant_stack_metal(const std::complex<double> *, std::size_t, std::size_t,
+                      const double *, const double *, const SlantStackGrid &, double *);
+void slant_stack(const std::complex<double> *, std::size_t, std::size_t,
+                 const double *, const double *, const SlantStackGrid &, double *);
 #endif

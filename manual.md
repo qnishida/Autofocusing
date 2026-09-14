@@ -93,9 +93,10 @@ their guidance.
 
 ## 5. Running Autofocusing
 
-Deploy `Scripts/run.sh` to the parent of `repo/`, and copy
-`Scripts/local_config.example.sh` to the parent's `local_config.sh` for a new
-workspace. The local configuration is outside this repository. Launch with
+For a new workspace, copy `Scripts/run.sh` to the parent of `repo/` as an
+editable regular file, and copy `Scripts/local_config.example.sh` to the
+parent's `local_config.sh`. Use `cp -n` for both to preserve existing files.
+The local configuration is outside this repository. Launch with
 `../run.sh` from the repository or an absolute path from elsewhere.
 
 The script resolves paths relative to its workspace and changes into `repo/`
@@ -252,3 +253,171 @@ boundary are documented in [the performance report](docs/cpu-slant-stack-perform
 日単位の HDF5 読み込み後に波形フィルタを CPU 並列処理します。
 スレッド数は `OMP_NUM_THREADS`、内訳の計測ログは `AUTOFOCUSING_PROFILE=1` で設定できます。
 実装範囲と検証状況は [共通 CPU I/O 最適化](docs/cpu-io-optimization.md) を参照してください。
+
+## 11. Metal GPU slant stacking
+
+On macOS, CMake builds the optional Metal backend by default. Use the Clang
+configuration above; Apple Metal/Foundation frameworks and an accessible Metal
+GPU are required. Shaders compile from embedded source at startup, so the
+standalone `metal` compiler/full Xcode installation is unnecessary. On other
+platforms the Metal backend is disabled by default. To build only the portable
+CPU path, configure with `-DDELTAP_ENABLE_METAL=OFF`.
+
+The runtime default is still `AUTOFOCUSING_BACKEND=cpu`. To use the GPU, add
+these exports to the parent's `local_config.sh`, or export them before launching
+if that file does not override them:
+
+```bash
+export AUTOFOCUSING_BACKEND=metal
+export OMP_NUM_THREADS=16
+export PARAM_ID=tilt_horizontal_metal
+```
+
+Both `horizontal` and `3c` are supported. Only slant stacking and its power
+reduction use float on the GPU. Input loading, rotation, FFT, QC and subsequent
+estimation retain the existing double CPU path. GPU powers are promoted and
+accumulated into the existing double result array. Startup logs identify the
+backend/device; an explicit Metal request fails if no GPU is accessible or the
+backend was not built. It does not silently switch to CPU. Sandboxed execution
+may require GPU access permission even when the same executable works normally
+in a terminal. This backend applies to `cal_ccf`, not `cal_ccf_eq`.
+
+Grid settings apply equally to CPU and Metal, without recompilation:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `AUTOFOCUSING_SLOWNESS_STEP` | `0.005` | Grid spacing, s/km |
+| `AUTOFOCUSING_SLOWNESS_MAX` | `0.165` | Maximum absolute px/py, s/km |
+
+For example, spacing `0.0025` and maximum `0.25` produce a 201×201 grid
+instead of the default 67×67. The upper limit is rounded down to a grid multiple;
+the actual grid is logged. Positive finite settings and a half-width from 1 to
+1024 are required. Finer/wider grids change the search itself and may change
+detected events. Use distinct `PARAM_ID` values for backend/grid experiments;
+the output format and file-overwrite behavior remain as described in section 6.
+
+`AUTOFOCUSING_PROFILE=1` measures normal processing, including float packing,
+submission, GPU completion and result accumulation in `stack_s`. Startup shader
+compilation is outside that stage. For numerical diagnosis only, export
+`AUTOFOCUSING_VERIFY_METAL=1`: every window also runs the double CPU kernel,
+logs maximum scaled/L2 error and peak mismatches, and fails on error exceeding
+5e-4 (with a 1e-30 absolute floor for maximum error). Unset this variable for
+speed measurements; setting it to `0` still enables the check.
+
+Validation commands, measured speedups and numerical limits are recorded in
+[the Metal report](docs/metal-slant-stack-performance.md).
+
+### Optional Metal fitting objectives
+
+For validated horizontal inputs, `AUTOFOCUSING_METAL_POWER` selects additional
+GPU power evaluations: `off` (default), `bootstrap`, `grid`, or `all`.
+Set `AUTOFOCUSING_BACKEND=metal` as well. CPU and three-component runs retain
+the existing CPU objectives. Final gradient fitting and Hessians are unchanged.
+See [Metal power evaluation](docs/metal-power-optimization.md) for numerical
+limits, measurements and reproduction commands. Use a distinct result ID when
+enabling these options; they do not change the existing overwrite policy.
+
+
+## 12. NVIDIA CUDA GPU backend
+
+CUDA supports the same `cal_ccf` stages as Metal: horizontal/3c slant stacking,
+and optional horizontal Bootstrap/initial-grid objectives. CPU remains the
+runtime default. FFT, I/O, final fitting and 3c fitting objectives remain on CPU.
+GPU arithmetic is FP32; returned doubles do not restore the lost precision.
+
+The CUDA build requires CMake 3.18 or newer, a CUDA Toolkit compatible with the
+host compiler/GPU, and the NVIDIA driver. For RTX PRO 2000 Blackwell, use the
+installed CUDA 13.2 Toolkit with compute capability 12.0:
+
+```bash
+cmake -S . -B build-cuda -DDELTAP_ENABLE_METAL=OFF \
+  -DDELTAP_ENABLE_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=120 \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-cuda -j4
+ctest --test-dir build-cuda --output-on-failure
+build-cuda/test_cuda_slant_stack
+build-cuda/test_cuda_power
+```
+
+Use the architecture of your device for other NVIDIA GPUs. CPU-only builds
+need no CUDA Toolkit: set `DELTAP_ENABLE_CUDA=OFF`. Metal retains its existing
+Apple-only build setting. CUDA kernels are compiled into the executable;
+there is no shader file or runtime compiler requirement.
+
+Set these in the environment or the launcher's parent `local_config.sh`:
+
+```bash
+export AUTOFOCUSING_BIN="/absolute/path/to/build-cuda/src/cal_ccf_gcc"
+export AUTOFOCUSING_BACKEND=cuda
+export AUTOFOCUSING_GPU_POWER=bootstrap
+export OMP_NUM_THREADS=16
+export PARAM_ID=tilt_horizontal_cuda
+```
+
+`AUTOFOCUSING_BACKEND` accepts `cpu`, `metal`, or `cuda`. An unavailable or
+unbuilt explicit GPU backend fails with a diagnostic; it never silently falls
+back to CPU. CUDA uses the current runtime device (normally device 0);
+`CUDA_VISIBLE_DEVICES` can restrict device visibility. GPU tests need access to
+the host GPU device nodes, including when running inside a container/sandbox.
+
+`AUTOFOCUSING_GPU_POWER` accepts `off` (default), `bootstrap`, `grid`, or `all`.
+For the measured RTX PRO 2000 workload, `bootstrap` is recommended: CUDA grid
+evaluation passes accuracy checks but is slower than CPU grid evaluation.
+The setting applies to the selected GPU only in horizontal mode. The legacy
+`AUTOFOCUSING_METAL_POWER` is still accepted for Metal when the new setting is
+absent; the new setting takes precedence, including `off`. The legacy setting
+has no effect on CUDA. CPU and 3c fitting always retain CPU objectives.
+
+For accuracy checks, `AUTOFOCUSING_VERIFY_CUDA=1` evaluates each slant-stack
+window on both CPU and CUDA, reporting scaled maximum error, relative L2 error
+and peak mismatches. Existing limits of `5e-4` apply; peak mismatches are
+reported for inspection. `AUTOFOCUSING_PROFILE=1` includes packing, transfers
+and synchronization in stage timings. Separately, `AUTOFOCUSING_CUDA_PROFILE=1`
+reports kernel-only CUDA-event time and reusable device-buffer capacities.
+Do not enable either verification or CUDA-event profiling during throughput
+measurements. The latter adds event instrumentation and log overhead.
+
+See [CUDA implementation and validation](docs/cuda-performance.md) for tests,
+measurements and the remaining qualification limits.
+
+## 13. Workspace and Git management
+
+The workspace is `Autofocusing/`; its only active Git checkout is `repo/`.
+The parent contains `run.sh`, `local_config.sh`, the catalog (or a link to
+its original), and `results/`. It has no `.git` or duplicate source tree.
+Open `repo/` as the development workspace and run Git/build commands there.
+Build products stay inside ignored directories such as `repo/build-cuda/`.
+When relocating a checkout, configure a fresh build rather than reusing a
+CMake cache containing the old absolute paths.
+
+The tracked scripts are templates. The parent launcher can be edited for an
+analysis; it is not replaced by `git pull`. Keep routine environment choices
+in `local_config.sh`. For example, the following executable path is relative
+to the parent workspace, so it survives moving the whole workspace:
+
+```bash
+export AUTOFOCUSING_BIN="repo/build-cuda/src/cal_ccf_gcc"
+export RESULTS_ROOT="results"
+```
+
+After updating source templates, compare them with the parent copies using
+`diff -u Scripts/run.sh ../run.sh` and
+`diff -u Scripts/local_config.example.sh ../local_config.sh`. A difference
+is expected for local settings; apply only the changes needed for the analysis.
+Do not copy templates over existing customized files automatically.
+
+GitHub synchronizes commits in `repo/`, not the parent workspace or uncommitted
+source edits. Directory relocation neither creates commits nor pushes them.
+Check `git rev-parse --show-toplevel` and `git status` before Git operations.
+Preserve unfinished changes before switching branches or updating. Fetch to
+inspect upstream changes, and use fast-forward-only pulls when ready. A
+divergence needs deliberate integration; do not reset or force-push to make
+the checkouts appear synchronized. Branches `main`, `metal` and `cuda` remain
+separate until explicitly integrated.
+
+For an SSH remote, `git ls-remote --heads origin` checks read access without
+changing the checkout. `Permission denied (publickey)` indicates an SSH
+authentication problem, independent of the directory layout. Cached
+`origin/*` refs are not proof of the current GitHub state. Fix access using
+the intended account/key before fetching or pushing; do not change the remote
+or generate replacement keys automatically.

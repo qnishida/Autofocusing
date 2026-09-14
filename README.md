@@ -129,14 +129,33 @@ Autofocusing/
 └── results/
 ```
 
-From the repository root, deploy the tracked launcher and configure the inputs:
+Only `repo/` is a Git repository. Its root on GitHub contains `src/`,
+`Scripts/`, and the other source files directly; `repo/` is a local checkout
+directory name, not another directory to commit. Do not initialize Git in
+the parent `Autofocusing/` workspace.
+
+From `repo/`, copy the templates once, preserving existing analysis files:
 
 ```bash
-cp Scripts/run.sh ../run.sh
-# For a new workspace; preserve an existing local_config.sh.
+cp -n Scripts/run.sh ../run.sh
 cp -n Scripts/local_config.example.sh ../local_config.sh
 ../run.sh
 ```
+
+The parent `run.sh` is an editable regular file, not a symlink. Keep machine
+paths and backend/thread settings in `local_config.sh`, and customize the
+parent launcher when an analysis needs different execution steps. Git pulls
+update the templates inside `repo/` only. Compare template changes with
+`diff -u Scripts/run.sh ../run.sh` and incorporate the relevant changes manually;
+do not overwrite a customized parent launcher or configuration.
+
+Run Git commands from `repo/`. Moving a checkout on disk does not publish any
+changes to GitHub: intentional source changes need a commit and a separate
+push. Before updating a checkout, inspect `git status` and preserve unfinished
+work; then use `git fetch origin` to inspect upstream changes and
+`git pull --ff-only` when the working tree is ready. Keep machine-specific
+settings, catalogs and results in the parent workspace. See
+[workspace management](manual.md#13-workspace-and-git-management).
 
 The launcher defaults to horizontal-only analysis of `Hi-net_tilt`, starting
 in 2004. Set `HINET_ROOT`, `CMT_CATALOG`, `START_YEAR`, `COMPONENT_MODE`, and
@@ -197,3 +216,17 @@ summarized in `NOTICE`. Global CMT raw catalog files and CMT catalogs
 converted for use with Autofocusing are not distributed under the Autofocusing 
 software license. Use `Scripts/GlobalCMT/` to regenerate the local catalog input 
 from Global CMT data and cite Global CMT following their guidance.
+
+
+## Optional GPU backends
+
+`cal_ccf` supports CPU (default), Apple Metal and NVIDIA CUDA. CUDA is opt-in at
+build time (`DELTAP_ENABLE_CUDA=ON`) and runtime (`AUTOFOCUSING_BACKEND=cuda`).
+See [CUDA setup](manual.md#12-nvidia-cuda-gpu-backend) and
+[validation results](docs/cuda-performance.md). Metal settings remain supported.
+
+CPU Hessian evaluation and RT rotation are also parallelized with OpenMP.
+See [CPU parallelization and validation](docs/cpu-fitting-parallel.md) for
+thread settings and numerical checks. The [M4 Max Metal measurements](docs/metal-cpu-parallel-performance-20260914.md)
+show 1.60× speedup from CPU parallelization and 8.89× cumulative speedup against
+the pre-optimization CPU implementation, with the remaining validation scope documented.

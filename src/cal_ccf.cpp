@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -42,6 +43,8 @@ static const Geodesic &geod = Geodesic::WGS84();
 
 #include "calTT.h"
 #include "slant_stack.h"
+#include "power.h"
+#include "cpu_profile.h"
 #include "station_info.h"
 #include "util.h"
 #include <math.h>
@@ -134,7 +137,27 @@ static int count_gap = 0;
 std::vector<ptime> CMT_ptime;
 std::vector<double> CMT_slat, CMT_slon, CMT_sdep, CMT_moment;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) try {
+  std::cerr << "#SlantStack backend=" << slant_stack_backend_name() << '\n';
+  std::cerr << "#Power mode=" << gpu_power_mode() << '\n';
+  // All backends use exactly the same requested grid, in seconds/km.
+  auto positive_setting = [](const char *name, double fallback) {
+    const char *value = std::getenv(name);
+    if (!value) return fallback;
+    std::size_t end = 0;
+    double result = std::stod(value, &end);
+    if (end != std::string(value).size() || !std::isfinite(result) || result <= 0)
+      throw std::invalid_argument(std::string(name) + " must be a positive finite number");
+    return result;
+  };
+  dp = positive_setting("AUTOFOCUSING_SLOWNESS_STEP", 5e-3);
+  const double slowness_max = positive_setting("AUTOFOCUSING_SLOWNESS_MAX", 1.65e-1);
+  const double half_width = std::floor(slowness_max / dp + 1e-10);
+  if (half_width < 1 || half_width > 1024)
+    throw std::invalid_argument("Slowness grid half-width must be between 1 and 1024");
+  ipmax = static_cast<int>(half_width);
+  std::cerr << "#SlantStack step_s_per_km=" << dp << " max_s_per_km=" << ipmax*dp
+            << " grid=" << 2*ipmax+1 << 'x' << 2*ipmax+1 << '\n';
   STATION::dt_msec = 500;  // Sampling interval in millisecond
   STATION::len = 1024 * 2; // 2^x
   STATION::stride = 928;   // 667*2; //667*2*128 = (86400*2-1024*2) //824;
@@ -289,6 +312,9 @@ int main(int argc, char *argv[]) {
     std::cerr << "#PROFILE accepted_windows_total=" << count0 << std::endl;
   H5Pclose(fapl);
   return 0;
+} catch (const std::exception &error) {
+  std::cerr << "Error: " << error.what() << '\n';
+  return 1;
 }
 
 /**
@@ -472,7 +498,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
         const auto stack_start = std::chrono::steady_clock::now();
         const SlantStackGrid grid{ipmax, dp, px0, py0, STATION::if1,
                                   STATION::if2, STATION::df, STATION::horizontal_only};
-        slant_stack_cpu(buf_aryENU.data(), sta0.size(), num_ary,
+        slant_stack(buf_aryENU.data(), sta0.size(), num_ary,
                         &dx_ary[0], &dy_ary[0], grid, ssRTU.data());
         std::cerr << t1 << " " << median0 << " " << median1 << " " << flag_deri
                   << " " << count_ss << std::endl;
@@ -645,6 +671,7 @@ void output_result(std::ostream &ofs, const PARAM &prm, int icmp, double max,
 static int rotate_EN_RT(const std::vector<STATION> &sta0,
                         array4c &buf_specENURT, array3d &w_specENURT,
                         const PARAM prm) {
+  cpu_profile::Timer cpu_timer(cpu_profile::rotation);
   std::vector<double> cosbaz2(sta0.size()), sinbaz2(sta0.size());
   double evlat, evlon;
   geod.ArcDirect(STATION::lat_ary, STATION::lon_ary, 90 - prm.θ / M_PI * 180.,
@@ -661,6 +688,9 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
   }
   const int num_buffers = static_cast<int>((buf_specENURT.shape())[1]);
   const int num_stations = static_cast<int>((buf_specENURT.shape())[2]);
+  // Each window/station owns disjoint RT spectra and weights. This preserves
+  // every scalar operation and does not introduce a floating-point reduction.
+#pragma omp parallel for collapse(2) schedule(static) if(num_buffers > 1 && !omp_in_parallel())
   for (int ibuf = 0; ibuf < num_buffers; ++ibuf) {
     for (int ist = 0; ist < num_stations; ++ist) {
       for (int k = STATION::if1; k <= STATION::if2; ++k) { // clang-format off
@@ -687,9 +717,58 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
  * @param num_ss Number of slant stacks.
  * @return int Number of iterations performed during the estimation process.
  */
+// New objectives remain opt-in, and real-data qualification currently covers horizontal input.
+static bool power_enabled(const char *stage) {
+  return gpu_power_enabled(stage, STATION::horizontal_only);
+}
+struct PowerTimer {
+  const char *stage;
+  std::chrono::steady_clock::time_point start=std::chrono::steady_clock::now();
+  explicit PowerTimer(const char *name):stage(name) {}
+  ~PowerTimer() {
+    if(std::getenv("AUTOFOCUSING_PROFILE"))
+      std::cerr << "#POWER_PROFILE stage=" << stage << " total_s="
+        << std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count() << '\n';
+  }
+};
+static PowerPoint power_point(const PARAM &p) { return {p.p,p.θ,p.Δ,p.dp_Δ}; }
+static PowerData power_data(const array3c &spec,const dvector &dx,const dvector &dy,int windows) {
+  PowerData d{unsigned(windows),unsigned(spec.shape()[1]),unsigned(STATION::if2-STATION::if1+1),unsigned(STATION::if1),STATION::df,{}, {}};
+  d.spectra.reserve(size_t(d.windows)*d.stations*d.bins); d.xy.reserve(2*d.stations);
+  for(unsigned i=0;i<d.stations;++i) { d.xy.push_back(dx[i]);d.xy.push_back(dy[i]); }
+  for(unsigned w=0;w<d.windows;++w) for(unsigned i=0;i<d.stations;++i)
+    for(int k=STATION::if1;k<=STATION::if2;++k) d.spectra.push_back(spec[w][i][k]);
+  return d;
+}
+static void append_weights(std::vector<double> &out,const array2d &weights,int windows,int stations) {
+  for(int w=0;w<windows;++w) for(int i=0;i<stations;++i) out.push_back(weights[w][i]);
+}
+static void grid_powers(dvector &values,const std::vector<PARAM> &points,int count,
+    const array3c &spec,const array2d &weights,const dvector &dx,const dvector &dy,int windows) {
+  auto data=power_data(spec,dx,dy,windows);
+  std::vector<PowerPoint> params;
+  for(int i=0;i<count;++i) params.push_back(power_point(points[i]));
+  std::vector<double> packed_weights;
+  append_weights(packed_weights,weights,windows,data.stations);
+  auto gpu=gpu_power_batch(data,params,packed_weights,true,false,false);
+  const double peak=*std::max_element(gpu.begin(),gpu.end());
+  // Conservative candidate band: calibrated independently of held-out event days.
+  const double band=2e-3*std::abs(peak)+1e-30;
+  for(int i=0;i<count;++i) values[i]=gpu[i];
+  // Re-evaluate potential winners in double, preserving CPU tie order.
+  const int refine_count=std::count_if(gpu.begin(),gpu.end(),[&](double v){return v>=peak-band;});
+#pragma omp parallel for if(refine_count>1)
+  for(int i=0;i<count;++i) {
+    if(gpu[i]>=peak-band) values[i]=cal_S(points[i],spec,weights,dx,dy,windows,0);
+    else values[i]=-std::numeric_limits<double>::infinity();
+  }
+}
+
 static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
+  PowerTimer timer("grid");
+  const bool gpu=power_enabled("grid");
   double maxS = 0;
 
   prm.Δ = -1;
@@ -702,9 +781,10 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
     for (int ideg = 0; ideg < 180 / ddeg - 1; ideg++) {
       prm1[ideg] = prm;
       prm1[ideg].Δ = (ideg + 1) * ddeg / 180. * M_PI;
-      S[ideg] = cal_S(prm1[ideg], buf_spec, w_spec, dx, dy, num_ss, 0);
+      if(!gpu) S[ideg] = cal_S(prm1[ideg], buf_spec, w_spec, dx, dy, num_ss, 0);
     }
 
+    if(gpu) grid_powers(S,prm1,180/ddeg-1,buf_spec,w_spec,dx,dy,num_ss);
     for (int ideg = 0; ideg < 180 / ddeg - 1; ideg++) {
       if (maxS < S[ideg]) {
         maxS = S[ideg];
@@ -731,9 +811,10 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
       prm1[i] = prm;
       prm1[i].dp_Δ = (dp_Δ1 - dp_Δ0) * i / 40. +
                      dp_Δ0; // prm1[i].dp_Δ = (i-20)* .04/ (30.*111)/30.;
-      S[i] = cal_S(prm1[i], buf_spec, w_spec, dx, dy, num_ss, 0);
+      if(!gpu) S[i] = cal_S(prm1[i], buf_spec, w_spec, dx, dy, num_ss, 0);
     }
 
+    if(gpu) grid_powers(S,prm1,40,buf_spec,w_spec,dx,dy,num_ss);
     for (int i = 0; i < 40; i++) {
       if (maxS < S[i]) {
         maxS = S[i];
@@ -759,6 +840,7 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
 static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss) {
+  cpu_profile::Timer cpu_timer(cpu_profile::fitting);
   double S0 = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 0);
   PARAM prm0 = prm, prm_init = prm, prm_tmp;
   dvector dS(4, 0.);
@@ -869,11 +951,15 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss,
                          const double bias) {
+  PowerTimer timer("bootstrap");
+  const bool gpu=power_enabled("bootstrap");
+  std::vector<double> packed_weights;
   // Estimate the cov. matrix
   const int loop_num = 100;
   dvector S(loop_num);
   const int num_sta = buf_spec.shape()[1];
   (void)bias;
+  if(gpu) packed_weights.reserve(size_t(loop_num+1)*num_ss*num_sta);
 
   Eigen::Matrix4f S_tmp;
   dvector dS(4, 0.);
@@ -914,7 +1000,16 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
         w_bootstrap[isg][ist] = w_spec[isg][ist] * bootstrap[ist];
     }
 
-    S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+    if(gpu) append_weights(packed_weights,w_bootstrap,num_ss,num_sta);
+    else S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+  }
+  double S_est;
+  if(gpu) {
+    append_weights(packed_weights,w_spec,num_ss,num_sta);
+    auto data=power_data(buf_spec,dx,dy,num_ss);
+    auto result=gpu_power_batch(data,std::vector<PowerPoint>(loop_num+1,power_point(prm)),packed_weights,false,true,true);
+    for(int i=0;i<loop_num;++i) S[i]=result[i];
+    S_est=result.back();
   }
   double mean = 0, sigma = 0;
   for (int i = 0; i < loop_num; i++)
@@ -933,7 +1028,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
       prm.cov[i][j] = -Cov(i, j) * W(i) * W(j);
 
   /// Estimation of max beam power without the bias
-  double S_est = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 1);
+  if(!gpu) S_est = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 1);
   double weight = 0.;
   for (int isg = 0; isg < num_ss; isg++) {
     double sum1 = 0;
@@ -980,6 +1075,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
 static double cal_S(const PARAM prm, const array3c &buf_spec,
                     const array2d &w_spec, const dvector &dx, const dvector &dy,
                     const int num_ss, const int flag_red) {
+  cpu_profile::Timer cpu_timer(cpu_profile::objective);
   const int num_sta = buf_spec.shape()[1];
   cvector phi(STATION::if2 + 1);
 
@@ -1229,7 +1325,8 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
  * @param ddS Matrix of the second derivatives of the objective function.
  * @param num_ss Number of slant stacks.
  */
-static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
+// Preserve the original direct-array kernel for serial and nested callers.
+static double cal_HessianS_serial(const PARAM prm, const array3c &buf_spec,
                            const array2d &w_spec, const dvector &dx,
                            const dvector &dy, dvector &dS, dmatrix &ddS,
                            const int num_ss) {
@@ -1351,6 +1448,164 @@ static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
         }
       }
     }
+  }
+  for (int m = 0; m < 4; m++)
+    for (int n = 0; n < m; n++)
+      ddS(m, n) = ddS(n, m);
+
+  return (S);
+}
+
+static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
+                           const array2d &w_spec, const dvector &dx,
+                           const dvector &dy, dvector &dS, dmatrix &ddS,
+                           const int num_ss) {
+  cpu_profile::Timer cpu_timer(cpu_profile::hessian);
+  if (omp_in_parallel() || omp_get_max_threads() == 1 || num_ss < 2)
+    return cal_HessianS_serial(prm, buf_spec, w_spec, dx, dy, dS, ddS, num_ss);
+  const int num_sta = buf_spec.shape()[1];
+
+  dvector tau(num_sta);
+  array2d dtau(boost::extents[num_sta][4]);
+  array3d ddtau(boost::extents[num_sta][4][4]);
+
+  // Separate complete window stacks preserve station order. Reduction below
+  // retains the original window/frequency order, independent of team size.
+  struct Window {
+    cvector phi;
+    cmatrix dphi;
+    array3c ddphi;
+    explicit Window(int bins) : phi(bins), dphi(4, bins),
+        ddphi(boost::extents[4][4][bins]) {}
+  };
+  const int slots = std::min(16, num_ss);
+
+
+  const double p = prm.p;
+  const double ex = cos(prm.θ);
+  const double ey = sin(prm.θ);
+  const double dp_Δ = prm.dp_Δ;
+  const double cotΔ = cos(prm.Δ) / sin(prm.Δ);
+  const double sinΔ = sin(prm.Δ);
+
+  for (int i = 0; i < num_sta; i++) {
+    double η = (ex * dx[i] + ey * dy[i]) / 6371.;
+    double ζ = (-ey * dx[i] + ex * dy[i]) / 6371.;
+    double l =
+        (-η + ζ * ζ * cotΔ / 2. + η * ζ * ζ * (1. / 6. + cotΔ * cotΔ / 2.)) *
+        6371.;
+
+    // double dl_phi = -ζ*(1+η*cotΔ)*6371.;
+    // double dl_Δ = -pow(ζ/sinΔ,2)/2*6371.;
+    // double ddl_phi2 = (η+(pow(η,2)-pow(ζ,2))*cotΔ)*6371.;
+    // double ddl_phiΔ = ζ*η/(pow(sinΔ,2))*6371.;
+    // double ddl_Δ2 = (pow(ζ/sinΔ,2)*cotΔ)*6371.;
+    double dl_phi = (-ζ * (1 + η * cotΔ) +
+                     (1 / 6. + cotΔ * cotΔ / 2.) * ζ * (ζ * ζ - 2 * η * η)) *
+                    6371.;
+    double dl_Δ =
+        (-pow(ζ / sinΔ, 2) / 2 - η * ζ * ζ * cotΔ / (sinΔ * sinΔ)) * 6371.;
+    double ddl_phi2 =
+        ((η + (pow(η, 2) - pow(ζ, 2)) * cotΔ) +
+         1 / 6. * (1 + 3 * cotΔ * cotΔ) * (2 * η * η * η - 7 * η * ζ * ζ)) *
+        6371.;
+    double ddl_phiΔ = (ζ * η / (pow(sinΔ, 2)) +
+                       ζ / (sinΔ * sinΔ) * cotΔ * (2 * η * η - ζ * ζ)) *
+                      6371.;
+    double ddl_Δ2 =
+        (pow(ζ / sinΔ, 2) * (cotΔ + η * (3 / (sinΔ * sinΔ) - 2))) * 6371.;
+
+    tau[i] = l * (p + dp_Δ * l / 2);
+
+    // 0: p, 1: θ, 2: Δ
+    dtau[i][0] = l;
+    dtau[i][1] = p * dl_phi + dp_Δ * l * dl_phi;
+    dtau[i][2] = p * dl_Δ + dp_Δ * l * dl_Δ;
+    dtau[i][3] = pow(l, 2) / 2.;
+
+    ddtau[i][0][0] = 0;
+    ddtau[i][0][1] = dl_phi;
+    ddtau[i][0][2] = dl_Δ;
+    ddtau[i][0][3] = 0.;
+    ddtau[i][1][0] = ddtau[i][0][1];
+    ddtau[i][1][1] = p * ddl_phi2 + dp_Δ * (pow(dl_phi, 2) + l * ddl_phi2);
+    ddtau[i][1][2] = p * ddl_phiΔ + dp_Δ * (dl_phi * dl_Δ + l * ddl_phiΔ);
+    ddtau[i][1][3] = l * dl_phi;
+    ddtau[i][2][0] = ddtau[i][0][2];
+    ddtau[i][2][1] = ddtau[i][1][2];
+    ddtau[i][2][2] = p * ddl_Δ2 + dp_Δ * (pow(dl_Δ, 2) + l * ddl_Δ2);
+    ddtau[i][2][3] = l * dl_Δ;
+    ddtau[i][3][0] = 0.;
+    ddtau[i][3][1] = ddtau[i][1][3];
+    ddtau[i][3][2] = ddtau[i][2][3];
+    ddtau[i][3][3] = 0.;
+  }
+  double S = 0;
+  dS.clear();
+  ddS.clear();
+
+  std::vector<std::unique_ptr<Window>> scratch;
+  for (int j = 0; j < slots; ++j)
+    scratch.emplace_back(new Window(STATION::if2 + 1));
+  auto stack_window = [&](int ibuf, Window &window) {
+    auto &phi = window.phi;
+    auto &dphi = window.dphi;
+    auto &ddphi = window.ddphi;
+    phi.clear();
+    dphi.clear();
+    fill_n(ddphi.data(), ddphi.num_elements(), 0.);
+
+    for (int i = 0; i < num_sta; i++) {
+      double phase = tau[i] * 2. * M_PI * STATION::df;
+      double dc = cos(phase);
+      double ds = sin(phase);
+      double cp0 = cos(phase * STATION::if1);
+      double sp0 = sin(phase * STATION::if1);
+      /// from python
+      for (int k = STATION::if1; k <= STATION::if2; ++k) {
+        double omega = k * STATION::df * 2. * M_PI;
+        double cp1 = cp0 * dc - sp0 * ds;
+        double sp1 = sp0 * dc + cp0 * ds;
+        std::complex<double> amp = buf_spec[ibuf][i][k] *
+                                   std::complex<double>(cp0, sp0) *
+                                   w_spec[ibuf][i];
+        phi[k] += amp;
+        for (int m = 0; m < 4; m++) {
+          dphi(m, k) += (amp * dtau[i][m] * std::complex<double>(0, 1) * omega);
+          for (int n = m; n < 4; n++) {
+            ddphi[m][n][k] +=
+                (-pow(omega, 2) * dtau[i][m] * dtau[i][n] +
+                 std::complex<double>(0, 1) * omega * ddtau[i][m][n]) *
+                amp;
+          }
+        }
+        cp0 = cp1;
+        sp0 = sp1;
+      }
+    }
+  };
+  auto accumulate_window = [&](const Window &window) {
+    const auto &phi = window.phi;
+    const auto &dphi = window.dphi;
+    const auto &ddphi = window.ddphi;
+    for (int k = STATION::if1; k <= STATION::if2; ++k)
+      S += real(conj(phi[k]) * phi[k]);
+
+    for (int k = STATION::if1; k <= STATION::if2; ++k) {
+      for (int m = 0; m < 4; m++) {
+        dS[m] += 2 * real(conj(phi[k]) * dphi(m, k));
+        for (int n = m; n < 4; n++) {
+          ddS(m, n) += 2 * real(conj(dphi(m, k)) * dphi(n, k) +
+                                conj(phi[k]) * ddphi[m][n][k]);
+        }
+      }
+    }
+  };
+  for (int first = 0; first < num_ss; first += slots) {
+    const int count = std::min(slots, num_ss - first);
+#pragma omp parallel for schedule(static) num_threads(std::min(count, omp_get_max_threads()))
+    for (int j = 0; j < count; ++j) stack_window(first + j, *scratch[j]);
+    for (int j = 0; j < count; ++j) accumulate_window(*scratch[j]);
   }
   for (int m = 0; m < 4; m++)
     for (int n = 0; n < m; n++)

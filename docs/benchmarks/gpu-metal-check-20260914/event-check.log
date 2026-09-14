@@ -1,0 +1,12 @@
+Running cpu cpu-0
+PASS cpu-0: 20 events, max_boot_rel=0, wall=64.872s
+Running metal off-0
+PASS: 20 event identities and non-bootstrap outputs match (optimizer residual tolerance 1e-12; GPU beam maximum/MAD rtol=1e-4)
+PASS off-0: 20 events, max_boot_rel=0, wall=34.749s
+Running metal bootstrap-0
+PASS bootstrap-0: 20 events, max_boot_rel=2.87e-05, wall=13.249s
+Running metal grid-0
+PASS grid-0: 20 events, max_boot_rel=0, wall=34.434s
+Running metal all-0
+PASS all-0: 20 events, max_boot_rel=2.87e-05, wall=13.108s
+{"cpu": {"median_s": 64.872142209, "min_s": 64.872142209, "max_s": 64.872142209, "stack_s": 27.89191, "stages": {"grid": 1.1200900000000003, "bootstrap": 22.059126999999993}}, "off": {"median_s": 34.749253583, "min_s": 34.749253583, "max_s": 34.749253583, "stack_s": 1.7601548000000002, "stages": {"grid": 1.1067974999999999, "bootstrap": 22.036049000000002}, "cpu_speedup": 1.8668643357777532, "stack_speedup": 15.846282383799423, "stage_pass": true, "end_to_end_pass": true}, "bootstrap": {"median_s": 13.248851041999998, "min_s": 13.248851041999998, "max_s": 13.248851041999998, "stack_s": 1.7341927, "stages": {"grid": 1.1046277999999998, "bootstrap": 0.7034039}, "stage_speedup": 31.327732189144818, "stage_pass": true, "end_to_end_pass": true}, "grid": {"median_s": 34.43361183400002, "min_s": 34.43361183400002, "max_s": 34.43361183400002, "stack_s": 1.7411318000000002, "stages": {"grid": 0.889117, "bootstrap": 22.049091999999998}, "stage_speedup": 1.244827733582869, "stage_pass": true, "end_to_end_pass": true}, "all": {"median_s": 13.107628083999998, "min_s": 13.107628083999998, "max_s": 13.107628083999998, "stack_s": 1.7745524000000001, "stages": {"grid": 0.8585975, "bootstrap": 0.6566493}, "stage_speedup": 15.2733181815662, "stage_pass": true, "end_to_end_pass": true}}

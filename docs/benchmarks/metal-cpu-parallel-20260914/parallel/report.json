@@ -1,0 +1,1391 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "backend": "metal",
+  "power": "bootstrap",
+  "threads": 16,
+  "days": 3,
+  "target": null,
+  "adoption_protocol": true,
+  "cache": "1 excluded warmup per binary; OS cache not purged; alternating fresh processes",
+  "timing": "inclusive function time; outer-parallel time is worker-call sum, not wall time",
+  "fftw": "ESTIMATE | UNALIGNED",
+  "seed": "1837 + 104729 * replicate",
+  "runs": [
+    {
+      "mode": "reference",
+      "repeat": -1,
+      "wall_s": 21.510520042,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.198
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 13.4458
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.91375
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.341923
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.0315
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.1891125,
+        "bootstrap": 1.7040419000000002
+      },
+      "max_rss_bytes": 3154903040,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5465504999999999,
+        "pack_s": 0.24437063,
+        "stack_s": 1.7230372,
+        "fit_s": 14.957983666,
+        "total_s": 17.545977000000004
+      },
+      "load_s": {
+        "init_s": 0.08688699999999999,
+        "read_decode_copy_s": 2.928617,
+        "filter_s": 0.314283,
+        "total_s": 3.32978
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": -1,
+      "wall_s": 13.589516540999998,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.20831
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.352
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.41889
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.104945
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.57865
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.0766947,
+        "bootstrap": 0.6706755
+      },
+      "max_rss_bytes": 3197714432,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5172654,
+        "pack_s": 0.22406138999999997,
+        "stack_s": 1.7213245,
+        "fit_s": 7.117611417000001,
+        "total_s": 9.651051000000002
+      },
+      "load_s": {
+        "init_s": 0.0855894,
+        "read_decode_copy_s": 2.891189,
+        "filter_s": 0.3069459,
+        "total_s": 3.28372
+      }
+    },
+    {
+      "mode": "reference",
+      "repeat": 0,
+      "wall_s": 21.042646249999997,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.2037
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.8181
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.9203
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.344114
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.0427
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.1782076000000001,
+        "bootstrap": 1.6919596000000001
+      },
+      "max_rss_bytes": 3156197376,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5276365,
+        "pack_s": 0.21548802,
+        "stack_s": 1.7453019000000003,
+        "fit_s": 14.942582416,
+        "total_s": 17.511292
+      },
+      "load_s": {
+        "init_s": 0.08663000000000001,
+        "read_decode_copy_s": 2.9201230000000002,
+        "filter_s": 0.307821,
+        "total_s": 3.31457
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": 0,
+      "wall_s": 13.162703624999999,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.22395
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.2451
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.41734
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.103118
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.59153
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.0585927,
+        "bootstrap": 0.6601068999999999
+      },
+      "max_rss_bytes": 3199778816,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.4953368,
+        "pack_s": 0.21767121,
+        "stack_s": 1.7652496000000002,
+        "fit_s": 7.108541833,
+        "total_s": 9.669943
+      },
+      "load_s": {
+        "init_s": 0.0862673,
+        "read_decode_copy_s": 2.89114,
+        "filter_s": 0.2943798,
+        "total_s": 3.27179
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": 1,
+      "wall_s": 13.09926883300001,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.22714
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.3113
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.40672
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.103355
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.58797
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.0950483999999998,
+        "bootstrap": 0.6665702
+      },
+      "max_rss_bytes": 3198681088,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.494694,
+        "pack_s": 0.21420279999999997,
+        "stack_s": 1.706713,
+        "fit_s": 7.147416123999999,
+        "total_s": 9.635067
+      },
+      "load_s": {
+        "init_s": 0.08565600000000001,
+        "read_decode_copy_s": 2.867156,
+        "filter_s": 0.2938391,
+        "total_s": 3.24665
+      }
+    },
+    {
+      "mode": "reference",
+      "repeat": 1,
+      "wall_s": 20.98107237500001,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.22359
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.4267
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.94487
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.34154
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.0831
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.1199817,
+        "bootstrap": 1.6973519000000001
+      },
+      "max_rss_bytes": 3616686080,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5194692,
+        "pack_s": 0.21359677000000002,
+        "stack_s": 1.7332280999999998,
+        "fit_s": 14.938454625000002,
+        "total_s": 17.473990999999998
+      },
+      "load_s": {
+        "init_s": 0.0867534,
+        "read_decode_copy_s": 2.887899,
+        "filter_s": 0.29590649999999996,
+        "total_s": 3.2705599999999997
+      }
+    },
+    {
+      "mode": "reference",
+      "repeat": 2,
+      "wall_s": 21.03890591599999,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.22544
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.7176
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.94189
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.341238
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.0794
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.1514033,
+        "bootstrap": 1.7021332000000002
+      },
+      "max_rss_bytes": 2831826944,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5124031,
+        "pack_s": 0.2090086,
+        "stack_s": 1.7442143,
+        "fit_s": 14.978056250000002,
+        "total_s": 17.514061
+      },
+      "load_s": {
+        "init_s": 0.0839867,
+        "read_decode_copy_s": 2.923209,
+        "filter_s": 0.3075502,
+        "total_s": 3.31475
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": 2,
+      "wall_s": 13.103122707999987,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.23018
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.2678
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.40827
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.102794
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.5902
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.0597337000000002,
+        "bootstrap": 0.6608525000000001
+      },
+      "max_rss_bytes": 3198484480,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.49001429999999996,
+        "pack_s": 0.21391554000000002,
+        "stack_s": 1.7199556,
+        "fit_s": 7.108751164999999,
+        "total_s": 9.603964000000001
+      },
+      "load_s": {
+        "init_s": 0.0856449,
+        "read_decode_copy_s": 2.88631,
+        "filter_s": 0.30633499999999997,
+        "total_s": 3.2782999999999998
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": 3,
+      "wall_s": 13.43039383300001,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.25336
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.552
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.42653
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.104502
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.63523
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.2893739,
+        "bootstrap": 0.6604396
+      },
+      "max_rss_bytes": 3196387328,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5028809,
+        "pack_s": 0.21529703,
+        "stack_s": 1.7316249000000001,
+        "fit_s": 7.397201665,
+        "total_s": 9.924723
+      },
+      "load_s": {
+        "init_s": 0.088167,
+        "read_decode_copy_s": 2.888249,
+        "filter_s": 0.3123974,
+        "total_s": 3.28882
+      }
+    },
+    {
+      "mode": "reference",
+      "repeat": 3,
+      "wall_s": 21.105100792,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.23659
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.7447
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.98605
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.342768
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.1325
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.1444609000000001,
+        "bootstrap": 1.7069489000000002
+      },
+      "max_rss_bytes": 3155394560,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5136194,
+        "pack_s": 0.22619089,
+        "stack_s": 1.7483473999999999,
+        "fit_s": 15.030091375,
+        "total_s": 17.587058
+      },
+      "load_s": {
+        "init_s": 0.0841944,
+        "read_decode_copy_s": 2.897273,
+        "filter_s": 0.29381640000000003,
+        "total_s": 3.2752799999999995
+      }
+    },
+    {
+      "mode": "reference",
+      "repeat": 4,
+      "wall_s": 20.980080041999997,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "c854e70d90b4c40417fe0e25c34172e7dfecc3ab75a4fb5e1ce828d81daa7e8e",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.223
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.3883
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 8.95115
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.337277
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 10.0885
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.129308,
+        "bootstrap": 1.7019386000000003
+      },
+      "max_rss_bytes": 3157082112,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.5141738,
+        "pack_s": 0.22314497000000003,
+        "stack_s": 1.7311645000000002,
+        "fit_s": 14.958419374999998,
+        "total_s": 17.497092
+      },
+      "load_s": {
+        "init_s": 0.0868213,
+        "read_decode_copy_s": 2.882883,
+        "filter_s": 0.3026639,
+        "total_s": 3.2723700000000004
+      }
+    },
+    {
+      "mode": "current",
+      "repeat": 4,
+      "wall_s": 13.149821500000002,
+      "events": 20,
+      "event_sha256": "7d66e4c29068e28da01fcabf38cba8187cf7ff0674d1989f777680170918742c",
+      "binary_sha256": "1dd1ee13d34fb1f28c50d27da04a5278262dea243455138e3e550466aa4c669b",
+      "cpu": {
+        "objective/serial_caller": {
+          "calls": 310,
+          "inclusive_s": 2.24552
+        },
+        "objective/outer_parallel": {
+          "calls": 1500,
+          "inclusive_s": 12.2843
+        },
+        "hessian/serial_caller": {
+          "calls": 145,
+          "inclusive_s": 1.42059
+        },
+        "hessian/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "rotation/serial_caller": {
+          "calls": 60,
+          "inclusive_s": 0.102157
+        },
+        "rotation/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        },
+        "fitting/serial_caller": {
+          "calls": 20,
+          "inclusive_s": 3.61928
+        },
+        "fitting/outer_parallel": {
+          "calls": 0,
+          "inclusive_s": 0.0
+        }
+      },
+      "power": {
+        "grid": 1.0579624,
+        "bootstrap": 0.6599985999999999
+      },
+      "max_rss_bytes": 3197304832,
+      "windows": [
+        [
+          "0",
+          "47"
+        ],
+        [
+          "1",
+          "19"
+        ],
+        [
+          "2",
+          "26"
+        ],
+        [
+          "3",
+          "42"
+        ],
+        [
+          "0",
+          "46"
+        ],
+        [
+          "1",
+          "21"
+        ],
+        [
+          "2",
+          "41"
+        ],
+        [
+          "3",
+          "34"
+        ],
+        [
+          "0",
+          "45"
+        ],
+        [
+          "1",
+          "48"
+        ],
+        [
+          "2",
+          "40"
+        ],
+        [
+          "3",
+          "24"
+        ]
+      ],
+      "segment_s": {
+        "fft_qc_s": 0.4993355,
+        "pack_s": 0.21309962000000002,
+        "stack_s": 1.7031831,
+        "fit_s": 7.138102250999999,
+        "total_s": 9.622321
+      },
+      "load_s": {
+        "init_s": 0.087073,
+        "read_decode_copy_s": 2.907202,
+        "filter_s": 0.2962996,
+        "total_s": 3.2905699999999998
+      }
+    }
+  ],
+  "summary": {
+    "reference": {
+      "median_s": 21.03890591599999,
+      "min_s": 20.980080041999997,
+      "max_s": 21.105100792,
+      "cpu": {
+        "objective/serial_caller": 2.22359,
+        "objective/outer_parallel": 12.7176,
+        "hessian/serial_caller": 8.94487,
+        "hessian/outer_parallel": 0.0,
+        "rotation/serial_caller": 0.34154,
+        "rotation/outer_parallel": 0.0,
+        "fitting/serial_caller": 10.0831,
+        "fitting/outer_parallel": 0.0
+      },
+      "power": {
+        "grid": 1.1444609000000001,
+        "bootstrap": 1.7019386000000003
+      }
+    },
+    "current": {
+      "median_s": 13.149821500000002,
+      "min_s": 13.09926883300001,
+      "max_s": 13.43039383300001,
+      "cpu": {
+        "objective/serial_caller": 2.23018,
+        "objective/outer_parallel": 12.2843,
+        "hessian/serial_caller": 1.41734,
+        "hessian/outer_parallel": 0.0,
+        "rotation/serial_caller": 0.103118,
+        "rotation/outer_parallel": 0.0,
+        "fitting/serial_caller": 3.59153,
+        "fitting/outer_parallel": 0.0
+      },
+      "power": {
+        "grid": 1.0597337000000002,
+        "bootstrap": 0.6604396
+      }
+    }
+  },
+  "whole_run_pass": true,
+  "grid_regression_pass": true,
+  "all_event_bytes_identical": true,
+  "commits": {
+    "reference": "6a7a4bd4d40a20f1383f683fe233776aed674efa",
+    "current": "dabb03727454421f4fbb0b42a61604539fe99a6d"
+  },
+  "hardware": "Apple M4 Max",
+  "compiler": "Homebrew Clang 23.1.1 C/C++; Apple Clang Objective-C++; Release -O3 -DNDEBUG; native arch OFF",
+  "speedup": 1.5999385174924228,
+  "elapsed_reduction_percent": 37.49759824725665,
+  "stage_speedups": {
+    "hessian/serial_caller": 6.311026288681615,
+    "rotation/serial_caller": 3.3121278535270275,
+    "fitting/serial_caller": 2.8074664558001743
+  }
+}

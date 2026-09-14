@@ -10,6 +10,38 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 option(DELTAP_ENABLE_NATIVE_ARCH "Build with -march=native on compilers that support it" OFF)
+option(DELTAP_ENABLE_METAL "Build the optional Apple Metal slant-stack backend" ${APPLE})
+option(DELTAP_ENABLE_CUDA "Build the optional NVIDIA CUDA GPU backend" OFF)
+add_library(slant_stack_backend STATIC src/slant_stack_backend.cpp src/metal_power.cpp src/power.cpp)
+if(DELTAP_ENABLE_CUDA)
+    if(CMAKE_VERSION VERSION_LESS 3.18)
+        message(FATAL_ERROR "The CUDA backend requires CMake 3.18 or newer")
+    endif()
+    enable_language(CUDA)
+    find_package(CUDAToolkit REQUIRED)
+    target_sources(slant_stack_backend PRIVATE src/slant_stack_cuda.cu src/power_cuda.cu)
+    target_compile_definitions(slant_stack_backend PRIVATE AUTOFOCUSING_HAVE_CUDA=1)
+    set_target_properties(slant_stack_backend PROPERTIES CUDA_STANDARD 14 CUDA_STANDARD_REQUIRED ON)
+    target_compile_options(slant_stack_backend PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--fmad=false;--ftz=false;--prec-div=true;--prec-sqrt=true>)
+    target_link_libraries(slant_stack_backend PUBLIC CUDA::cudart)
+endif()
+if(DELTAP_ENABLE_METAL)
+    if(NOT APPLE)
+        message(FATAL_ERROR "DELTAP_ENABLE_METAL requires Apple Metal; use OFF on other platforms")
+    endif()
+    enable_language(OBJCXX)
+    target_sources(slant_stack_backend PRIVATE src/slant_stack_metal.mm src/metal_power.mm)
+    target_compile_definitions(slant_stack_backend PRIVATE AUTOFOCUSING_HAVE_METAL=1)
+    target_compile_options(slant_stack_backend PRIVATE $<$<COMPILE_LANGUAGE:OBJCXX>:-fobjc-arc>)
+    set_target_properties(slant_stack_backend PROPERTIES OBJCXX_STANDARD 14 OBJCXX_STANDARD_REQUIRED ON)
+    find_library(METAL_FRAMEWORK Metal)
+    find_library(FOUNDATION_FRAMEWORK Foundation)
+    if(NOT METAL_FRAMEWORK OR NOT FOUNDATION_FRAMEWORK)
+        message(FATAL_ERROR "Metal and Foundation frameworks are required")
+    endif()
+    target_link_libraries(slant_stack_backend PUBLIC ${METAL_FRAMEWORK} ${FOUNDATION_FRAMEWORK})
+endif()
 
 # コンパイラごとにオプションを設定
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -53,6 +85,7 @@ set(DELTAP_INCLUDE_DIRS
 )
 
 set(DELTAP_LIBS
+    slant_stack_backend
     Boost::filesystem
     Boost::date_time
     Boost::math_c99
@@ -92,10 +125,34 @@ install(TARGETS ${TARGET_NAME1} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(test_cpu_parallel tests/cpu_parallel.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
+    target_include_directories(test_cpu_parallel PRIVATE ${DELTAP_INCLUDE_DIRS})
+    target_link_libraries(test_cpu_parallel PRIVATE ${DELTAP_LIBS})
+    target_compile_options(test_cpu_parallel PRIVATE ${DELTAP_COMPILE_OPTIONS})
+    add_test(NAME cpu_parallel_equivalence COMMAND test_cpu_parallel)
     add_executable(test_io tests/io.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
     target_include_directories(test_io PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_io PRIVATE ${DELTAP_LIBS})
     add_test(NAME io_equivalence COMMAND test_io ${CMAKE_CURRENT_BINARY_DIR}/io-fixture.h5)
+    foreach(backend metal cuda)
+        string(TOUPPER "${backend}" backend_upper)
+        if(DELTAP_ENABLE_${backend_upper})
+            add_executable(test_${backend}_power tests/metal_power.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
+            target_include_directories(test_${backend}_power PRIVATE ${DELTAP_INCLUDE_DIRS})
+            target_compile_definitions(test_${backend}_power PRIVATE AUTOFOCUSING_TEST_BACKEND="${backend}")
+            target_link_libraries(test_${backend}_power PRIVATE ${DELTAP_LIBS})
+            add_executable(test_${backend}_slant_stack tests/metal_slant_stack.cpp src/slant_stack.cpp)
+            target_compile_definitions(test_${backend}_slant_stack PRIVATE AUTOFOCUSING_TEST_BACKEND="${backend}")
+            target_link_libraries(test_${backend}_slant_stack PRIVATE slant_stack_backend OpenMP::OpenMP_CXX)
+            # Requires an accessible GPU; explicitly run on the appropriate host.
+        endif()
+    endforeach()
+    add_executable(test_backend tests/backend.cpp src/slant_stack.cpp)
+    target_link_libraries(test_backend PRIVATE slant_stack_backend OpenMP::OpenMP_CXX)
+    target_compile_definitions(test_backend PRIVATE
+        AUTOFOCUSING_TEST_HAVE_CUDA=$<BOOL:${DELTAP_ENABLE_CUDA}>
+        AUTOFOCUSING_TEST_HAVE_METAL=$<BOOL:${DELTAP_ENABLE_METAL}>)
+    add_test(NAME backend_configuration COMMAND test_backend)
     add_executable(test_horizontal tests/horizontal.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
     target_include_directories(test_horizontal PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_horizontal PRIVATE ${DELTAP_LIBS})
@@ -106,6 +163,8 @@ if(BUILD_TESTING)
     add_test(NAME slant_stack_equivalence COMMAND test_slant_stack)
     find_package(Python3 QUIET COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME gpu_qualification_tools COMMAND ${Python3_EXECUTABLE}
+            ${PROJECT_SOURCE_DIR}/tests/gpu_tools.py)
         add_test(NAME parent_launcher COMMAND ${Python3_EXECUTABLE}
             ${PROJECT_SOURCE_DIR}/tests/launcher.py ${PROJECT_SOURCE_DIR}
             $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
