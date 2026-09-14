@@ -222,6 +222,8 @@ later that day. The [M4 Max Metal report](metal-cpu-parallel-performance-2026091
 records passing builds, regressions and three-day real-event comparisons:
 Hessian + rotation parallelism gives 1.600× whole-run speedup, and the direct
 pre-optimization CPU comparison gives 8.887× cumulative speedup. `main` remains
-unchanged. Five-day pre/post Metal qualification, additional one-thread timing
-checks and real three-component event data remain outside that measurement;
+unchanged. The subsequent [five-day and one-thread Metal qualification](metal-main-qualification-20260914.md)
+passes both requested follow-up checks: all 29 five-day events are byte-identical,
+and five alternating one-thread pairs show no >5% regression in whole-run,
+Hessian or rotation time. Real three-component event data remains unqualified;
 synthetic rotation and GPU tests cover both horizontal and three-component layouts.

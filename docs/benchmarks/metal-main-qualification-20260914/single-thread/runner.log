@@ -1,0 +1,13 @@
+PASS reference--1: 20 events, wall=36.428s
+PASS current--1: 20 events, wall=36.528s
+PASS reference-0: 20 events, wall=36.479s
+PASS current-0: 20 events, wall=36.561s
+PASS current-1: 20 events, wall=36.489s
+PASS reference-1: 20 events, wall=36.263s
+PASS reference-2: 20 events, wall=36.328s
+PASS current-2: 20 events, wall=36.336s
+PASS current-3: 20 events, wall=36.324s
+PASS reference-3: 20 events, wall=36.302s
+PASS reference-4: 20 events, wall=36.263s
+PASS current-4: 20 events, wall=36.366s
+{"reference": {"median_s": 36.30184533300002, "min_s": 36.26294579100002, "max_s": 36.478682332999995, "cpu": {"objective/serial_caller": 12.4865, "objective/outer_parallel": 0.0, "hessian/serial_caller": 8.92417, "hessian/outer_parallel": 0.0, "rotation/serial_caller": 0.352154, "rotation/outer_parallel": 0.0, "fitting/serial_caller": 10.0507, "fitting/outer_parallel": 0.0}, "power": {"grid": 10.274917000000002, "bootstrap": 1.7176668}}, "current": {"median_s": 36.36623854100003, "min_s": 36.32403662500002, "max_s": 36.561009458, "cpu": {"objective/serial_caller": 12.5059, "objective/outer_parallel": 0.0, "hessian/serial_caller": 8.97119, "hessian/outer_parallel": 0.0, "rotation/serial_caller": 0.362434, "rotation/outer_parallel": 0.0, "fitting/serial_caller": 10.1022, "fitting/outer_parallel": 0.0}, "power": {"grid": 10.292039, "bootstrap": 1.7191224999999999}}}
