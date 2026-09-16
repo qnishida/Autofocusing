@@ -1,5 +1,8 @@
 # 2005年3成分データによるスペクトル行列の検証 — 2026-09-16
 
+詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
+公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
+
 [English](spectral-matrix-3c-2005-verification_en.md)
 
 max/MADがR・Tで7超、Uで35超の条件による1月の期間拡張と、
@@ -115,7 +118,7 @@ RRが6.82%、TTが33.64%、UUが8.93%、Re(RU)が7.08%、Im(RU)が137.33%。
 エネルギー比と解釈することはできない。小さな正の成分でも比は不安定になり得る。
 本集計では成分パワーの統計的有意性による閾値は追加していない。
 
-[イベントごとの比、採用条件、符号、割合の統計](benchmarks/spectral-matrix-3c-2005-20260916/energy-ratio-report.json)を
+イベントごとの比、採用条件、符号、割合の統計を
 比較記録とともに保存した。
 
 ## 再現手順と記録
@@ -139,11 +142,11 @@ python3 -B tests/run_spectral_matrix_events.py \
 出力先は新しいディレクトリを指定する。実行スクリプトは変更中の入力を拒否し、
 行列以外の出力一致の条件を緩めずに比較する。
 
-- [数値結果・判定・コマンド・入力とバイナリのハッシュ](benchmarks/spectral-matrix-3c-2005-20260916/report.json)
-- [現行版イベント](benchmarks/spectral-matrix-3c-2005-20260916/reference-events.dat)と[修正版イベント](benchmarks/spectral-matrix-3c-2005-20260916/corrected-events.dat)
-- [現行版ログ](benchmarks/spectral-matrix-3c-2005-20260916/reference.log)と[修正版ログ](benchmarks/spectral-matrix-3c-2005-20260916/corrected.log)
-- [未修正時の行列テスト失敗](benchmarks/spectral-matrix-3c-2005-20260916/spectral-test-before.log)、[CTest 10件合格](benchmarks/spectral-matrix-3c-2005-20260916/spectral-ctest.log)、[保存物の確認](benchmarks/spectral-matrix-3c-2005-20260916/artifact-checks.json)
-- [ソース・ビルドの来歴](benchmarks/spectral-matrix-3c-2005-20260916/spectral-validation-provenance.json)と[ソース変更](benchmarks/spectral-matrix-3c-2005-20260916/source-change.patch)
+- 数値結果・判定・コマンド・入力とバイナリのハッシュ
+- 現行版イベントと修正版イベント
+- 現行版ログと修正版ログ
+- 未修正時の行列テスト失敗、CTest 10件合格、保存物の確認
+- ソース・ビルドの来歴とソース変更
 
 この結果が検証するのは、この3日間に対する行列補正である。モデルの全仮定、
 全アーカイブ、GPU演算、別途記録したslowness候補選択の問題まで検証したものではない。
@@ -182,4 +185,4 @@ python3 -B tests/run_spectral_matrix_events.py \
 
 ピーク探索と収束条件の変更は別の作業とし、共分散の出力規約も保持する。
 [CPU/Metal比較](cpu-gpu-3c-2005-verification_jp.md)と
-[コミット前の検証記録](benchmarks/spectral-matrix-3c-2005-20260916/commit-validation.json)を参照。
+コミット前の検証記録を参照。

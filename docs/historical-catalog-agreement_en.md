@@ -1,5 +1,9 @@
 # Historical catalog agreement — 48-day 2005 audit
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 [Japanese](historical-catalog-agreement_jp.md)
 
 Most strong detections have close numerical counterparts in the supplied
@@ -65,8 +69,8 @@ had an uninitialized `prm_init`; commit `393a93e` fixed it. This known diagnosti
 fix is consistent with the observed column differences; see the investigation. Diagnostics, iteration counts
 and bootstrap outputs should not be assumed identical merely from the layout.
 
-- [Main comparison, pair IDs, unmatched rows, metrics and hashes](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison.json)
-- [Tight tolerance](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison-tight.json) and [wide tolerance](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison-wide.json)
+- Main comparison, pair IDs, unmatched rows, metrics and hashes
+- Tight tolerance and wide tolerance
 - [Estimate distributions and signed implementation shifts](matrix-estimate-distributions_en.md)
 
 Reproduce with `tests/compare_historical_catalog.py HISTORICAL EXPANDED_JSON

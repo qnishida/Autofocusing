@@ -1,5 +1,8 @@
 # 実データ3成分解析のCPU / Metal整合性
 
+詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
+公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
+
 2026-09-17、Apple M4 Maxで検証。2005年3月15–17日の3日間について、
 CPUとMetalの60イベントで推定パラメータ、bootstrap出力、スペクトル行列が
 カタログの出力桁まで一致した。修正前・修正後の行列式それぞれで比較に合格した。
@@ -64,23 +67,24 @@ Metalが単精度で計算するのは初期のslant stackで、CPUカーネル�
 
 ## 記録と再実行
 
-- [GPU比較結果](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/report.json)、
-  [ログ](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/run.log)、
-  [修正前カタログ](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/reference-events.dat)、
-  [修正後カタログ](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/corrected-events.dat)。
-- [CPU基準実行](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json)。
-- [700観測点の合成入力検証](benchmarks/cpu-gpu-3c-2005-20260917/kernel-700.json)。
-- [ハッシュとイベント相対差の集計](benchmarks/cpu-gpu-3c-2005-20260917/provenance.json)。
+- GPU比較結果、
+  ログ、
+  修正前カタログ、
+  修正後カタログ。
+- CPU基準実行。
+- 700観測点の合成入力検証。
+- ハッシュとイベント相対差の集計。
 
-同じ検証バイナリと入力がある環境で、未作成の出力先を指定する。
+ローカルのCPU検証実行ディレクトリと、それに対応するバイナリ・入力を用意し、
+CPU_RUNをそのディレクトリに置き換えて、未作成の出力先を指定する。
 
 ```bash
 python3 -B tests/run_cpu_gpu_events.py \
-  docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17 \
+  CPU_RUN \
   build-clang/cpu-gpu-3c-repeat
 ./build-clang/test_metal_slant_stack 700 33 4 1
 ```
 
 スクリプトはCPU基準実行に対するバイナリ・入力ハッシュの一致を確認する。
 Metalデバイスへのアクセスが必要。ログのパスは実行時のまま保持し、
-永続化した成果物は上記から参照できる。
+詳細な成果物はローカルの実行ディレクトリで保持する。

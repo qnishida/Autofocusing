@@ -1,5 +1,9 @@
 # Spectral-matrix ratios after event selection — 2026-09-16
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 [Japanese](matrix-ratio-threshold-2005_jp.md)
 
 For historical catalog, current-before, and current-after consistency, see the [regression investigation](catalog-consistency-investigation_en.md).
@@ -48,7 +52,7 @@ as a consecutive-period control, without duplicating dates. The selected
 days do not provide an unbiased estimate of annual event populations or
 independent earthquake counts. Catalog rows can describe related signals.
 
-[Catalog hash, selected dates, and all 37 historical T row references](benchmarks/matrix-ratio-threshold-2005-20260916/catalog-date-selection.json)
+Catalog hash, selected dates, and all 37 historical T row references
 preserve the selection without copying the full private catalog.
 
 ## Test method
@@ -99,8 +103,8 @@ the additional dates. In R/U detections, T may be weak or negative despite
 passing the detected-component threshold; the threshold alone cannot make
 all energy ratios reliable.
 
-[January per-event results and all ratio/fraction summaries](benchmarks/matrix-ratio-threshold-2005-20260916/january-thresholds.json)
-and [test provenance](benchmarks/matrix-ratio-threshold-2005-20260916/provenance.json)
+January per-event results and all ratio/fraction summaries
+and test provenance
 are retained with individual run logs and checks.
 
 ## Expanded sample: 48 days
@@ -160,11 +164,11 @@ A threshold on the detected component does not establish significance of the
 other powers. The sample is selected by historical T activity, and the 36 T
 rows are not 36 independent earthquakes or an unbiased annual population.
 
-- [Expanded per-event results and full ratio/fraction statistics](benchmarks/matrix-ratio-threshold-2005-20260916/expanded-thresholds.json)
-- [Additional 13 days only](benchmarks/matrix-ratio-threshold-2005-20260916/additional-thresholds.json)
-- [Added-date manifest and run directories](benchmarks/matrix-ratio-threshold-2005-20260916/catalog-date-extension.json)
-- [Coverage, hashes, checks and historical-count comparison](benchmarks/matrix-ratio-threshold-2005-20260916/extension-provenance.json)
-- [Initial 35-day results](benchmarks/matrix-ratio-threshold-2005-20260916/combined-thresholds.json) and [initial targeted March results](benchmarks/matrix-ratio-threshold-2005-20260916/march-targeted-thresholds.json)
+- Expanded per-event results and full ratio/fraction statistics
+- Additional 13 days only
+- Added-date manifest and run directories
+- Coverage, hashes, checks and historical-count comparison
+- Initial 35-day results and initial targeted March results
 
 The validation runs did not replace an installed binary, merge, or push.
 The [adoption decision](spectral-matrix-3c-2005-verification_en.md#adopted-correction-2026-09-17)

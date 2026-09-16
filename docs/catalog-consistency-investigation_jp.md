@@ -1,5 +1,8 @@
 # カタログ整合性と後から入った不具合の調査 — 2026-09-16
 
+詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
+公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
+
 [English](catalog-consistency-investigation_en.md)
 
 ユーザーによると、旧カタログは基本的に公開時点のソースを用いたCPU計算。
@@ -30,7 +33,7 @@
 直接足す独立計算と一致する。これらの行列要素は、旧カタログへの一致だけを
 正しさの基準にはできない。
 
-[3者比較の数値と対応行](benchmarks/matrix-ratio-threshold-2005-20260916/three-catalog-comparison.json)・
+3者比較の数値と対応行・
 [独立した行列検証](spectral-matrix-3c-2005-verification_jp.md)。
 
 ## 開始時の状態が差の一部を説明する
@@ -61,8 +64,8 @@
 長期実行の状態を常に再現できるという保証ではない。
 重複する再実行分は48日間の統計に加えていない。
 
-[連続性の比較](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-comparison.json)・
-[再実行の検査とハッシュ](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json)。
+連続性の比較・
+再実行の検査とハッシュ。
 
 ## 過去に修正済みの診断値の不具合
 
@@ -85,7 +88,7 @@ FFTWとbootstrap乱数は現行監査と同じ固定設定とした。
 3月16日の最初の区間では、4イベントの全38列が現行の修正前出力とバイト単位で一致。
 公開版のテストドライバはこの区間の後で終了させ、区間長や計算は維持している。
 
-[公開版の比較記録・互換性パッチ](benchmarks/matrix-ratio-threshold-2005-20260916/public-first-segment/checks.json)。
+公開版の比較記録・互換性パッチ。
 
 11月4〜5日を公開ソースで全区間実行した結果も、42イベントの全38列がバイト単位で
 現行修正前と一致した。保存済みの現行実行と同じ4スレッドを使用し、旧カタログとの
@@ -94,10 +97,10 @@ slowness差があった11月5日のイベントも含む。
 この条件をそろえた例では公開後の変更による不具合は再現していないが、
 全日付・全実行モードの保証ではない。
 
-[公開版と現行の2日間の比較記録](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/report.json)・
-[公開版のイベント](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/public-events.dat)・
-[現行修正前のイベント](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/current-before-events.dat)・
-[検証ドライバの全変更](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/driver.patch)。
+公開版と現行の2日間の比較記録・
+公開版のイベント・
+現行修正前のイベント・
+検証ドライバの全変更。
 
 過去のコンパイラ設定・FFTW plan・乱数・波形ハッシュは不明で、残差の原因は証拠なしに
 特定しない。今回の行列変更と、それ以前からのカタログ差を切り分けた結果であり、

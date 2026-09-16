@@ -1,5 +1,9 @@
 # CPU / Metal agreement for real three-component data
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 Verified 2026-09-17 on Apple M4 Max. For 2005-03-15 through 2005-03-17,
 CPU and Metal produced the same 60 events, fitted parameters, bootstrap fields,
 and spectral-matrix fields at catalog output precision. Both the original and
@@ -68,23 +72,24 @@ Verification computes both kernels and is not a performance benchmark.
 
 ## Records and reproduction
 
-- [GPU comparison report](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/report.json),
-  [log](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/run.log),
-  [original-formula catalog](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/reference-events.dat),
-  [corrected catalog](benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/corrected-events.dat).
-- [CPU baseline](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json).
-- [700-station kernel check](benchmarks/cpu-gpu-3c-2005-20260917/kernel-700.json).
-- [Artifact hashes and event-difference statistics](benchmarks/cpu-gpu-3c-2005-20260917/provenance.json).
+- GPU comparison report,
+  log,
+  original-formula catalog,
+  corrected catalog.
+- CPU baseline.
+- 700-station kernel check.
+- Artifact hashes and event-difference statistics.
 
-With the same audit binary and input files available, use a fresh output path:
+With a local passing CPU audit directory, its matching binary and input files,
+use a fresh output path. Replace CPU_RUN below with that directory:
 
 ```bash
 python3 -B tests/run_cpu_gpu_events.py \
-  docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17 \
+  CPU_RUN \
   build-clang/cpu-gpu-3c-repeat
 ./build-clang/test_metal_slant_stack 700 33 4 1
 ```
 
 The script verifies executable and input hashes against the CPU baseline and
 requires access to the Metal device. Logs retain original runtime paths;
-archived artifacts are linked above.
+detailed artifacts remain in the local run directories.

@@ -1,5 +1,8 @@
 # イベント選別後のスペクトル行列比の検証 — 2026-09-16
 
+詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
+公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
+
 [English](matrix-ratio-threshold-2005_en.md)
 
 旧カタログ・現行修正前・修正後の整合性は、[不具合と開始状態の調査](catalog-consistency-investigation_jp.md)を参照。
@@ -44,7 +47,7 @@ R・Tでは厳密に7超、U（鉛直、Vとも表記）では35超を採用す�
 選択した日付は年間母集団の不偏標本ではなく、カタログ行数も独立な地震数を
 意味しない。関連する信号が複数行に含まれる場合がある。
 
-[カタログのハッシュ、選択日付、旧Tイベント37件の行番号](benchmarks/matrix-ratio-threshold-2005-20260916/catalog-date-selection.json)
+カタログのハッシュ、選択日付、旧Tイベント37件の行番号
 を保存し、非公開カタログ全体は複製しない。
 
 ## 検証方法
@@ -93,8 +96,8 @@ Tの4件は1月27〜28日。少数なので、上記の追加日付で補う。
 R・Uで検出したイベントではTが弱い、または負の場合があり、
 検出成分の閾値だけではすべてのエネルギー比の信頼性は確保できない。
 
-[1月のイベント別結果と比・正規化比率の全統計](benchmarks/matrix-ratio-threshold-2005-20260916/january-thresholds.json)
-および[検証来歴](benchmarks/matrix-ratio-threshold-2005-20260916/provenance.json)
+1月のイベント別結果と比・正規化比率の全統計
+および検証来歴
 を、各実行のログ・検査結果とともに保持する。
 
 ## 48日間への件数拡張
@@ -148,11 +151,11 @@ R・Uで選別したイベントでは修正後Tが非正のものがそれぞ�
 検出成分の閾値は他成分の有意性を保証しない。
 旧カタログのT活動で選んだ標本なので、36件は独立な地震36個や年間の不偏標本を意味しない。
 
-- [拡張後のイベント別結果と比・構成比の全統計](benchmarks/matrix-ratio-threshold-2005-20260916/expanded-thresholds.json)
-- [追加13日間だけの集計](benchmarks/matrix-ratio-threshold-2005-20260916/additional-thresholds.json)
-- [追加日付と実行ディレクトリの一覧](benchmarks/matrix-ratio-threshold-2005-20260916/catalog-date-extension.json)
-- [日付の網羅性・ハッシュ・検査・旧カタログとの件数比較](benchmarks/matrix-ratio-threshold-2005-20260916/extension-provenance.json)
-- [初回35日間の結果](benchmarks/matrix-ratio-threshold-2005-20260916/combined-thresholds.json)・[初回の3月指定日付の結果](benchmarks/matrix-ratio-threshold-2005-20260916/march-targeted-thresholds.json)
+- 拡張後のイベント別結果と比・構成比の全統計
+- 追加13日間だけの集計
+- 追加日付と実行ディレクトリの一覧
+- 日付の網羅性・ハッシュ・検査・旧カタログとの件数比較
+- 初回35日間の結果・初回の3月指定日付の結果
 
 検証時に運用バイナリの置換、merge、pushは行っていない。
 [採用方針](spectral-matrix-3c-2005-verification_jp.md)に複素自己項の減算を明記した。後続の[CPU/Metal比較](cpu-gpu-3c-2005-verification_jp.md)で、

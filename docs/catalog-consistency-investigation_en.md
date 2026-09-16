@@ -1,5 +1,9 @@
 # Catalog consistency and regression investigation — 2026-09-16
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 [Japanese](catalog-consistency-investigation_jp.md)
 
 The user identifies the historical catalog as a CPU result from essentially
@@ -35,7 +39,7 @@ The proposed correction instead agrees with an independently calculated sum
 over distinct station pairs. Historical agreement alone is not a correctness
 criterion for these matrix entries.
 
-[Three-catalog numbers and row references](benchmarks/matrix-ratio-threshold-2005-20260916/three-catalog-comparison.json)
+Three-catalog numbers and row references
 and [independent matrix verification](spectral-matrix-3c-2005-verification_en.md).
 
 ## Restart history explains part of the catalog discrepancy
@@ -70,8 +74,8 @@ demonstrates a restart effect, not full reproduction of the historical catalog
 or a guarantee that one warm-up day always recovers a long run's QC state.
 These overlapping reruns are excluded from the 48-day statistical sample.
 
-[Continuity comparison](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-comparison.json),
-[run checks and hashes](benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json).
+Continuity comparison,
+run checks and hashes.
 
 ## Known earlier diagnostics fix
 
@@ -96,7 +100,7 @@ For March 16's first segment, four events match the current pre-correction
 output byte for byte across all 38 columns. The public test driver stops after
 that segment; normal segment length and calculations are retained.
 
-[Public control artifacts and compatibility patch](benchmarks/matrix-ratio-threshold-2005-20260916/public-first-segment/checks.json).
+Public control artifacts and compatibility patch.
 
 The full November 4–5 public-source run also matches all 42 events byte for
 byte across all 38 columns, using four threads as in the saved current run.
@@ -105,10 +109,10 @@ catalog. Input waveform and source-catalog hashes match the current run and
 remain unchanged. No public-to-current regression is reproduced in these
 controlled examples; this does not qualify every day or execution mode.
 
-[Two-day public/current report](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/report.json),
-[public events](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/public-events.dat),
-[current-before events](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/current-before-events.dat),
-[complete test-driver patch](benchmarks/matrix-ratio-threshold-2005-20260916/public-nov04-05/driver.patch).
+Two-day public/current report,
+public events,
+current-before events,
+complete test-driver patch.
 
 Historical compiler flags, FFTW plans, random seeds and waveform hashes remain
 unknown. Residual differences are not assigned to a specific cause without

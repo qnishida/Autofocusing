@@ -1,2 +1,0 @@
-FAIL stations=7 horizontal=0 entry=0,0 actual=(0.461623,0) expected=(1.04686,6.49101e-19) error=0.58524
-Matrix differs from explicit distinct-station pairs

@@ -1,5 +1,9 @@
 # Estimate distributions and signed shifts — 2005 matrix audit
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 [Japanese](matrix-estimate-distributions_jp.md)
 
 This uses the expanded 48-day sample from the [thresholded matrix audit](matrix-ratio-threshold-2005_en.md):
@@ -74,7 +78,7 @@ experiment would need resampling of the same event, and known-input simulations
 (or another specified truth reference) to evaluate bias. The current catalogs
 alone do not provide those quantities for all matrix entries and ratios.
 
-[Complete distributions, paired shifts, row IDs and input/script hashes](benchmarks/matrix-ratio-threshold-2005-20260916/estimate-distributions.json)
+Complete distributions, paired shifts, row IDs and input/script hashes
 are reproducible with:
 
 ```bash

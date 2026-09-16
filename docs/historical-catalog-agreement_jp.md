@@ -1,5 +1,8 @@
 # 旧カタログとの一致度 — 2005年48日間の検証
 
+詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
+公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
+
 [English](historical-catalog-agreement_en.md)
 
 強い検出の大部分は提供カタログと数値が近いが、完全一致ではない。
@@ -60,8 +63,8 @@ R/Tのmax/MAD > 7、U > 35を適用すると、旧／現行はR 167/171、T 37/3
 この既知の診断値の修正は観測された列の違いと整合する。詳細は整合性調査を参照。
 列の並びが同じことだけで、診断値・反復数・bootstrap出力まで同一とは判断できない。
 
-- [主比較・対応行ID・未対応一覧・数値・ハッシュ](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison.json)
-- [狭い許容差](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison-tight.json)・[広い許容差](benchmarks/matrix-ratio-threshold-2005-20260916/historical-comparison-wide.json)
+- 主比較・対応行ID・未対応一覧・数値・ハッシュ
+- 狭い許容差・広い許容差
 - [推定値の分布と修正による符号付きのずれ](matrix-estimate-distributions_jp.md)
 
 再計算は `tests/compare_historical_catalog.py HISTORICAL EXPANDED_JSON

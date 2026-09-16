@@ -2,3 +2,6 @@
 /bin/
 /output/
 /local_config.sh
+
+# Detailed analysis outputs and run logs stay local.
+/docs/benchmarks/

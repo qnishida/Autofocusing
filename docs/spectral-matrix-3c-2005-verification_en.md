@@ -1,5 +1,9 @@
 # Three-component spectral-matrix validation, 2005 data — 2026-09-16
 
+Detailed run logs, output catalogs and per-event comparison records are retained
+locally and are not distributed in this repository. References to these records
+below describe local artifacts.
+
 [Japanese](spectral-matrix-3c-2005-verification_jp.md)
 
 For the later R/T > 7 and U > 35 max/MAD selection, January extension, and
@@ -131,7 +135,7 @@ such entries cannot directly be interpreted as positive energy ratios.
 Even a small positive entry can give an unstable ratio. This analysis does
 not add a statistical significance threshold for component power.
 
-[Per-event ratios, inclusion rules, signs, and fraction statistics](benchmarks/spectral-matrix-3c-2005-20260916/energy-ratio-report.json)
+Per-event ratios, inclusion rules, signs, and fraction statistics
 are saved with the comparison artifacts.
 
 ## Reproduction and records
@@ -155,11 +159,11 @@ python3 -B tests/run_spectral_matrix_events.py \
 Use a new output directory. The runner rejects changing inputs and compares
 output fields without relaxing non-matrix equality requirements.
 
-- [Measurements, checks, commands, and input/binary hashes](benchmarks/spectral-matrix-3c-2005-20260916/report.json)
-- [Reference events](benchmarks/spectral-matrix-3c-2005-20260916/reference-events.dat) and [corrected events](benchmarks/spectral-matrix-3c-2005-20260916/corrected-events.dat)
-- [Reference log](benchmarks/spectral-matrix-3c-2005-20260916/reference.log) and [corrected log](benchmarks/spectral-matrix-3c-2005-20260916/corrected.log)
-- [Original matrix-test failure](benchmarks/spectral-matrix-3c-2005-20260916/spectral-test-before.log), [10 passing CTests](benchmarks/spectral-matrix-3c-2005-20260916/spectral-ctest.log), and [artifact checks](benchmarks/spectral-matrix-3c-2005-20260916/artifact-checks.json)
-- [Source/build provenance](benchmarks/spectral-matrix-3c-2005-20260916/spectral-validation-provenance.json) and [source change](benchmarks/spectral-matrix-3c-2005-20260916/source-change.patch)
+- Measurements, checks, commands, and input/binary hashes
+- Reference events and corrected events
+- Reference log and corrected log
+- Original matrix-test failure, 10 passing CTests, and artifact checks
+- Source/build provenance and source change
 
 The evidence qualifies this matrix correction on these three days; it does
 not validate all modeling assumptions, the full archive, GPU arithmetic, or
@@ -204,4 +208,4 @@ are included with this report. The previously tested source is unchanged.
 The peak-search findings and convergence-condition change are separate work;
 the covariance output convention is preserved. See the
 [CPU/Metal comparison](cpu-gpu-3c-2005-verification_en.md) and the
-[commit-time validation record](benchmarks/spectral-matrix-3c-2005-20260916/commit-validation.json).
+commit-time validation record.
