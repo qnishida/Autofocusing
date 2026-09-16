@@ -163,6 +163,8 @@ if(BUILD_TESTING)
     add_test(NAME slant_stack_equivalence COMMAND test_slant_stack)
     find_package(Python3 QUIET COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME workspace_scripts COMMAND ${Python3_EXECUTABLE} -B
+            ${PROJECT_SOURCE_DIR}/tests/workspace.py)
         add_test(NAME gpu_qualification_tools COMMAND ${Python3_EXECUTABLE}
             ${PROJECT_SOURCE_DIR}/tests/gpu_tools.py)
         add_test(NAME parent_launcher COMMAND ${Python3_EXECUTABLE}

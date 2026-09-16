@@ -1,5 +1,6 @@
 """Exercise the deployed parent launcher from another cwd using an empty archive."""
 from pathlib import Path
+import json
 import os
 import shutil
 import subprocess
@@ -25,6 +26,11 @@ with tempfile.TemporaryDirectory(prefix='launcher-', dir=build) as tmp:
     assert result.returncode == 0, result.stderr
     files = list((workspace / 'results/launcher_test').glob('*/*.dat'))
     assert len(files) == 1 and files[0].stat().st_size == 0, result.stdout
+    manifest = json.loads((files[0].parent / 'manifest.json').read_text())
+    assert manifest['status'] == 'succeeded' and manifest['exit_code'] == 0
+    assert manifest['run_id'] == files[0].parent.name
+    assert manifest['source']['commit'] and not manifest['binary']['source_revision_verified']
+    assert (files[0].parent / 'run.log').is_file()
     # A copied, editable launcher also resolves a configured executable path
     # relative to its workspace, even when invoked from another cwd.
     assert not (workspace / 'run.sh').is_symlink()

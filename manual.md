@@ -93,28 +93,30 @@ their guidance.
 
 ## 5. Running Autofocusing
 
-For a new workspace, copy `Scripts/run.sh` to the parent of `repo/` as an
-editable regular file, and copy `Scripts/local_config.example.sh` to the
-parent's `local_config.sh`. Use `cp -n` for both to preserve existing files.
-The local configuration is outside this repository. Launch with
-`../run.sh` from the repository or an absolute path from elsewhere.
-
-The script resolves paths relative to its workspace and changes into `repo/`
-for runtime model files. It discovers installed `cal_ccf_gcc` or
-`cal_ccf_clang`; `AUTOFOCUSING_BIN` can override the executable.
+Create a workspace and experiment using the tracked scripts:
 
 ```bash
-export HINET_ROOT="/Volumes/Seismic_Data/hdf5/Hi-net_tilt"
-export CMT_CATALOG="moment_loc_76_24"
-export COMPONENT_MODE="horizontal"
-export PARAM_ID="tilt_horizontal"
-export START_YEAR="2004"
+bash Scripts/setup_workspace.sh --experiment primary-microseisms --init-git
+# Configure ../local_config.sh and ../analysis/primary-microseisms/config.sh.
+bash Scripts/run.sh --experiment primary-microseisms
 ```
 
-These settings belong in the parent's `local_config.sh`, which is sourced by
-the launcher. Relative input/output paths refer to the parent directory.
-`RESULTS_ROOT` defaults to its `results/` directory. `OMP_NUM_THREADS` optionally
-limits parallelism. The launcher does not build the program automatically.
+Setup creates missing files only. `--init-git` initializes the independent
+`analysis/` repository without committing or configuring a remote. The parent
+workspace is not a Git repository. Use `--workspace PATH` to select another
+location. The scripts require Bash, Git and Python 3.7+.
+
+Set waveform and catalog locations (`HINET_ROOT`, `CMT_CATALOG`) and optional
+binary/thread/backend choices in `local_config.sh`. Put scientific settings
+in `analysis/<experiment>/config.sh`. Settings override the inherited environment
+in that order. Relative paths refer to the workspace. `RESULTS_ROOT` defaults
+to `results/`, and `AUTOFOCUSING_BIN` can override executable discovery in the
+source checkout's `bin/`. The runner does not build automatically.
+
+The template retains nominal 0.1–0.25 Hz processing and the ±0.165 s/km px/py
+range regardless of experiment name. No-argument runs still accept local settings
+and `PARAM_ID`. See [Scripts/README.md](Scripts/README.md) for the full workflow,
+recorded metadata, configuration precedence and existing-launcher migration.
 
 ### Horizontal input and processing
 
@@ -155,7 +157,11 @@ first. This change does not add support for 2025 or a date-range interface.
 
 ## 6. Output
 
-The launcher writes `results/<param-id>/<git-version>/` under the workspace.
+The launcher writes `results/<experiment>/<UTC-timestamp>/` under the workspace.
+Concurrent starts use numeric suffixes to avoid collisions. Settings, source and
+analysis revisions, exit status and logs are saved with each run; existing runs
+are never reused. The unchanged C++ CLI receives the timestamp as its directory
+label in the `<git-version>` argument.
 The filename retains `YYYY_<segment length>_<min frequency>-<max frequency>.dat`.
 A direct invocation defaults to `output/` if no output root is supplied.
 
@@ -164,9 +170,10 @@ numbers R=0 and T=1. Columns 34–35 contain R/T matrix diagonal values;
 columns 36–38 (U power and real/imaginary R–U cross-power) are `nan` in
 horizontal mode. These values indicate missing observations, not zero power.
 
-Each invocation truncates its output file. Use distinct parameter IDs for
-separate experiments. Git identifiers include a `-dirty` suffix for tracked
-uncommitted changes; they do not uniquely identify each uncommitted edit.
+Direct executable invocations truncate their output file if the destination is
+reused. The launcher avoids this by allocating a new timestamp directory on every
+run. Actual Git revisions, dirty state and tracked differences are recorded in
+the run metadata rather than encoded in the directory name.
 
 ## 7. Citation
 
@@ -293,8 +300,9 @@ For example, spacing `0.0025` and maximum `0.25` produce a 201×201 grid
 instead of the default 67×67. The upper limit is rounded down to a grid multiple;
 the actual grid is logged. Positive finite settings and a half-width from 1 to
 1024 are required. Finer/wider grids change the search itself and may change
-detected events. Use distinct `PARAM_ID` values for backend/grid experiments;
-the output format and file-overwrite behavior remain as described in section 6.
+detected events. Use distinct experiment names (or `PARAM_ID` for no-argument
+launches) to organize backend/grid comparisons. Each launcher run is preserved
+in a separate timestamp directory; see section 6 for direct-call behavior.
 
 `AUTOFOCUSING_PROFILE=1` measures normal processing, including float packing,
 submission, GPU completion and result accumulation in `stack_s`. Startup shader
@@ -314,8 +322,9 @@ GPU power evaluations: `off` (default), `bootstrap`, `grid`, or `all`.
 Set `AUTOFOCUSING_BACKEND=metal` as well. CPU and three-component runs retain
 the existing CPU objectives. Final gradient fitting and Hessians are unchanged.
 See [Metal power evaluation](docs/metal-power-optimization.md) for numerical
-limits, measurements and reproduction commands. Use a distinct result ID when
-enabling these options; they do not change the existing overwrite policy.
+limits, measurements and reproduction commands. Record these settings in the
+experiment configuration when comparing runs. Launcher runs are preserved
+separately; direct executable calls still require distinct destinations.
 
 
 ## 12. NVIDIA CUDA GPU backend
@@ -382,29 +391,21 @@ measurements and the remaining qualification limits.
 
 ## 13. Workspace and Git management
 
-The workspace is `Autofocusing/`; its only active Git checkout is `repo/`.
-The parent contains `run.sh`, `local_config.sh`, the catalog (or a link to
-its original), and `results/`. It has no `.git` or duplicate source tree.
-Open `repo/` as the development workspace and run Git/build commands there.
-Build products stay inside ignored directories such as `repo/build-cuda/`.
-When relocating a checkout, configure a fresh build rather than reusing a
-CMake cache containing the old absolute paths.
+The workspace separates the public source repository (`repo/`), an independent
+analysis repository (`analysis/`) and generated outputs (`results/`). Keep the
+parent workspace outside Git. Analysis definitions and notes can be synchronized
+to a separate private or public remote; outputs need independent backups.
 
-The tracked scripts are templates. The parent launcher can be edited for an
-analysis; it is not replaced by `git pull`. Keep routine environment choices
-in `local_config.sh`. For example, the following executable path is relative
-to the parent workspace, so it survives moving the whole workspace:
+Use the setup and migration instructions in [Scripts/README.md](Scripts/README.md).
+New parent launchers delegate common execution to the tracked script. Existing
+customized launchers and local settings are never overwritten by setup or pull.
+Use the tracked runner explicitly until an old launcher has been migrated.
 
-```bash
-export AUTOFOCUSING_BIN="repo/build-cuda/src/cal_ccf_gcc"
-export RESULTS_ROOT="results"
-```
-
-After updating source templates, compare them with the parent copies using
-`diff -u Scripts/run.sh ../run.sh` and
-`diff -u Scripts/local_config.example.sh ../local_config.sh`. A difference
-is expected for local settings; apply only the changes needed for the analysis.
-Do not copy templates over existing customized files automatically.
+Run source Git/build commands in `repo/`. Build products stay inside ignored
+directories such as `repo/build-cuda/`. When relocating a checkout, configure a
+fresh build rather than reusing a CMake cache with old absolute paths. Formal
+runs should use committed source and analysis definitions and a freshly built
+binary: the recorded checkout SHA alone does not verify the binary's origin.
 
 GitHub synchronizes commits in `repo/`, not the parent workspace or uncommitted
 source edits. Directory relocation neither creates commits nor pushes them.

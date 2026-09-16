@@ -118,50 +118,40 @@ citation notes.
 
 ## Run
 
-The local analysis workspace uses this layout:
+The workspace separates public source, analysis definitions and generated results:
 
 ```text
 Autofocusing/
-├── run.sh
-├── local_config.sh
-├── moment_loc_76_24
-├── repo/
-└── results/
+├── repo/                         # This public Git repository
+├── run.sh                        # Delegates to repo/Scripts/run.sh
+├── local_config.sh               # Machine-local settings
+├── analysis/                     # Separate, optionally private Git repository
+│   └── primary-microseisms/       # config.sh and analysis notes
+└── results/                      # Generated outputs, outside Git
 ```
 
-Only `repo/` is a Git repository. Its root on GitHub contains `src/`,
-`Scripts/`, and the other source files directly; `repo/` is a local checkout
-directory name, not another directory to commit. Do not initialize Git in
-the parent `Autofocusing/` workspace.
-
-From `repo/`, copy the templates once, preserving existing analysis files:
+From the source checkout, create missing directories and templates:
 
 ```bash
-cp -n Scripts/run.sh ../run.sh
-cp -n Scripts/local_config.example.sh ../local_config.sh
-../run.sh
+bash Scripts/setup_workspace.sh --experiment primary-microseisms --init-git
+# Edit ../local_config.sh and ../analysis/primary-microseisms/config.sh first.
+bash Scripts/run.sh --experiment primary-microseisms
 ```
 
-The parent `run.sh` is an editable regular file, not a symlink. Keep machine
-paths and backend/thread settings in `local_config.sh`, and customize the
-parent launcher when an analysis needs different execution steps. Git pulls
-update the templates inside `repo/` only. Compare template changes with
-`diff -u Scripts/run.sh ../run.sh` and incorporate the relevant changes manually;
-do not overwrite a customized parent launcher or configuration.
+Setup preserves existing files and initializes only `analysis/` when `--init-git`
+is requested. Do not initialize Git in the parent workspace. Existing customized
+parent launchers are preserved and need a deliberate migration to the new runner.
+Use `--workspace PATH` to select a workspace other than the checkout's parent.
+Bash, Git and Python 3.7+ are required for the scripts.
 
-Run Git commands from `repo/`. Moving a checkout on disk does not publish any
-changes to GitHub: intentional source changes need a commit and a separate
-push. Before updating a checkout, inspect `git status` and preserve unfinished
-work; then use `git fetch origin` to inspect upstream changes and
-`git pull --ff-only` when the working tree is ready. Keep machine-specific
-settings, catalogs and results in the parent workspace. See
-[workspace management](manual.md#13-workspace-and-git-management).
-
-The launcher defaults to horizontal-only analysis of `Hi-net_tilt`, starting
-in 2004. Set `HINET_ROOT`, `CMT_CATALOG`, `START_YEAR`, `COMPONENT_MODE`, and
-`PARAM_ID` in the parent `local_config.sh`. Relative paths are resolved against
-that parent. For three-component data, set `COMPONENT_MODE=3c` and use a distinct
-parameter ID. See [manual.md](manual.md) for mode details and macOS build notes.
+The template still uses the nominal **0.1–0.25 Hz** band and ±0.165 s/km px/py
+range. The experiment name does not select a frequency band; the proposed
+0.05–0.1 Hz primary-microseism analysis requires a separate code change.
+The launcher defaults to horizontal-only analysis starting in 2004. Input paths
+must be configured. With no `--experiment`, local settings and `PARAM_ID` remain
+supported. See [Scripts/README.md](Scripts/README.md) for setting precedence,
+run records, setup options and migration, and [manual.md](manual.md) for the
+scientific input requirements and build details.
 
 Direct execution remains available from the repository root:
 
@@ -184,14 +174,16 @@ one regular HDF5 file. Missing/empty/multiple-file days are skipped.
 The parent launcher writes to:
 
 ```text
-results/<param-id>/<git-version>/YYYY_2048_0.099609-0.250000.dat
+results/<experiment>/<UTC-timestamp>/YYYY_2048_0.099609-0.250000.dat
 ```
 
 Here `YYYY` is the start year, not the year of each individual event.
-The default parameter ID is `tilt_horizontal`. Horizontal mode preserves the
-38-column format, emits R=0 and T=1 events, and writes `nan` for U-related
-matrix values (columns 36–38). Use a separate parameter ID for each experiment;
-reusing the same destination overwrites the existing `.dat` file.
+Without an experiment argument, the default parameter ID is `tilt_horizontal`.
+Horizontal mode preserves the 38-column format, emits R=0 and T=1 events, and
+writes `nan` for U-related matrix values (columns 36–38). Each launcher execution
+allocates a new run directory and records settings,
+source/analysis commits and logs alongside the results. Direct executable calls
+still overwrite the `.dat` file when their destination is reused.
 
 Generated build directories, binaries, and outputs are not tracked.
 [Verification notes](docs/horizontal-verification.md) describe the input
