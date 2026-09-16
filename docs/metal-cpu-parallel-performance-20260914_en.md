@@ -1,5 +1,9 @@
 # Metal: CPU parallelization and cumulative speedup from before CPU optimization
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 [Japanese](metal-cpu-parallel-performance-20260914_jp.md)
 
 Measured on 2026-09-14 on Apple M4 Max running macOS 26.6.2.
@@ -56,7 +60,7 @@ Event output was byte-identical in all 12 trials, including warmups.
 Accepted windows and initial candidates also matched. The comparison treats this as
 a change within the same backend and does not relax the bootstrap tolerance for GPU error.
 
-[All trials, hashes, and stage timings](benchmarks/metal-cpu-parallel-20260914/parallel/report.json)
+All trials, hashes, and stage timings
 are saved alongside the logs and event files for each trial.
 
 ## (ii) Cumulative effect from before CPU optimization
@@ -86,7 +90,7 @@ All 38 columns were checked across CPU and GPU using the existing tolerances:
 - Other columns: exact output-string equality. Existing NaNs for missing U in horizontal mode are preserved;
   non-finite values are rejected in columns compared numerically.
 
-[All trials, hashes, accuracy, and accepted windows](benchmarks/metal-cpu-parallel-20260914/cumulative/report.json)
+All trials, hashes, accuracy, and accepted windows
 are saved alongside the logs and event files for each trial.
 
 ## Build and reproduction
@@ -118,7 +122,7 @@ and 7/7 for the current version. The current version also passed 32 Metal slant-
 The first launcher test for the old version failed because the archive copy lacked Git
 metadata; it passed when rerun with Git metadata for the target commit. No source fix was needed.
 Metal and `/usr/bin/time -l` ran outside the agent sandbox on this host.
-[Build and CTest logs](benchmarks/metal-cpu-parallel-20260914/build-checks/after/ctest.log)
+Build and CTest logs
 are also saved. The comparison scripts were checked with synthetic cases for identical
 output, bootstrap tolerance boundaries, event-identity mismatches, and non-finite-value rejection.
 

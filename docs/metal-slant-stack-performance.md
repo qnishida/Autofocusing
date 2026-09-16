@@ -1,5 +1,9 @@
 # Metal slant-stack backend
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 Implemented on `metal`, based on CPU commit `51f60a7`. The default runtime
 backend remains double/OpenMP CPU. `AUTOFOCUSING_BACKEND=metal` selects float
 GPU slant stacking for either horizontal or three-component spectra. Loading,
@@ -167,4 +171,4 @@ python3 tests/compare_event_results.py cpu.dat metal.dat --metal
 
 The `--metal` comparison only relaxes beam maximum/MAD; CPU comparison defaults
 remain unchanged. Machine-readable timings and validation summaries are in
-[the measurement artifact](benchmarks/metal-slant-stack-20260908.json).
+the measurement artifact.

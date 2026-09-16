@@ -1,5 +1,9 @@
 # Metal power-evaluation optimization
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 [Japanese](metal-power-optimization_jp.md)
 
 ## Scope and usage
@@ -90,7 +94,7 @@ The maximum relative difference in bootstrap-related values remained within appr
 - Maximum process RSS for all: 3.193 GB.
 
 These are whole-process peaks, not GPU memory alone.
-See the [repeated-measurement JSON](benchmarks/metal-power-events-20260912.json) for speed,
+See the repeated-measurement JSON for speed,
 ranges, CPU time, and memory details.
 
 For grid-only evaluation with synthetic data, the standard 75 candidates yielded
@@ -98,17 +102,17 @@ For grid-only evaluation with synthetic data, the standard 75 candidates yielded
 1.61–1.91×, and with 7500 candidates it was 2.38–2.45×.
 Every case selected the same candidate as the CPU. The GPU is not necessarily faster
 for every small input. This expanded evaluation uses synthetic data; changes to real-data
-search settings require separate validation. See the [expanded-grid JSON](benchmarks/metal-power-grid-20260912.json).
+search settings require separate validation. See the expanded-grid JSON.
 
 Both candidates are selected for adoption and integration into `metal`. The default remains `off`.
 Leave `main`, the prefetch TODO, and installed binaries unchanged; do not push.
 
 ## Validation records
 
-- [Kernel tests](benchmarks/metal-power-kernel-20260912.json)
-- [Initial five-day comparison](benchmarks/metal-power-qualification-20260912.json)
-- [Comparison after parallelizing double-precision reevaluation](benchmarks/metal-power-refined-qualification-20260912.json)
-- [29 events from the original Metal version](benchmarks/metal-power-reference-events-20260912.dat)
+- Kernel tests
+- Initial five-day comparison
+- Comparison after parallelizing double-precision reevaluation
+- 29 events from the original Metal version
 
 Initial comparison timings may include interference from concurrent builds, so they
 are not used for the performance adoption decision.

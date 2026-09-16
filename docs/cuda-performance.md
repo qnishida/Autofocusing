@@ -1,5 +1,9 @@
 # CUDA implementation and validation
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 CUDA was added to `cuda` from `b9620e7`, retaining the CPU and Metal backends.
 The common dispatch accepts `AUTOFOCUSING_BACKEND=cpu|metal|cuda`; CPU is the
 default and explicit GPU requests fail when unavailable.
@@ -83,7 +87,7 @@ selected winners agree. The standard synthetic grid does **not** meet the
 real events. Tiny slant-stack inputs can also be slower on GPU.
 
 Raw synthetic timings, precision metrics and source hashes are in
-[the machine-readable record](benchmarks/cuda-20260913.json).
+the machine-readable record.
 
 ## Real-event qualification and reproduction
 
@@ -99,7 +103,7 @@ are 1,590,904 bytes for slant stacking and 70,634,472 bytes for power; these
 exclude the CUDA context/driver and host staging memory. Days 4–5 were not used to adjust any tolerances or refinement
 settings. Qualification timings overlapped other validation/build activity
 and are not adoption measurements. See the
-[qualification record](benchmarks/cuda-events-qualification-20260913.json).
+qualification record.
 
 
 ### Repeated real-data performance
@@ -140,7 +144,7 @@ Peak process RSS across the five runs (includes host memory, not standalone VRAM
 - all: 2.086 GiB.
 
 Full trial ranges, stage timings, event hashes and adoption flags are in the
-[performance record](benchmarks/cuda-events-performance-20260913.json).
+performance record.
 These results cover the supplied five horizontal days. Real 3c events and the
 full archive were not qualified; 3c coverage here is synthetic slant stacking.
 

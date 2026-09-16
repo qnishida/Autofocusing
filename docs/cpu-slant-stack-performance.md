@@ -1,5 +1,9 @@
 # CPU slant-stack optimization before Metal
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 Implemented on `perf/cpu-slant-stack`, based on `393a93e`. These measurements were made before creating a `metal` branch. Slant-stack arithmetic stays double/complex<double>;
 FFT/QC, nonlinear fitting and bootstrap still run on the existing CPU paths.
 No GPU implementation, precision reduction or slowness-grid change is included.
@@ -41,7 +45,7 @@ The benchmark reference allocates its legacy grid scratch for each call,
 whereas the old application allocated it once per segment and cleared it
 per window. Use the real-day comparison above as the end-to-end evidence.
 Detailed measurements, including rejected experiments, are stored in
-[the JSON report](benchmarks/cpu-slant-stack-20260908.json).
+the JSON report.
 
 ## Changes retained
 

@@ -1,5 +1,9 @@
 # Shared CPU I/O optimization
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 [Japanese](cpu-io-optimization_jp.md)
 
 ## Implementation (2026-09-12)
@@ -38,7 +42,7 @@ This checks for regressions in existing Metal calculations; it does not measure 
 After connecting the SSD, full-waveform comparisons also passed for 2004-01-01 through 03,
 2014-01-01, and 2024-01-01. Accepted station counts were 653, 653, 652, 725, and 725,
 respectively. Each date was checked with 1, 4, and 16 threads, including repeated loading
-and the legacy APIs. See the [real-waveform validation record](benchmarks/cpu-io-equivalence-20260912.json).
+and the legacy APIs. See the real-waveform validation record.
 
 Medians for cached input from 2004-01-01, with five runs per implementation in alternating order:
 
@@ -52,7 +56,7 @@ Medians for cached input from 2004-01-01, with five runs per implementation in a
 Input time fell by approximately 49% with 16 threads. Actual disk-read counters were
 0 bytes in every trial, so these results do not measure USB bandwidth or uncached input.
 The largest peak RSS was approximately 1.035 GB before and 1.011 GB after the change.
-See the [measurement JSON](benchmarks/cpu-io-2004001.json) for medians, ranges, CPU time, and raw RSS data.
+See the measurement JSON for medians, ranges, CPU time, and raw RSS data.
 
 ### End-to-end comparison
 
@@ -71,8 +75,8 @@ and no more than a 5% increase in total time.
 This comparison uses the version before the I/O optimization, not the version before
 CPU slant-stack optimization. Normal builds retain FFTW_MEASURE and time-based bootstrap seeds.
 
-- [CPU measurements and comparisons](benchmarks/cpu-io-events-cpu-20260912.json), [CPU event output](benchmarks/cpu-io-events-cpu-20260912.dat)
-- [Metal measurements and comparisons](benchmarks/cpu-io-events-metal-20260912.json), [Metal event output](benchmarks/cpu-io-events-metal-20260912.dat)
+- CPU measurements and comparisons, CPU event output
+- Metal measurements and comparisons, Metal event output
 
 ## Reproduction
 

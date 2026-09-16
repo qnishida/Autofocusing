@@ -1,5 +1,9 @@
 # gpu branch: Metal verification (2026-09-14)
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 Verified unmodified `origin/gpu` commit `dabb03727454421f4fbb0b42a61604539fe99a6d`
 on Apple M4 Max, macOS 26.6.2, with 16 OpenMP threads. The working checkout
 remained on `cuda`; no source changes, installation, commits or pushes were made.
@@ -63,9 +67,9 @@ These are functionality-check timings, not repeated performance qualification.
 Real 3c data, five-day validation, and paired pre/post CPU-change performance
 qualification were not performed; this does not complete all `main` merge gates.
 
-[Raw report](benchmarks/gpu-metal-check-20260914/report.json),
-[CTest](benchmarks/gpu-metal-check-20260914/ctest-unrestricted.log),
-[slant stack](benchmarks/gpu-metal-check-20260914/metal-slant.log),
-[power](benchmarks/gpu-metal-check-20260914/metal-power.log), and
-[initial linker failure](benchmarks/gpu-metal-check-20260914/build.log)
+Raw report,
+CTest,
+slant stack,
+power, and
+initial linker failure
 are retained alongside real-event logs and outputs.

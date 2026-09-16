@@ -1,5 +1,8 @@
 # 共通 CPU I/O 最適化
 
+詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
+含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
+
 [English](cpu-io-optimization_en.md)
 
 ## 実装（2026-09-12）
@@ -36,7 +39,7 @@ Metal 検証ブランチ `test/metal-cpu-io` は共通 I/O の上に旧 Metal �
 SSD 接続後、2004-01-01～03、2014-01-01、2024-01-01 の全波形比較も成功。
 採用観測点数は順に 653・653・652・725・725。各日 1・4・16 スレッド、
 繰り返し読み込みと従来 API を含めて確認した。
-[実波形検証記録](benchmarks/cpu-io-equivalence-20260912.json)。
+実波形検証記録。
 
 2004-01-01 のキャッシュ済み入力を各 5 回、変更前後で交互に測定した中央値：
 
@@ -50,7 +53,7 @@ SSD 接続後、2004-01-01～03、2014-01-01、2024-01-01 の全波形比較も�
 16 スレッドでは入力時間を約 49% 削減。全試行の実ディスク読み込みカウンタは
 0 byte で、USB 転送帯域や未キャッシュ時の測定ではない。
 ピーク RSS の最大値は変更前約 1.035 GB、変更後約 1.011 GB。
-中央値・範囲・CPU 時間・RSS の生データは [計測 JSON](benchmarks/cpu-io-2004001.json) を参照。
+中央値・範囲・CPU 時間・RSS の生データは 計測 JSON を参照。
 
 ### 全体計算の比較
 
@@ -67,8 +70,8 @@ FFTW 計画と bootstrap seed を検証用ビルドで固定し、2004-01-01～0
 これは I/O 最適化前との比較であり、CPU slant stack 最適化以前との比較ではない。
 通常ビルドは従来の FFTW_MEASURE と時刻由来の bootstrap seed を維持する。
 
-- [CPU 計測・照合記録](benchmarks/cpu-io-events-cpu-20260912.json)、[CPU イベント出力](benchmarks/cpu-io-events-cpu-20260912.dat)
-- [Metal 計測・照合記録](benchmarks/cpu-io-events-metal-20260912.json)、[Metal イベント出力](benchmarks/cpu-io-events-metal-20260912.dat)
+- CPU 計測・照合記録、CPU イベント出力
+- Metal 計測・照合記録、Metal イベント出力
 
 
 ## 再現方法

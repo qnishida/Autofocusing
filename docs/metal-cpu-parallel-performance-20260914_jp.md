@@ -1,5 +1,8 @@
 # Metal: CPU 並列化と CPU 最適化前からの累積高速化
 
+詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
+含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
+
 [English](metal-cpu-parallel-performance-20260914_en.md)
 
 2026-09-14、Apple M4 Max、macOS 26.6.2 で測定。
@@ -52,7 +55,7 @@ Hessian、回転、Fitting は `serial_caller` の inclusive time であり、
 採用窓・初期候補も一致した。比較では Bootstrap の GPU 誤差許容を緩めず、
 同一バックエンドの変更として照合している。
 
-[全試行・ハッシュ・段階時間](benchmarks/metal-cpu-parallel-20260914/parallel/report.json)
+全試行・ハッシュ・段階時間
 と、その隣に各試行のログ・イベントファイルを保存した。
 
 ## (ii) CPU 最適化前からの累積効果
@@ -79,7 +82,7 @@ CPU/GPU 間は既存の許容誤差を適用し、全38列を検証した。
 - その他：出力文字列一致。水平モードの既存 U 欠測 NaN は保持し、
   数値比較列の非有限値は許可しない。
 
-[全試行・ハッシュ・精度・採用窓](benchmarks/metal-cpu-parallel-20260914/cumulative/report.json)
+全試行・ハッシュ・精度・採用窓
 と、その隣に各試行のログ・イベントファイルを保存した。
 
 ## ビルド・再現手順
@@ -110,7 +113,7 @@ python3 tests/run_legacy_gpu_events.py \
 最初の旧版ランチャーテストは archive コピーに Git 情報がないため失敗したが、
 対象コミットの Git 情報を付けた再実行で合格した。ソース修正は不要だった。
 Metal と `/usr/bin/time -l` はこのホストのエージェント sandbox 外で実行した。
-[ビルド・CTest ログ](benchmarks/metal-cpu-parallel-20260914/build-checks/after/ctest.log)
+ビルド・CTest ログ
 も保存している。比較スクリプトは同一出力・Bootstrap 境界・イベント識別不一致・
 非有限値拒否の人工例で確認した。
 

@@ -1,5 +1,9 @@
 # Ordered CPU fitting parallelism
 
+Detailed benchmark logs and run results are retained locally and are not
+distributed in this repository. References to detailed records below describe
+those local artifacts.
+
 ## Scope and branch workflow
 
 The baseline is CUDA commit `977736f`; `6a7a4bd` adds profiling and an independent
@@ -174,7 +178,7 @@ measurement. These inclusive stages overlap and must not be added. This gain
 is relative to the existing CUDA version before this CPU-parallelization work;
 it is not a comparison with the original unoptimized CPU-only program or Mac.
 
-[Machine-readable measurements](benchmarks/cpu-fitting-parallel-20260914.json)
+Machine-readable measurements
 include every paired run, binary hashes, event hashes, RSS, per-stage totals,
 independent experiments, the held objective change, and synthetic timings.
 The ignored `build-cuda/cpu-parallel/` directory retains local fixed drivers,
@@ -211,7 +215,7 @@ pass the existing bounds: beam maximum/MAD `rtol=1e-4`, Bootstrap columns 21–3
 relative differences are `9.00657e-6` for beam maximum/MAD and `1.19376e-5` for
 Bootstrap. The legacy build also passes its two CTest cases.
 
-[The full measurement record](benchmarks/cpu-legacy-total-20260914.json) retains
+The full measurement record retains
 all eight runs, including excluded warmups, event and binary hashes, RSS,
 accepted windows and summary statistics. Its `event_file` entries refer to
 local artifacts under the ignored `build-cuda/cpu-parallel/legacy-total-events/`

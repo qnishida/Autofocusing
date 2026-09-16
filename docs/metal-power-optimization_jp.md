@@ -1,5 +1,8 @@
 # Metal パワー評価の最適化
 
+詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
+含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
+
 [English](metal-power-optimization_en.md)
 
 ## 対象と使い方
@@ -85,23 +88,23 @@ Bootstrap 関連値の最大相対差は全反復で約0.0029%以内だった。
 - all の最大プロセス RSS：3.193 GB。
 
 これはプロセス全体のピークで、GPU メモリ単独の値ではない。
-速度・範囲・CPU 時間・メモリの詳細は [反復測定 JSON](benchmarks/metal-power-events-20260912.json)。
+速度・範囲・CPU 時間・メモリの詳細は 反復測定 JSON。
 
 合成データのグリッド単体では、標準75候補は0.89～0.97倍で GPU が少し遅い。
 750候補では1.61～1.91倍、7500候補では2.38～2.45倍だった。
 全条件で CPU と同じ候補を選択した。GPU がすべての小さい入力で速いとは限らない。
 この拡張評価は合成データであり、実データの探索条件変更時には別途検証する。
-[拡張グリッド JSON](benchmarks/metal-power-grid-20260912.json)。
+拡張グリッド JSON。
 
 両候補を採用対象とし、`metal` へ統合する。既定値 `off` は維持する。
 `main`・先読み TODO・インストール済みバイナリは変更せず、push は行わない。
 
 ## 検証記録
 
-- [カーネル試験](benchmarks/metal-power-kernel-20260912.json)
-- [5日分の初期照合](benchmarks/metal-power-qualification-20260912.json)
-- [倍精度再評価の並列化後の照合](benchmarks/metal-power-refined-qualification-20260912.json)
-- [元の Metal 版29イベント](benchmarks/metal-power-reference-events-20260912.dat)
+- カーネル試験
+- 5日分の初期照合
+- 倍精度再評価の並列化後の照合
+- 元の Metal 版29イベント
 
 初期照合の時間は併走ビルドの影響を含み得るため、採用の性能判定には使わない。
 数値的な変更を伴わない倍精度再評価の並列化後に、独立検証日も再照合済み。

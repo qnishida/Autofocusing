@@ -1,5 +1,0 @@
-/private/tmp/autofocusing-metal-paired-20260914/legacy/build/io-fixed-current/cal_ccf.cpp:219:7: warning: variable 'count0' set but not used [-Wunused-but-set-variable]
-  219 |   int count0 = 0;
-      |       ^
-1 warning generated.
-/private/tmp/autofocusing-metal-paired-20260914/legacy/build/io-fixed-current/cal_ccf_io_probe

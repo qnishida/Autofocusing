@@ -1,5 +1,8 @@
 # Metal: 5日間の厳密比較と1スレッド性能検証
 
+詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
+含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
+
 [English](metal-main-qualification-20260914_en.md)
 
 2026-09-14、`6a7a4bd` と `gpu@7de4c22` を比較し、依頼された2項目はともに合格した。
@@ -28,8 +31,8 @@
 対象2版の Metal カーネルには差分がない。固定 seed と FFTW 条件は既存の
 `tests/build_io_probe.py` で生成した検証用ドライバだけに適用し、製品ソースは変更していない。
 両版の CTest は7/7に合格。
-[基準版ログ](benchmarks/metal-main-qualification-20260914/build-checks/before/ctest.log)・
-[現在版ログ](benchmarks/metal-main-qualification-20260914/build-checks/after/ctest.log)を保存した。
+基準版ログ・
+現在版ログを保存した。
 
 ## 1. 5日分の並列化前後比較
 
@@ -45,7 +48,7 @@
 - 共通イベント SHA-256：
   `92893ed8efa1d1a8ee428dd7dda0211f452ce9cdc16d7e797d6a2e87de4b0ec7`。
 
-[機械可読レポート](benchmarks/metal-main-qualification-20260914/five-day/report.json)に
+機械可読レポートに
 全試行、バイナリ・イベントハッシュ、採用窓、初期候補を保存。
 同じディレクトリにログとイベントファイルも保存している。
 
@@ -73,7 +76,7 @@ Hessianと回転は `serial_caller` の inclusive time で、全体 wall time �
 ウォームアップを含む12試行すべてで20イベント・433採用窓・初期候補が一致し、
 Bootstrapを含む全イベント出力もバイト単位で一致した。
 
-[機械可読レポート](benchmarks/metal-main-qualification-20260914/single-thread/report.json)の
+機械可読レポートの
 `regression` に中央値、各ペアの増減、範囲、5%判定を保存。
 同じディレクトリに全試行のログとイベントファイルも保存している。
 保存後に14イベントファイルのハッシュ、件数、採用窓、初期候補を再確認した。
