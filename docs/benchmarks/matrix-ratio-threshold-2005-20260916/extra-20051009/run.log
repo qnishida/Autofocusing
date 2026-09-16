@@ -1,0 +1,218 @@
+#SlantStack backend=cpu (double)
+#Power mode=off
+#SlantStack step_s_per_km=0.005 max_s_per_km=0.165 grid=67x67
+#FrequencyBand {"requested_min_hz":0.10000000000000001,"requested_max_hz":0.25,"min_hz":0.099609375,"max_hz":0.25,"df_hz":0.0009765625,"min_bin":102,"max_bin":256,"fft_length":2048,"sample_interval_s":0.5,"spectrum_bins":266}
+#DateRange start=2005-10-09 end=2005-10-09 inclusive=true
+#0.0996094 0.25
+#Start/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-extension-20051009/input/2005/1009/20052820000.h5 0 0.00015s
+#LOAD_PROFILE init_s=0.0442068 read_decode_copy_s=3.17355 filter_s=0.490675 total_s=3.70843
+#Read data: load_h5 /Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-extension-20051009/input/2005/1009/20052820000.h5 683 3.71365s
+#PROFILE segment=0 windows=0 fft_qc_s=0.146059 pack_s=0 stack_s=0 fit_s=4.8291e-05 total_s=0.161721
+#Segment 2005-Oct-09 0 accepted_windows=0
+2005-Oct-09 07:36:16 14380.1 60.0284 1 574
+2005-Oct-09 07:44:00 14410.5 58.7496 1 570
+2005-Oct-09 07:51:44 14664 55.6556 1 580
+2005-Oct-09 07:59:28 14566.7 56.7687 1 581
+2005-Oct-09 08:07:12 14393 58.7155 1 586
+2005-Oct-09 08:14:56 14913.7 58.577 1 584
+2005-Oct-09 08:22:40 15040.6 59.8014 1 586
+2005-Oct-09 08:30:24 14179.2 59.8092 1 593
+2005-Oct-09 08:38:08 14363.3 60.0159 1 593
+2005-Oct-09 09:09:04 14254.1 58.553 1 598
+2005-Oct-09 09:16:48 14292.9 59.6912 1 600
+2005-Oct-09 09:24:32 14823.4 60.9987 1 600
+2005-Oct-09 09:32:16 14040.4 60.6083 1 600
+2005-Oct-09 09:40:00 14631.7 59.7446 1 602
+2005-Oct-09 09:47:44 14514 58.7676 1 600
+2005-Oct-09 09:55:28 13860.9 59.0997 1 600
+2005-Oct-09 10:03:12 14551 59.2365 1 599
+2005-Oct-09 10:10:56 14400.9 60.8166 1 599
+2005-Oct-09 10:18:40 13730.7 59.3995 1 599
+2005-Oct-09 10:26:24 14157.5 59.9888 1 596
+2005-Oct-09 10:34:08 14306.9 59.0439 1 598
+2005-Oct-09 10:41:52 14349 59.022 1 595
+2005-Oct-09 10:49:36 14093.1 58.6683 1 597
+2005-Oct-09 10:57:20 14428.4 59.0892 1 596
+2005-Oct-09 11:05:04 14228.1 59.3095 1 597
+2005-Oct-09 11:12:48 14477.8 59.0379 1 599
+2005-Oct-09 11:20:32 14066.1 59.2802 1 599
+2005-Oct-09 11:28:16 14178.2 57.8858 1 595
+2005-Oct-09 11:36:00 14636.4 58.1492 1 596
+2005-Oct-09 11:43:44 14100.1 58.7833 1 596
+2005-Oct-09 11:51:28 14497.4 58.8164 1 598
+2005-Oct-09 11:59:12 15243.4 58.0116 1 597
+#$1.10208e-17 -1.38189e-17 2
+#deg max=115 2.00713
+#dp_Δ max=-5e-07
+#POWER_PROFILE stage=grid total_s=0.121206
+#POWER_PROFILE stage=bootstrap total_s=1.01571
+#deg max=30 0.523599
+#dp_Δ max=2.5e-07
+#POWER_PROFILE stage=grid total_s=0.120159
+#POWER_PROFILE stage=bootstrap total_s=1.01421
+#deg max=25 0.436332
+#dp_Δ max=-1.25e-06
+#POWER_PROFILE stage=grid total_s=0.120565
+#POWER_PROFILE stage=bootstrap total_s=1.0152
+#deg max=80 1.39626
+#dp_Δ max=4e-06
+#POWER_PROFILE stage=grid total_s=0.120438
+#POWER_PROFILE stage=bootstrap total_s=1.01013
+#$1.11802e-17 -5.6865e-18 0
+#deg max=115 2.00713
+#dp_Δ max=-1.25e-06
+#POWER_PROFILE stage=grid total_s=0.119175
+#POWER_PROFILE stage=bootstrap total_s=1.00553
+#deg max=25 0.436332
+#dp_Δ max=-1.25e-06
+#POWER_PROFILE stage=grid total_s=0.120355
+#POWER_PROFILE stage=bootstrap total_s=1.00305
+#deg max=20 0.349066
+#dp_Δ max=-2.75e-06
+#POWER_PROFILE stage=grid total_s=0.122072
+#POWER_PROFILE stage=bootstrap total_s=1.01773
+#deg max=60 1.0472
+#dp_Δ max=2.5e-07
+#POWER_PROFILE stage=grid total_s=0.121004
+#POWER_PROFILE stage=bootstrap total_s=1.01754
+#$9.81041e-18 -1.60996e-17 1
+#deg max=145 2.53073
+#dp_Δ max=-6.5e-06
+#POWER_PROFILE stage=grid total_s=0.120541
+#POWER_PROFILE stage=bootstrap total_s=0.998839
+#deg max=170 2.96706
+#dp_Δ max=-1.475e-05
+#POWER_PROFILE stage=grid total_s=0.122642
+#POWER_PROFILE stage=bootstrap total_s=1.01723
+#PROFILE segment=1 windows=32 fft_qc_s=0.148009 pack_s=0.0170749 stack_s=7.76409 fit_s=15.228 total_s=23.1592
+#Segment 2005-Oct-09 1 accepted_windows=32
+2005-Oct-09 11:51:28 14497.4 58.8164 1 598
+2005-Oct-09 11:59:12 15243.4 58.0116 1 597
+2005-Oct-09 12:06:56 14569.2 58.8922 1 595
+2005-Oct-09 12:14:40 14818.9 58.8821 1 597
+2005-Oct-09 12:22:24 14753.8 58.0148 1 597
+2005-Oct-09 12:30:08 14157.8 59.4203 1 598
+2005-Oct-09 12:37:52 14432.6 59.738 1 595
+2005-Oct-09 12:45:36 14752 57.5834 1 596
+2005-Oct-09 12:53:20 14112.8 58.7819 1 597
+2005-Oct-09 13:01:04 14468.8 57.6124 1 598
+2005-Oct-09 13:08:48 14481.1 58.3222 1 596
+2005-Oct-09 13:16:32 13977.1 59.5209 1 600
+2005-Oct-09 13:24:16 14155 59.1568 1 601
+2005-Oct-09 13:32:00 14259.3 59.2644 1 600
+2005-Oct-09 13:39:44 14240.2 59.8918 1 602
+2005-Oct-09 13:47:28 14421.8 59.4991 1 594
+2005-Oct-09 13:55:12 13880.7 61.2827 1 599
+2005-Oct-09 14:02:56 14066.9 61.4683 1 597
+2005-Oct-09 14:10:40 14142.8 61.1265 1 600
+2005-Oct-09 14:18:24 13675.8 60.5414 1 597
+2005-Oct-09 14:26:08 14349.3 61.7537 1 599
+2005-Oct-09 14:33:52 14232 60.9359 1 602
+2005-Oct-09 14:41:36 13861.3 60.6537 1 599
+2005-Oct-09 14:49:20 14469.7 59.9807 1 600
+2005-Oct-09 14:57:04 14606.2 60.4999 1 599
+2005-Oct-09 15:04:48 14851.9 62.0753 1 601
+2005-Oct-09 15:12:32 13667.7 60.755 1 602
+2005-Oct-09 15:20:16 14602 59.919 1 599
+2005-Oct-09 15:28:00 14314.4 60.8434 1 600
+2005-Oct-09 15:35:44 14223.2 61.1503 1 598
+2005-Oct-09 15:43:28 14137.2 61.6421 1 599
+2005-Oct-09 15:51:12 14022.2 60.4671 1 601
+2005-Oct-09 15:58:56 14097 62.3364 1 601
+2005-Oct-09 16:06:40 14700.4 63.6849 1 606
+2005-Oct-09 16:14:24 14370.1 70.3041 1 604
+2005-Oct-09 16:22:08 14573.9 76.9345 1 604
+2005-Oct-09 17:00:48 14917.5 64.9938 1 602
+2005-Oct-09 17:08:32 14534.8 63.0177 1 601
+2005-Oct-09 17:16:16 14607.1 61.8109 1 603
+#$1.19092e-17 -1.53529e-17 2
+#deg max=115 2.00713
+#dp_Δ max=2.5e-07
+#POWER_PROFILE stage=grid total_s=0.145657
+#POWER_PROFILE stage=bootstrap total_s=1.21111
+#deg max=25 0.436332
+#dp_Δ max=-2e-06
+#POWER_PROFILE stage=grid total_s=0.147334
+#POWER_PROFILE stage=bootstrap total_s=1.23365
+#$1.21257e-17 -7.90169e-18 0
+#deg max=30 0.523599
+#dp_Δ max=-2e-06
+#POWER_PROFILE stage=grid total_s=0.145464
+#POWER_PROFILE stage=bootstrap total_s=1.23275
+#deg max=10 0.174533
+#dp_Δ max=-1.175e-05
+#POWER_PROFILE stage=grid total_s=0.145485
+#POWER_PROFILE stage=bootstrap total_s=1.24259
+#$1.09299e-17 -1.86291e-17 1
+#deg max=5 0.0872665
+#dp_Δ max=4.75e-06
+#POWER_PROFILE stage=grid total_s=0.14713
+#POWER_PROFILE stage=bootstrap total_s=1.21179
+#PROFILE segment=2 windows=39 fft_qc_s=0.146453 pack_s=0.0202347 stack_s=9.46206 fit_s=9.3915 total_s=19.0222
+#Segment 2005-Oct-09 2 accepted_windows=39
+2005-Oct-09 18:33:36 14184.7 69.0521 1 602
+2005-Oct-09 18:41:20 14766.9 65.7425 1 605
+2005-Oct-09 18:49:04 14762.7 66.0671 1 604
+2005-Oct-09 18:56:48 14523.1 67.9283 1 608
+2005-Oct-09 19:04:32 14405.6 63.789 1 605
+2005-Oct-09 19:12:16 13772.2 63.7613 1 606
+2005-Oct-09 19:20:00 14362.8 63.8939 1 608
+2005-Oct-09 19:27:44 14838.3 63.0876 1 606
+2005-Oct-09 19:35:28 14156.2 62.6717 1 606
+2005-Oct-09 19:43:12 14263.4 64.4163 1 604
+2005-Oct-09 19:50:56 14389.3 64.8181 1 604
+2005-Oct-09 19:58:40 14187.3 62.5516 1 606
+2005-Oct-09 20:06:24 13672 62.0425 1 605
+2005-Oct-09 20:14:08 14277.7 64.8607 1 605
+2005-Oct-09 20:21:52 14143.9 64.1222 1 603
+2005-Oct-09 20:29:36 14397 63.9908 1 607
+2005-Oct-09 20:37:20 14262.9 63.4542 1 606
+2005-Oct-09 20:45:04 14229.8 64.9559 1 606
+2005-Oct-09 20:52:48 13906.3 67.1657 1 604
+2005-Oct-09 21:08:16 14916 79.8715 1 605
+2005-Oct-09 21:23:44 14308.5 65.2221 1 607
+2005-Oct-09 21:31:28 14114.1 63.9648 1 608
+2005-Oct-09 21:39:12 14285.5 63.1753 1 609
+2005-Oct-09 21:46:56 13981.4 62.1108 1 607
+2005-Oct-09 21:54:40 14172.9 62.5066 1 606
+2005-Oct-09 22:02:24 14400.1 63.9175 1 605
+2005-Oct-09 22:10:08 14858.4 64.4877 1 605
+2005-Oct-09 22:17:52 14223.8 64.433 1 603
+2005-Oct-09 22:25:36 14763 61.848 1 602
+2005-Oct-09 22:33:20 14598.5 63.476 1 610
+2005-Oct-09 22:56:32 14395.8 77.3665 1 612
+2005-Oct-09 23:12:00 16513.5 65.4077 1 608
+2005-Oct-09 23:19:44 15102.1 63.3152 1 611
+2005-Oct-09 23:27:28 14136.9 62.7659 1 606
+2005-Oct-09 23:35:12 14395.1 61.2449 1 608
+#$9.05373e-18 -1.49005e-17 2
+#deg max=45 0.785398
+#dp_Δ max=-5e-06
+#POWER_PROFILE stage=grid total_s=0.132505
+#POWER_PROFILE stage=bootstrap total_s=1.11189
+#$8.65392e-18 -6.46553e-18 0
+#deg max=10 0.174533
+#dp_Δ max=-1.025e-05
+#POWER_PROFILE stage=grid total_s=0.133796
+#POWER_PROFILE stage=bootstrap total_s=1.10864
+#deg max=40 0.698132
+#dp_Δ max=-5.75e-06
+#POWER_PROFILE stage=grid total_s=0.134013
+#POWER_PROFILE stage=bootstrap total_s=1.08041
+#$8.49621e-18 -1.6647e-17 1
+#deg max=20 0.349066
+#dp_Δ max=4e-06
+#POWER_PROFILE stage=grid total_s=0.131796
+#POWER_PROFILE stage=bootstrap total_s=1.1108
+#PROFILE segment=3 windows=35 fft_qc_s=0.140593 pack_s=0.0184274 stack_s=8.6557 fit_s=6.90879 total_s=15.7395
+#Segment 2005-Oct-09 3 accepted_windows=35
+#ScanSummary days=1 missing=0 empty=0 multiple=0 loaded=1
+#PROFILE accepted_windows_total=106
+#CPU_PROFILE stage=objective context=serial_caller calls=2257 inclusive_s=22.408
+#CPU_PROFILE stage=objective context=outer_parallel calls=1425 inclusive_s=9.66704
+#CPU_PROFILE stage=hessian context=serial_caller calls=162 inclusive_s=3.21336
+#CPU_PROFILE stage=hessian context=outer_parallel calls=0 inclusive_s=0
+#CPU_PROFILE stage=rotation context=serial_caller calls=57 inclusive_s=0.130968
+#CPU_PROFILE stage=rotation context=outer_parallel calls=0 inclusive_s=0
+#CPU_PROFILE stage=fitting context=serial_caller calls=19 inclusive_s=5.25256
+#CPU_PROFILE stage=fitting context=outer_parallel calls=0 inclusive_s=0

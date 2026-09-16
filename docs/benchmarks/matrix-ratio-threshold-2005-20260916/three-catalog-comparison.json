@@ -1,0 +1,3186 @@
+{
+  "total_current_rows": 677,
+  "first_33_columns_exact": true,
+  "rows_with_changed_matrix": 677,
+  "matching_report_sha256": "a911822924f7852e3a1098130147bc52a091f79162b044902926371bdae9f123",
+  "definition": "100 * (current - historical) / historical; same historical-current pairing retained for before and after; positive fitted-component power in all three catalogs",
+  "by_component": {
+    "R": {
+      "count": 164,
+      "events": [
+        {
+          "historical_line": 3334,
+          "current_id": "1:9",
+          "historical": 1.76566e-15,
+          "before": 1.76523e-15,
+          "after": 1.69172e-15,
+          "before_relative_percent": -0.024353499541240886,
+          "after_relative_percent": -4.187669200185762
+        },
+        {
+          "historical_line": 3335,
+          "current_id": "1:10",
+          "historical": 1.65919e-15,
+          "before": 1.6594e-15,
+          "after": 1.56468e-15,
+          "before_relative_percent": 0.012656778307484906,
+          "after_relative_percent": -5.696152942098253
+        },
+        {
+          "historical_line": 3337,
+          "current_id": "1:14",
+          "historical": 1.69596e-15,
+          "before": 1.69564e-15,
+          "after": 1.60955e-15,
+          "before_relative_percent": -0.018868369537017315,
+          "after_relative_percent": -5.095049411542718
+        },
+        {
+          "historical_line": 3338,
+          "current_id": "1:15",
+          "historical": 1.6859e-15,
+          "before": 1.6858e-15,
+          "after": 1.63249e-15,
+          "before_relative_percent": -0.00593154991398448,
+          "after_relative_percent": -3.1680408090634105
+        },
+        {
+          "historical_line": 3339,
+          "current_id": "1:16",
+          "historical": 1.46749e-15,
+          "before": 1.46753e-15,
+          "after": 1.37932e-15,
+          "before_relative_percent": 0.0027257425945004243,
+          "after_relative_percent": -6.008218113922403
+        },
+        {
+          "historical_line": 3340,
+          "current_id": "1:17",
+          "historical": 1.84142e-15,
+          "before": 1.84133e-15,
+          "after": 1.78671e-15,
+          "before_relative_percent": -0.004887532447783727,
+          "after_relative_percent": -2.9710766690923096
+        },
+        {
+          "historical_line": 3341,
+          "current_id": "1:18",
+          "historical": 1.41376e-15,
+          "before": 1.4134e-15,
+          "after": 1.36775e-15,
+          "before_relative_percent": -0.025464010864639786,
+          "after_relative_percent": -3.2544420552286013
+        },
+        {
+          "historical_line": 3345,
+          "current_id": "1:22",
+          "historical": 1.27712e-15,
+          "before": 1.27707e-15,
+          "after": 1.22676e-15,
+          "before_relative_percent": -0.003915058882475453,
+          "after_relative_percent": -3.943247306439479
+        },
+        {
+          "historical_line": 3346,
+          "current_id": "1:23",
+          "historical": 1.26131e-15,
+          "before": 1.26138e-15,
+          "after": 1.21678e-15,
+          "before_relative_percent": 0.005549785540437391,
+          "after_relative_percent": -3.5304564302193753
+        },
+        {
+          "historical_line": 3350,
+          "current_id": "1:27",
+          "historical": 9.3671e-16,
+          "before": 9.36714e-16,
+          "after": 8.95458e-16,
+          "before_relative_percent": 0.0004270265076877777,
+          "after_relative_percent": -4.403924373605495
+        },
+        {
+          "historical_line": 3355,
+          "current_id": "1:32",
+          "historical": 6.41224e-16,
+          "before": 6.41204e-16,
+          "after": 6.00279e-16,
+          "before_relative_percent": -0.003119034845844304,
+          "after_relative_percent": -6.385444088181336
+        },
+        {
+          "historical_line": 3401,
+          "current_id": "2:33",
+          "historical": 6.37952e-16,
+          "before": 6.37923e-16,
+          "after": 5.87375e-16,
+          "before_relative_percent": -0.004545796548960368,
+          "after_relative_percent": -7.92802593298555
+        },
+        {
+          "historical_line": 3402,
+          "current_id": "2:34",
+          "historical": 5.97102e-16,
+          "before": 5.97068e-16,
+          "after": 5.48577e-16,
+          "before_relative_percent": -0.005694169505376934,
+          "after_relative_percent": -8.126752213189715
+        },
+        {
+          "historical_line": 3409,
+          "current_id": "2:41",
+          "historical": 1.35484e-15,
+          "before": 1.35484e-15,
+          "after": 1.30831e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -3.434353872043927
+        },
+        {
+          "historical_line": 3416,
+          "current_id": "2:48",
+          "historical": 1.144e-15,
+          "before": 1.14384e-15,
+          "after": 1.09665e-15,
+          "before_relative_percent": -0.013986013986011514,
+          "after_relative_percent": -4.138986013986024
+        },
+        {
+          "historical_line": 3421,
+          "current_id": "2:52",
+          "historical": 8.24998e-16,
+          "before": 8.2496e-16,
+          "after": 7.70867e-16,
+          "before_relative_percent": -0.004606071772295106,
+          "after_relative_percent": -6.561349239634517
+        },
+        {
+          "historical_line": 3422,
+          "current_id": "2:53",
+          "historical": 8.7783e-16,
+          "before": 8.77917e-16,
+          "after": 7.78021e-16,
+          "before_relative_percent": 0.009910802775037197,
+          "after_relative_percent": -11.369969128418944
+        },
+        {
+          "historical_line": 3426,
+          "current_id": "2:57",
+          "historical": 7.79877e-16,
+          "before": 7.79848e-16,
+          "after": 6.96257e-16,
+          "before_relative_percent": -0.003718535102326115,
+          "after_relative_percent": -10.722203629546712
+        },
+        {
+          "historical_line": 3427,
+          "current_id": "2:58",
+          "historical": 7.53811e-16,
+          "before": 7.53681e-16,
+          "after": 6.91262e-16,
+          "before_relative_percent": -0.0172457021720418,
+          "after_relative_percent": -8.29770327044843
+        },
+        {
+          "historical_line": 3428,
+          "current_id": "2:59",
+          "historical": 6.80437e-16,
+          "before": 6.80477e-16,
+          "after": 6.01147e-16,
+          "before_relative_percent": 0.005878575092177485,
+          "after_relative_percent": -11.652805476480566
+        },
+        {
+          "historical_line": 3442,
+          "current_id": "2:74",
+          "historical": 7.26523e-16,
+          "before": 7.26554e-16,
+          "after": 6.88516e-16,
+          "before_relative_percent": 0.004266898639149197,
+          "after_relative_percent": -5.231355373470614
+        },
+        {
+          "historical_line": 3492,
+          "current_id": "2:125",
+          "historical": 6.9641e-16,
+          "before": 6.96359e-16,
+          "after": 6.46397e-16,
+          "before_relative_percent": -0.007323272210335574,
+          "after_relative_percent": -7.181545354029961
+        },
+        {
+          "historical_line": 3499,
+          "current_id": "2:132",
+          "historical": 8.40715e-16,
+          "before": 8.4077e-16,
+          "after": 7.9054e-16,
+          "before_relative_percent": 0.006542050516511466,
+          "after_relative_percent": -5.96813426666587
+        },
+        {
+          "historical_line": 3505,
+          "current_id": "3:3",
+          "historical": 7.16925e-16,
+          "before": 7.17538e-16,
+          "after": 6.69205e-16,
+          "before_relative_percent": 0.08550406248910569,
+          "after_relative_percent": -6.65620532133766
+        },
+        {
+          "historical_line": 3506,
+          "current_id": "3:4",
+          "historical": 7.77741e-16,
+          "before": 7.08573e-16,
+          "after": 6.58289e-16,
+          "before_relative_percent": -8.893449104521933,
+          "after_relative_percent": -15.358840539459795
+        },
+        {
+          "historical_line": 3509,
+          "current_id": "3:7",
+          "historical": 8.05504e-16,
+          "before": 8.05592e-16,
+          "after": 7.59128e-16,
+          "before_relative_percent": 0.01092483712059611,
+          "after_relative_percent": -5.7573891625615765
+        },
+        {
+          "historical_line": 3510,
+          "current_id": "3:8",
+          "historical": 9.08667e-16,
+          "before": 9.08636e-16,
+          "after": 8.63256e-16,
+          "before_relative_percent": -0.0034115908247978055,
+          "after_relative_percent": -4.997540353066632
+        },
+        {
+          "historical_line": 3513,
+          "current_id": "3:11",
+          "historical": 8.0633e-16,
+          "before": 8.06369e-16,
+          "after": 7.60671e-16,
+          "before_relative_percent": 0.004836729378787652,
+          "after_relative_percent": -5.662569915543269
+        },
+        {
+          "historical_line": 3527,
+          "current_id": "3:26",
+          "historical": 1.12085e-15,
+          "before": 1.12081e-15,
+          "after": 1.13327e-15,
+          "before_relative_percent": -0.0035687201677347957,
+          "after_relative_percent": 1.1080876120800998
+        },
+        {
+          "historical_line": 3529,
+          "current_id": "3:28",
+          "historical": 9.16257e-16,
+          "before": 9.2726e-16,
+          "after": 9.47644e-16,
+          "before_relative_percent": 1.2008639497433693,
+          "after_relative_percent": 3.4255672807956827
+        },
+        {
+          "historical_line": 3531,
+          "current_id": "3:30",
+          "historical": 1.02854e-15,
+          "before": 1.10461e-15,
+          "after": 1.09478e-15,
+          "before_relative_percent": 7.39592043090207,
+          "after_relative_percent": 6.440196783790619
+        },
+        {
+          "historical_line": 3548,
+          "current_id": "3:47",
+          "historical": 8.53886e-16,
+          "before": 8.53709e-16,
+          "after": 8.12702e-16,
+          "before_relative_percent": -0.02072876238747856,
+          "after_relative_percent": -4.823126272125322
+        },
+        {
+          "historical_line": 3575,
+          "current_id": "3:75",
+          "historical": 5.81416e-16,
+          "before": 5.81422e-16,
+          "after": 5.65601e-16,
+          "before_relative_percent": 0.0010319633446664866,
+          "after_relative_percent": -2.720083382638261
+        },
+        {
+          "historical_line": 3578,
+          "current_id": "3:78",
+          "historical": 1.04616e-15,
+          "before": 1.07039e-15,
+          "after": 1.03017e-15,
+          "before_relative_percent": 2.316089317121661,
+          "after_relative_percent": -1.5284468914888771
+        },
+        {
+          "historical_line": 3580,
+          "current_id": "3:80",
+          "historical": 9.03824e-16,
+          "before": 9.03863e-16,
+          "after": 8.67588e-16,
+          "before_relative_percent": 0.004314999380405915,
+          "after_relative_percent": -4.009187629449984
+        },
+        {
+          "historical_line": 3602,
+          "current_id": "3:101",
+          "historical": 3.28626e-16,
+          "before": 3.28655e-16,
+          "after": 3.72771e-16,
+          "before_relative_percent": 0.008824621302028213,
+          "after_relative_percent": 13.43320370268939
+        },
+        {
+          "historical_line": 3611,
+          "current_id": "3:110",
+          "historical": 2.52165e-16,
+          "before": 2.5219e-16,
+          "after": 2.40665e-16,
+          "before_relative_percent": 0.009914143517164575,
+          "after_relative_percent": -4.560506017885113
+        },
+        {
+          "historical_line": 3622,
+          "current_id": "3:121",
+          "historical": 2.53337e-16,
+          "before": 2.5336e-16,
+          "after": 2.41448e-16,
+          "before_relative_percent": 0.009078815964502773,
+          "after_relative_percent": -4.692958391391688
+        },
+        {
+          "historical_line": 3632,
+          "current_id": "3:129",
+          "historical": 2.54503e-16,
+          "before": 2.54482e-16,
+          "after": 2.44283e-16,
+          "before_relative_percent": -0.008251376211676487,
+          "after_relative_percent": -4.01566975634865
+        },
+        {
+          "historical_line": 3633,
+          "current_id": "3:130",
+          "historical": 2.35532e-16,
+          "before": 2.35475e-16,
+          "after": 2.60661e-16,
+          "before_relative_percent": -0.024200533260865242,
+          "after_relative_percent": 10.669038601973412
+        },
+        {
+          "historical_line": 3638,
+          "current_id": "3:135",
+          "historical": 3.25223e-16,
+          "before": 2.90139e-16,
+          "after": 2.75823e-16,
+          "before_relative_percent": -10.78767491844057,
+          "after_relative_percent": -15.189577612899452
+        },
+        {
+          "historical_line": 3641,
+          "current_id": "3:139",
+          "historical": 3.50254e-16,
+          "before": 3.50258e-16,
+          "after": 3.31797e-16,
+          "before_relative_percent": 0.0011420283565710676,
+          "after_relative_percent": -5.269604344275869
+        },
+        {
+          "historical_line": 3642,
+          "current_id": "3:140",
+          "historical": 3.27596e-16,
+          "before": 3.27572e-16,
+          "after": 3.13096e-16,
+          "before_relative_percent": -0.0073260967777488695,
+          "after_relative_percent": -4.426183469883648
+        },
+        {
+          "historical_line": 3643,
+          "current_id": "3:141",
+          "historical": 2.0052e-16,
+          "before": 2.00523e-16,
+          "after": 1.83179e-16,
+          "before_relative_percent": 0.0014961101137078714,
+          "after_relative_percent": -8.648015160582478
+        },
+        {
+          "historical_line": 3646,
+          "current_id": "3:144",
+          "historical": 3.77774e-16,
+          "before": 3.77774e-16,
+          "after": 3.61485e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -4.311837236019422
+        },
+        {
+          "historical_line": 3651,
+          "current_id": "3:150",
+          "historical": 4.3105e-16,
+          "before": 4.31058e-16,
+          "after": 4.20222e-16,
+          "before_relative_percent": 0.001855933186400982,
+          "after_relative_percent": -2.512005567799569
+        },
+        {
+          "historical_line": 3754,
+          "current_id": "6:2",
+          "historical": 1.2078e-15,
+          "before": 1.20762e-15,
+          "after": 1.18602e-15,
+          "before_relative_percent": -0.01490312965721774,
+          "after_relative_percent": -1.80327868852459
+        },
+        {
+          "historical_line": 3755,
+          "current_id": "6:3",
+          "historical": 8.91041e-16,
+          "before": 8.90955e-16,
+          "after": 8.63751e-16,
+          "before_relative_percent": -0.00965163219199816,
+          "after_relative_percent": -3.062709796743357
+        },
+        {
+          "historical_line": 3758,
+          "current_id": "6:6",
+          "historical": 9.91571e-16,
+          "before": 9.91538e-16,
+          "after": 9.52792e-16,
+          "before_relative_percent": -0.0033280521516076966,
+          "after_relative_percent": -3.9108646783740153
+        },
+        {
+          "historical_line": 3759,
+          "current_id": "6:7",
+          "historical": 7.33755e-16,
+          "before": 7.33779e-16,
+          "after": 7.09126e-16,
+          "before_relative_percent": 0.0032708465359743144,
+          "after_relative_percent": -3.3565699722659548
+        },
+        {
+          "historical_line": 3762,
+          "current_id": "6:10",
+          "historical": 1.18607e-15,
+          "before": 1.18605e-15,
+          "after": 1.15536e-15,
+          "before_relative_percent": -0.0016862411156171042,
+          "after_relative_percent": -2.5892232330300913
+        },
+        {
+          "historical_line": 3763,
+          "current_id": "6:11",
+          "historical": 8.4147e-16,
+          "before": 8.41498e-16,
+          "after": 8.0729e-16,
+          "before_relative_percent": 0.003327510190498373,
+          "after_relative_percent": -4.061939225403166
+        },
+        {
+          "historical_line": 3766,
+          "current_id": "6:14",
+          "historical": 1.00064e-15,
+          "before": 1.0006e-15,
+          "after": 9.67851e-16,
+          "before_relative_percent": -0.003997441637360044,
+          "after_relative_percent": -3.2768028461784504
+        },
+        {
+          "historical_line": 3767,
+          "current_id": "6:15",
+          "historical": 7.44702e-16,
+          "before": 7.44714e-16,
+          "after": 7.06854e-16,
+          "before_relative_percent": 0.0016113828081643078,
+          "after_relative_percent": -5.082301376926612
+        },
+        {
+          "historical_line": 3770,
+          "current_id": "6:18",
+          "historical": 5.99712e-16,
+          "before": 5.99739e-16,
+          "after": 5.68587e-16,
+          "before_relative_percent": 0.004502161037311936,
+          "after_relative_percent": -5.189991195773969
+        },
+        {
+          "historical_line": 3773,
+          "current_id": "6:22",
+          "historical": 3.70501e-16,
+          "before": 3.70495e-16,
+          "after": 3.48671e-16,
+          "before_relative_percent": -0.001619428827448477,
+          "after_relative_percent": -5.89202188388156
+        },
+        {
+          "historical_line": 3776,
+          "current_id": "6:25",
+          "historical": 3.46617e-16,
+          "before": 3.46599e-16,
+          "after": 3.31529e-16,
+          "before_relative_percent": -0.005193051696827933,
+          "after_relative_percent": -4.35293133343142
+        },
+        {
+          "historical_line": 3777,
+          "current_id": "6:26",
+          "historical": 2.85754e-16,
+          "before": 2.85757e-16,
+          "after": 2.72334e-16,
+          "before_relative_percent": 0.0010498540702785775,
+          "after_relative_percent": -4.696347207738116
+        },
+        {
+          "historical_line": 4049,
+          "current_id": "7:3",
+          "historical": 2.4228e-16,
+          "before": 2.4358e-16,
+          "after": 2.13441e-16,
+          "before_relative_percent": 0.5365692587089299,
+          "after_relative_percent": -11.903169886082232
+        },
+        {
+          "historical_line": 4050,
+          "current_id": "7:4",
+          "historical": 1.51004e-16,
+          "before": 1.53453e-16,
+          "after": 1.66548e-16,
+          "before_relative_percent": 1.6218113427458825,
+          "after_relative_percent": 10.293767052528402
+        },
+        {
+          "historical_line": 4055,
+          "current_id": "7:9",
+          "historical": 2.29417e-16,
+          "before": 2.29437e-16,
+          "after": 2.06208e-16,
+          "before_relative_percent": 0.008717749774422856,
+          "after_relative_percent": -10.116512725735227
+        },
+        {
+          "historical_line": 4061,
+          "current_id": "7:15",
+          "historical": 1.76119e-16,
+          "before": 1.76129e-16,
+          "after": 1.56435e-16,
+          "before_relative_percent": 0.005677979093676733,
+          "after_relative_percent": -11.17653404800164
+        },
+        {
+          "historical_line": 4062,
+          "current_id": "7:16",
+          "historical": 1.08648e-16,
+          "before": 1.08651e-16,
+          "after": 1.17542e-16,
+          "before_relative_percent": 0.00276121051470124,
+          "after_relative_percent": 8.18606877254988
+        },
+        {
+          "historical_line": 4066,
+          "current_id": "7:20",
+          "historical": 1.77766e-16,
+          "before": 1.77761e-16,
+          "after": 1.60192e-16,
+          "before_relative_percent": -0.00281268634048093,
+          "after_relative_percent": -9.886029949484154
+        },
+        {
+          "historical_line": 4067,
+          "current_id": "7:21",
+          "historical": 1.31992e-16,
+          "before": 1.31993e-16,
+          "after": 1.40682e-16,
+          "before_relative_percent": 0.0007576216740412534,
+          "after_relative_percent": 6.583732347414983
+        },
+        {
+          "historical_line": 4070,
+          "current_id": "4:2",
+          "historical": 4.17884e-16,
+          "before": 4.21124e-16,
+          "after": 4.26265e-16,
+          "before_relative_percent": 0.7753347819011935,
+          "after_relative_percent": 2.0055804960228185
+        },
+        {
+          "historical_line": 4071,
+          "current_id": "4:3",
+          "historical": 2.81053e-16,
+          "before": 2.81682e-16,
+          "after": 2.87305e-16,
+          "before_relative_percent": 0.2238012047549809,
+          "after_relative_percent": 2.2244914660224158
+        },
+        {
+          "historical_line": 4073,
+          "current_id": "4:6",
+          "historical": 3.24164e-16,
+          "before": 3.24161e-16,
+          "after": 3.28356e-16,
+          "before_relative_percent": -0.000925457484479697,
+          "after_relative_percent": 1.2931725916511372
+        },
+        {
+          "historical_line": 4074,
+          "current_id": "4:7",
+          "historical": 2.58006e-16,
+          "before": 2.58007e-16,
+          "after": 2.62507e-16,
+          "before_relative_percent": 0.0003875878855641446,
+          "after_relative_percent": 1.744533072874277
+        },
+        {
+          "historical_line": 4077,
+          "current_id": "4:10",
+          "historical": 4.73874e-16,
+          "before": 4.73866e-16,
+          "after": 4.57199e-16,
+          "before_relative_percent": -0.0016882124784345365,
+          "after_relative_percent": -3.5188678847119736
+        },
+        {
+          "historical_line": 4078,
+          "current_id": "4:11",
+          "historical": 2.35117e-16,
+          "before": 2.35117e-16,
+          "after": 2.39295e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": 1.7769876274365437
+        },
+        {
+          "historical_line": 4079,
+          "current_id": "4:12",
+          "historical": 2.57089e-16,
+          "before": 2.57083e-16,
+          "after": 2.61085e-16,
+          "before_relative_percent": -0.002333822139422015,
+          "after_relative_percent": 1.5543255448502213
+        },
+        {
+          "historical_line": 4083,
+          "current_id": "4:16",
+          "historical": 5.773e-16,
+          "before": 5.77263e-16,
+          "after": 5.61283e-16,
+          "before_relative_percent": -0.006409146024599632,
+          "after_relative_percent": -2.774467347999321
+        },
+        {
+          "historical_line": 4084,
+          "current_id": "4:17",
+          "historical": 3.17036e-16,
+          "before": 3.17038e-16,
+          "after": 3.20411e-16,
+          "before_relative_percent": 0.0006308431850010621,
+          "after_relative_percent": 1.0645478746893033
+        },
+        {
+          "historical_line": 4087,
+          "current_id": "4:20",
+          "historical": 5.32776e-16,
+          "before": 5.32793e-16,
+          "after": 5.17072e-16,
+          "before_relative_percent": 0.003190834421973321,
+          "after_relative_percent": -2.947580221331292
+        },
+        {
+          "historical_line": 4088,
+          "current_id": "4:21",
+          "historical": 3.42817e-16,
+          "before": 3.42822e-16,
+          "after": 3.45842e-16,
+          "before_relative_percent": 0.0014585040998493781,
+          "after_relative_percent": 0.8823949804122933
+        },
+        {
+          "historical_line": 4089,
+          "current_id": "4:22",
+          "historical": 3.08708e-16,
+          "before": 3.08708e-16,
+          "after": 3.11604e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": 0.9381033209375778
+        },
+        {
+          "historical_line": 4092,
+          "current_id": "4:25",
+          "historical": 4.55357e-16,
+          "before": 4.55346e-16,
+          "after": 4.41833e-16,
+          "before_relative_percent": -0.002415687032375491,
+          "after_relative_percent": -2.969977402345858
+        },
+        {
+          "historical_line": 4093,
+          "current_id": "4:26",
+          "historical": 3.16836e-16,
+          "before": 3.16841e-16,
+          "after": 3.20367e-16,
+          "before_relative_percent": 0.0015781034983453068,
+          "after_relative_percent": 1.1144566905275877
+        },
+        {
+          "historical_line": 4094,
+          "current_id": "4:27",
+          "historical": 2.0813e-16,
+          "before": 2.08129e-16,
+          "after": 2.11311e-16,
+          "before_relative_percent": -0.00048046893768027843,
+          "after_relative_percent": 1.5283716907702027
+        },
+        {
+          "historical_line": 4097,
+          "current_id": "4:30",
+          "historical": 4.0174e-16,
+          "before": 4.01785e-16,
+          "after": 3.90822e-16,
+          "before_relative_percent": 0.011201274456107413,
+          "after_relative_percent": -2.717678100263854
+        },
+        {
+          "historical_line": 4098,
+          "current_id": "4:31",
+          "historical": 2.71703e-16,
+          "before": 2.71708e-16,
+          "after": 2.73708e-16,
+          "before_relative_percent": 0.0018402446789300697,
+          "after_relative_percent": 0.737938116251935
+        },
+        {
+          "historical_line": 4099,
+          "current_id": "4:32",
+          "historical": 1.93789e-16,
+          "before": 1.93784e-16,
+          "after": 1.95044e-16,
+          "before_relative_percent": -0.002580125806928013,
+          "after_relative_percent": 0.6476115775405189
+        },
+        {
+          "historical_line": 4102,
+          "current_id": "4:35",
+          "historical": 3.41865e-16,
+          "before": 3.41891e-16,
+          "after": 3.34363e-16,
+          "before_relative_percent": 0.007605341289695922,
+          "after_relative_percent": -2.1944334752022066
+        },
+        {
+          "historical_line": 4103,
+          "current_id": "4:36",
+          "historical": 2.0242e-16,
+          "before": 2.02425e-16,
+          "after": 2.11341e-16,
+          "before_relative_percent": 0.0024701116490444264,
+          "after_relative_percent": 4.407173204228831
+        },
+        {
+          "historical_line": 4104,
+          "current_id": "4:37",
+          "historical": 1.69069e-16,
+          "before": 1.69071e-16,
+          "after": 1.78176e-16,
+          "before_relative_percent": 0.0011829489734882515,
+          "after_relative_percent": 5.386558150814147
+        },
+        {
+          "historical_line": 4192,
+          "current_id": "5:6",
+          "historical": 3.45637e-16,
+          "before": 3.45578e-16,
+          "after": 3.34697e-16,
+          "before_relative_percent": -0.017069931749202905,
+          "after_relative_percent": -3.16517039553057
+        },
+        {
+          "historical_line": 4195,
+          "current_id": "5:9",
+          "historical": 4.61269e-16,
+          "before": 4.61341e-16,
+          "after": 4.45056e-16,
+          "before_relative_percent": 0.015609113120551577,
+          "after_relative_percent": -3.514868764213497
+        },
+        {
+          "historical_line": 4196,
+          "current_id": "5:10",
+          "historical": 4.2417e-16,
+          "before": 4.24169e-16,
+          "after": 4.09548e-16,
+          "before_relative_percent": -0.00023575453238500188,
+          "after_relative_percent": -3.447202772473301
+        },
+        {
+          "historical_line": 4200,
+          "current_id": "5:14",
+          "historical": 5.04738e-16,
+          "before": 5.047e-16,
+          "after": 4.87522e-16,
+          "before_relative_percent": -0.007528658432687241,
+          "after_relative_percent": -3.4108785151900523
+        },
+        {
+          "historical_line": 4201,
+          "current_id": "5:15",
+          "historical": 5.6402e-16,
+          "before": 5.63981e-16,
+          "after": 5.45712e-16,
+          "before_relative_percent": -0.006914648416733726,
+          "after_relative_percent": -3.245984184957995
+        },
+        {
+          "historical_line": 4205,
+          "current_id": "5:19",
+          "historical": 5.02849e-16,
+          "before": 5.02762e-16,
+          "after": 4.89191e-16,
+          "before_relative_percent": -0.017301416528603397,
+          "after_relative_percent": -2.7161235281366714
+        },
+        {
+          "historical_line": 4209,
+          "current_id": "5:23",
+          "historical": 4.81258e-16,
+          "before": 4.81298e-16,
+          "after": 4.69546e-16,
+          "before_relative_percent": 0.008311550145667645,
+          "after_relative_percent": -2.4336218826492173
+        },
+        {
+          "historical_line": 4213,
+          "current_id": "5:27",
+          "historical": 4.00675e-16,
+          "before": 4.00657e-16,
+          "after": 3.89295e-16,
+          "before_relative_percent": -0.004492419042867457,
+          "after_relative_percent": -2.840207150433638
+        },
+        {
+          "historical_line": 4217,
+          "current_id": "5:31",
+          "historical": 4.41702e-16,
+          "before": 4.41725e-16,
+          "after": 4.29774e-16,
+          "before_relative_percent": 0.005207130599371723,
+          "after_relative_percent": -2.7004632082263558
+        },
+        {
+          "historical_line": 4264,
+          "current_id": "8:2",
+          "historical": 3.97938e-16,
+          "before": 3.99229e-16,
+          "after": 3.86383e-16,
+          "before_relative_percent": 0.3244223974589122,
+          "after_relative_percent": -2.9037186697425277
+        },
+        {
+          "historical_line": 4265,
+          "current_id": "8:3",
+          "historical": 2.75124e-16,
+          "before": 2.7795e-16,
+          "after": 2.63915e-16,
+          "before_relative_percent": 1.0271732019016877,
+          "after_relative_percent": -4.074162922900204
+        },
+        {
+          "historical_line": 4268,
+          "current_id": "8:6",
+          "historical": 5.82604e-16,
+          "before": 5.82231e-16,
+          "after": 5.67452e-16,
+          "before_relative_percent": -0.0640229040651974,
+          "after_relative_percent": -2.600737379077378
+        },
+        {
+          "historical_line": 4269,
+          "current_id": "8:7",
+          "historical": 4.2957e-16,
+          "before": 4.29593e-16,
+          "after": 4.14855e-16,
+          "before_relative_percent": 0.0053541914007082525,
+          "after_relative_percent": -3.425518541797612
+        },
+        {
+          "historical_line": 4272,
+          "current_id": "8:10",
+          "historical": 4.21585e-16,
+          "before": 4.21699e-16,
+          "after": 4.06213e-16,
+          "before_relative_percent": 0.02704081027551375,
+          "after_relative_percent": -3.646239785571115
+        },
+        {
+          "historical_line": 4275,
+          "current_id": "8:13",
+          "historical": 2.95494e-16,
+          "before": 2.95499e-16,
+          "after": 2.87891e-16,
+          "before_relative_percent": 0.0016920817343057948,
+          "after_relative_percent": -2.5729794852010546
+        },
+        {
+          "historical_line": 4276,
+          "current_id": "8:14",
+          "historical": 3.04714e-16,
+          "before": 3.04739e-16,
+          "after": 2.95027e-16,
+          "before_relative_percent": 0.008204414631429735,
+          "after_relative_percent": -3.179046581384515
+        },
+        {
+          "historical_line": 5864,
+          "current_id": "9:3",
+          "historical": 4.90317e-17,
+          "before": 4.87378e-17,
+          "after": 4.53105e-17,
+          "before_relative_percent": -0.5994081380005234,
+          "after_relative_percent": -7.589375852764646
+        },
+        {
+          "historical_line": 5865,
+          "current_id": "9:4",
+          "historical": 3.5784e-17,
+          "before": 3.55676e-17,
+          "after": 3.12653e-17,
+          "before_relative_percent": -0.6047395484015228,
+          "after_relative_percent": -12.627710708696615
+        },
+        {
+          "historical_line": 5869,
+          "current_id": "9:7",
+          "historical": 4.62714e-17,
+          "before": 4.62688e-17,
+          "after": 4.34272e-17,
+          "before_relative_percent": -0.0056190216850993124,
+          "after_relative_percent": -6.146777491063582
+        },
+        {
+          "historical_line": 5870,
+          "current_id": "9:8",
+          "historical": 4.46386e-17,
+          "before": 4.46367e-17,
+          "after": 4.19275e-17,
+          "before_relative_percent": -0.004256405890867843,
+          "after_relative_percent": -6.073443163540082
+        },
+        {
+          "historical_line": 5874,
+          "current_id": "9:12",
+          "historical": 5.19799e-17,
+          "before": 5.19777e-17,
+          "after": 4.86797e-17,
+          "before_relative_percent": -0.00423240521817414,
+          "after_relative_percent": -6.348992591367053
+        },
+        {
+          "historical_line": 5879,
+          "current_id": "9:17",
+          "historical": 5.69597e-17,
+          "before": 5.696e-17,
+          "after": 5.36983e-17,
+          "before_relative_percent": 0.0005266881672572055,
+          "after_relative_percent": -5.725802628876197
+        },
+        {
+          "historical_line": 6417,
+          "current_id": "10:3",
+          "historical": 7.20853e-17,
+          "before": 7.29881e-17,
+          "after": 6.61649e-17,
+          "before_relative_percent": 1.252405136692225,
+          "after_relative_percent": -8.213047597776512
+        },
+        {
+          "historical_line": 6422,
+          "current_id": "10:8",
+          "historical": 6.55076e-17,
+          "before": 6.55065e-17,
+          "after": 6.03421e-17,
+          "before_relative_percent": -0.001679194475145973,
+          "after_relative_percent": -7.88534460123711
+        },
+        {
+          "historical_line": 6423,
+          "current_id": "10:9",
+          "historical": 3.33476e-17,
+          "before": 3.3348e-17,
+          "after": 3.04606e-17,
+          "before_relative_percent": 0.0011994866197184706,
+          "after_relative_percent": -8.65729467787787
+        },
+        {
+          "historical_line": 6424,
+          "current_id": "10:10",
+          "historical": 3.52706e-17,
+          "before": 3.52715e-17,
+          "after": 3.24494e-17,
+          "before_relative_percent": 0.0025517002829600344,
+          "after_relative_percent": -7.998729820303597
+        },
+        {
+          "historical_line": 6431,
+          "current_id": "10:17",
+          "historical": 5.06506e-17,
+          "before": 5.06491e-17,
+          "after": 4.64496e-17,
+          "before_relative_percent": -0.0029614654120435624,
+          "after_relative_percent": -8.29407746403793
+        },
+        {
+          "historical_line": 6432,
+          "current_id": "10:18",
+          "historical": 3.50501e-17,
+          "before": 3.5049e-17,
+          "after": 3.24821e-17,
+          "before_relative_percent": -0.003138364797816706,
+          "after_relative_percent": -7.326655273451433
+        },
+        {
+          "historical_line": 6433,
+          "current_id": "10:19",
+          "historical": 3.16342e-17,
+          "before": 3.16365e-17,
+          "after": 2.90832e-17,
+          "before_relative_percent": 0.007270612185572567,
+          "after_relative_percent": -8.064057254490386
+        },
+        {
+          "historical_line": 6434,
+          "current_id": "10:20",
+          "historical": 1.7698e-17,
+          "before": 1.76992e-17,
+          "after": 2.18097e-17,
+          "before_relative_percent": 0.006780427166908076,
+          "after_relative_percent": 23.23256865182506
+        },
+        {
+          "historical_line": 6439,
+          "current_id": "10:26",
+          "historical": 4.25456e-17,
+          "before": 4.25456e-17,
+          "after": 4.01425e-17,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -5.648292655409726
+        },
+        {
+          "historical_line": 6440,
+          "current_id": "10:27",
+          "historical": 3.62943e-17,
+          "before": 3.62923e-17,
+          "after": 3.20029e-17,
+          "before_relative_percent": -0.0055105071595340505,
+          "after_relative_percent": -11.823895212195868
+        },
+        {
+          "historical_line": 6441,
+          "current_id": "10:28",
+          "historical": 2.10215e-17,
+          "before": 2.10232e-17,
+          "after": 2.44538e-17,
+          "before_relative_percent": 0.008086958590025617,
+          "after_relative_percent": 16.32756939324025
+        },
+        {
+          "historical_line": 6442,
+          "current_id": "10:29",
+          "historical": 2.80264e-17,
+          "before": 2.80214e-17,
+          "after": 2.54749e-17,
+          "before_relative_percent": -0.017840321982132146,
+          "after_relative_percent": -9.103916307481509
+        },
+        {
+          "historical_line": 6695,
+          "current_id": "11:3",
+          "historical": 1.97378e-16,
+          "before": 1.97395e-16,
+          "after": 1.92529e-16,
+          "before_relative_percent": 0.008612915319838876,
+          "after_relative_percent": -2.4567074344658435
+        },
+        {
+          "historical_line": 6701,
+          "current_id": "11:9",
+          "historical": 1.87509e-16,
+          "before": 1.87552e-16,
+          "after": 1.83606e-16,
+          "before_relative_percent": 0.022932232586159174,
+          "after_relative_percent": -2.08150008799578
+        },
+        {
+          "historical_line": 6707,
+          "current_id": "11:15",
+          "historical": 3.85218e-16,
+          "before": 3.85236e-16,
+          "after": 3.80614e-16,
+          "before_relative_percent": 0.0046726788467843505,
+          "after_relative_percent": -1.1951674116993494
+        },
+        {
+          "historical_line": 6715,
+          "current_id": "11:23",
+          "historical": 3.86722e-16,
+          "before": 3.86756e-16,
+          "after": 3.80819e-16,
+          "before_relative_percent": 0.008791845304889634,
+          "after_relative_percent": -1.526419495141218
+        },
+        {
+          "historical_line": 6723,
+          "current_id": "11:31",
+          "historical": 2.59951e-16,
+          "before": 2.59994e-16,
+          "after": 2.54241e-16,
+          "before_relative_percent": 0.016541578989892614,
+          "after_relative_percent": -2.196567814703543
+        },
+        {
+          "historical_line": 6731,
+          "current_id": "11:39",
+          "historical": 1.32269e-16,
+          "before": 1.32292e-16,
+          "after": 1.2682e-16,
+          "before_relative_percent": 0.017388806145057778,
+          "after_relative_percent": -4.119634986277965
+        },
+        {
+          "historical_line": 6732,
+          "current_id": "11:40",
+          "historical": 7.05043e-17,
+          "before": 7.05177e-17,
+          "after": 6.52832e-17,
+          "before_relative_percent": 0.019005932971460915,
+          "after_relative_percent": -7.405363928157572
+        },
+        {
+          "historical_line": 6737,
+          "current_id": "11:46",
+          "historical": 2.16042e-16,
+          "before": 2.16066e-16,
+          "after": 2.07274e-16,
+          "before_relative_percent": 0.011108951037308579,
+          "after_relative_percent": -4.058470112292978
+        },
+        {
+          "historical_line": 6738,
+          "current_id": "11:47",
+          "historical": 1.76091e-16,
+          "before": 1.76118e-16,
+          "after": 1.67814e-16,
+          "before_relative_percent": 0.01533298124265503,
+          "after_relative_percent": -4.700410583164394
+        },
+        {
+          "historical_line": 6743,
+          "current_id": "11:52",
+          "historical": 1.99347e-16,
+          "before": 1.99355e-16,
+          "after": 1.91885e-16,
+          "before_relative_percent": 0.00401310278057565,
+          "after_relative_percent": -3.743221618584669
+        },
+        {
+          "historical_line": 6744,
+          "current_id": "11:53",
+          "historical": 1.34134e-16,
+          "before": 1.34125e-16,
+          "after": 1.26332e-16,
+          "before_relative_percent": -0.006709708202234932,
+          "after_relative_percent": -5.816571488213262
+        },
+        {
+          "historical_line": 6745,
+          "current_id": "11:54",
+          "historical": 1.56049e-16,
+          "before": 1.56056e-16,
+          "after": 1.49117e-16,
+          "before_relative_percent": 0.004485770495166186,
+          "after_relative_percent": -4.442194438926239
+        },
+        {
+          "historical_line": 6793,
+          "current_id": "12:5",
+          "historical": 3.10233e-16,
+          "before": 3.1023e-16,
+          "after": 3.04987e-16,
+          "before_relative_percent": -0.0009670151144502981,
+          "after_relative_percent": -1.6909870967949936
+        },
+        {
+          "historical_line": 6794,
+          "current_id": "12:6",
+          "historical": 3.34654e-16,
+          "before": 3.34944e-16,
+          "after": 3.05107e-16,
+          "before_relative_percent": 0.08665666628817625,
+          "after_relative_percent": -8.829119030401555
+        },
+        {
+          "historical_line": 6795,
+          "current_id": "12:7",
+          "historical": 4.11944e-16,
+          "before": 4.1204e-16,
+          "after": 3.81335e-16,
+          "before_relative_percent": 0.023304138426571974,
+          "after_relative_percent": -7.430378886450583
+        },
+        {
+          "historical_line": 6801,
+          "current_id": "12:13",
+          "historical": 7.72607e-16,
+          "before": 7.72593e-16,
+          "after": 7.45119e-16,
+          "before_relative_percent": -0.0018120467456195222,
+          "after_relative_percent": -3.5578243531316667
+        },
+        {
+          "historical_line": 6802,
+          "current_id": "12:14",
+          "historical": 5.72858e-16,
+          "before": 5.73168e-16,
+          "after": 5.44483e-16,
+          "before_relative_percent": 0.054114632247426186,
+          "after_relative_percent": -4.953234483938429
+        },
+        {
+          "historical_line": 6805,
+          "current_id": "12:17",
+          "historical": 9.77748e-16,
+          "before": 9.78025e-16,
+          "after": 9.61058e-16,
+          "before_relative_percent": 0.028330408244259253,
+          "after_relative_percent": -1.7069838035976392
+        },
+        {
+          "historical_line": 6806,
+          "current_id": "12:18",
+          "historical": 8.02709e-16,
+          "before": 8.03048e-16,
+          "after": 7.80944e-16,
+          "before_relative_percent": 0.042231991917374145,
+          "after_relative_percent": -2.711443374871836
+        },
+        {
+          "historical_line": 6957,
+          "current_id": "13:3",
+          "historical": 5.72254e-17,
+          "before": 5.7668e-17,
+          "after": 6.08547e-17,
+          "before_relative_percent": 0.7734327763545545,
+          "after_relative_percent": 6.342113816591932
+        },
+        {
+          "historical_line": 6958,
+          "current_id": "13:4",
+          "historical": 4.0683e-17,
+          "before": 4.11733e-17,
+          "after": 3.94721e-17,
+          "before_relative_percent": 1.2051716933362933,
+          "after_relative_percent": -2.9764275004301455
+        },
+        {
+          "historical_line": 6964,
+          "current_id": "13:10",
+          "historical": 7.42134e-17,
+          "before": 7.42135e-17,
+          "after": 7.78545e-17,
+          "before_relative_percent": 0.00013474655520262502,
+          "after_relative_percent": 4.9062568215443525
+        },
+        {
+          "historical_line": 6965,
+          "current_id": "13:11",
+          "historical": 3.61566e-17,
+          "before": 3.6167e-17,
+          "after": 3.484e-17,
+          "before_relative_percent": 0.02876376650460255,
+          "after_relative_percent": -3.641382209610411
+        },
+        {
+          "historical_line": 6970,
+          "current_id": "13:16",
+          "historical": 9.03088e-17,
+          "before": 9.0309e-17,
+          "after": 9.24019e-17,
+          "before_relative_percent": 0.00022146236025033517,
+          "after_relative_percent": 2.317714331272258
+        },
+        {
+          "historical_line": 6973,
+          "current_id": "13:19",
+          "historical": 1.20388e-16,
+          "before": 1.20389e-16,
+          "after": 1.21236e-16,
+          "before_relative_percent": 0.0008306475728359075,
+          "after_relative_percent": 0.7043891417749304
+        },
+        {
+          "historical_line": 6974,
+          "current_id": "13:20",
+          "historical": 4.81446e-17,
+          "before": 4.81547e-17,
+          "after": 4.49698e-17,
+          "before_relative_percent": 0.02097846902870959,
+          "after_relative_percent": -6.594301333898301
+        },
+        {
+          "historical_line": 7110,
+          "current_id": "14:11",
+          "historical": 2.85634e-17,
+          "before": 2.85629e-17,
+          "after": 3.24651e-17,
+          "before_relative_percent": -0.0017504918882305098,
+          "after_relative_percent": 13.659788400540563
+        },
+        {
+          "historical_line": 7111,
+          "current_id": "14:12",
+          "historical": 2.62009e-17,
+          "before": 2.61927e-17,
+          "after": 3.41737e-17,
+          "before_relative_percent": -0.031296634848421157,
+          "after_relative_percent": 30.42948906335279
+        },
+        {
+          "historical_line": 7118,
+          "current_id": "14:19",
+          "historical": 6.05023e-17,
+          "before": 5.89791e-17,
+          "after": 6.07293e-17,
+          "before_relative_percent": -2.517590240371026,
+          "after_relative_percent": 0.3751923480594943
+        },
+        {
+          "historical_line": 7119,
+          "current_id": "14:20",
+          "historical": 3.21624e-17,
+          "before": 3.21544e-17,
+          "after": 4.14922e-17,
+          "before_relative_percent": -0.024873765639388257,
+          "after_relative_percent": 29.008407332786113
+        },
+        {
+          "historical_line": 7123,
+          "current_id": "14:24",
+          "historical": 1.02852e-16,
+          "before": 1.02855e-16,
+          "after": 1.03979e-16,
+          "before_relative_percent": 0.002916812507303135,
+          "after_relative_percent": 1.0957492319060513
+        },
+        {
+          "historical_line": 7126,
+          "current_id": "14:27",
+          "historical": 1.60497e-16,
+          "before": 1.60498e-16,
+          "after": 1.59934e-16,
+          "before_relative_percent": 0.0006230646055760403,
+          "after_relative_percent": -0.35078537293530276
+        },
+        {
+          "historical_line": 7127,
+          "current_id": "14:28",
+          "historical": 8.40273e-17,
+          "before": 8.40303e-17,
+          "after": 8.48139e-17,
+          "before_relative_percent": 0.0035702682342542147,
+          "after_relative_percent": 0.9361243310209932
+        },
+        {
+          "historical_line": 7128,
+          "current_id": "14:29",
+          "historical": 9.99028e-17,
+          "before": 9.98999e-17,
+          "after": 9.75914e-17,
+          "before_relative_percent": -0.002902821542538625,
+          "after_relative_percent": -2.3136488666984256
+        },
+        {
+          "historical_line": 7131,
+          "current_id": "14:32",
+          "historical": 2.88503e-16,
+          "before": 2.88507e-16,
+          "after": 2.88109e-16,
+          "before_relative_percent": 0.001386467385078305,
+          "after_relative_percent": -0.13656703743115672
+        },
+        {
+          "historical_line": 7132,
+          "current_id": "14:33",
+          "historical": 2.84705e-16,
+          "before": 2.84709e-16,
+          "after": 2.78746e-16,
+          "before_relative_percent": 0.0014049630318924144,
+          "after_relative_percent": -2.093043676788253
+        },
+        {
+          "historical_line": 7135,
+          "current_id": "14:36",
+          "historical": 4.84759e-16,
+          "before": 4.84671e-16,
+          "after": 4.76895e-16,
+          "before_relative_percent": -0.01815335042774091,
+          "after_relative_percent": -1.6222494064060622
+        },
+        {
+          "historical_line": 7136,
+          "current_id": "14:37",
+          "historical": 1.24443e-16,
+          "before": 1.24443e-16,
+          "after": 1.25916e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": 1.1836744533641808
+        },
+        {
+          "historical_line": 7257,
+          "current_id": "15:4",
+          "historical": 2.18935e-16,
+          "before": 2.23447e-16,
+          "after": 2.18384e-16,
+          "before_relative_percent": 2.060885650992317,
+          "after_relative_percent": -0.25167287094343127
+        },
+        {
+          "historical_line": 7258,
+          "current_id": "15:5",
+          "historical": 1.07835e-16,
+          "before": 1.04195e-16,
+          "after": 9.45368e-17,
+          "before_relative_percent": -3.3755274261603407,
+          "after_relative_percent": -12.33198868641907
+        },
+        {
+          "historical_line": 7264,
+          "current_id": "15:11",
+          "historical": 1.76578e-16,
+          "before": 1.76578e-16,
+          "after": 1.75286e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -0.731687979249962
+        },
+        {
+          "historical_line": 7268,
+          "current_id": "15:15",
+          "historical": 1.03799e-16,
+          "before": 1.03809e-16,
+          "after": 9.79278e-17,
+          "before_relative_percent": 0.009634004181147127,
+          "after_relative_percent": -5.656316534841377
+        },
+        {
+          "historical_line": 7269,
+          "current_id": "15:16",
+          "historical": 9.76114e-17,
+          "before": 9.76219e-17,
+          "after": 9.52926e-17,
+          "before_relative_percent": 0.01075694027541374,
+          "after_relative_percent": -2.375542201013403
+        },
+        {
+          "historical_line": 7276,
+          "current_id": "15:23",
+          "historical": 1.28265e-16,
+          "before": 1.28269e-16,
+          "after": 1.2158e-16,
+          "before_relative_percent": 0.003118543640123761,
+          "after_relative_percent": -5.211866058550663
+        }
+      ],
+      "before": {
+        "median_absolute_percent": 0.005584403612768352,
+        "median_signed_percent": 0.0010959412134248225,
+        "max_absolute_percent": 10.78767491844057
+      },
+      "after": {
+        "median_absolute_percent": 4.096898954589085,
+        "median_signed_percent": -3.4407783222586144,
+        "max_absolute_percent": 30.42948906335279
+      }
+    },
+    "T": {
+      "count": 35,
+      "events": [
+        {
+          "historical_line": 3604,
+          "current_id": "3:103",
+          "historical": 2.09669e-16,
+          "before": 2.09621e-16,
+          "after": 2.41536e-16,
+          "before_relative_percent": -0.022893226943410117,
+          "after_relative_percent": 15.198717979291176
+        },
+        {
+          "historical_line": 3625,
+          "current_id": "3:123",
+          "historical": 1.78014e-16,
+          "before": 1.78e-16,
+          "after": 1.95293e-16,
+          "before_relative_percent": -0.00786454997920849,
+          "after_relative_percent": 9.706539935061276
+        },
+        {
+          "historical_line": 3634,
+          "current_id": "3:131",
+          "historical": 4.67189e-16,
+          "before": 4.67161e-16,
+          "after": 4.81273e-16,
+          "before_relative_percent": -0.00599329179411523,
+          "after_relative_percent": 3.0146257724389836
+        },
+        {
+          "historical_line": 3639,
+          "current_id": "3:136",
+          "historical": 3.49047e-17,
+          "before": 3.49157e-17,
+          "after": 4.43084e-17,
+          "before_relative_percent": 0.03151438058484057,
+          "after_relative_percent": 26.941070973250003
+        },
+        {
+          "historical_line": 3764,
+          "current_id": "6:12",
+          "historical": 4.71526e-16,
+          "before": 4.71635e-16,
+          "after": 4.6864e-16,
+          "before_relative_percent": 0.023116434724701485,
+          "after_relative_percent": -0.6120553267476403
+        },
+        {
+          "historical_line": 3768,
+          "current_id": "6:16",
+          "historical": 3.10982e-16,
+          "before": 3.10976e-16,
+          "after": 3.00804e-16,
+          "before_relative_percent": -0.0019293721180035917,
+          "after_relative_percent": -3.272858236168019
+        },
+        {
+          "historical_line": 3771,
+          "current_id": "6:19",
+          "historical": 1.52888e-16,
+          "before": 1.52898e-16,
+          "after": 1.41069e-16,
+          "before_relative_percent": 0.0065407357019431345,
+          "after_relative_percent": -7.7304955261367825
+        },
+        {
+          "historical_line": 4068,
+          "current_id": "7:22",
+          "historical": 1.08501e-16,
+          "before": 1.08503e-16,
+          "after": 8.37155e-17,
+          "before_relative_percent": 0.0018433009834062375,
+          "after_relative_percent": -22.843568262043668
+        },
+        {
+          "historical_line": 4072,
+          "current_id": "4:4",
+          "historical": 1.7237e-16,
+          "before": 1.73396e-16,
+          "after": 1.48141e-16,
+          "before_relative_percent": 0.5952311887219341,
+          "after_relative_percent": -14.056390323142088
+        },
+        {
+          "historical_line": 4075,
+          "current_id": "4:8",
+          "historical": 1.80797e-16,
+          "before": 1.80787e-16,
+          "after": 1.5721e-16,
+          "before_relative_percent": -0.0055310652278484085,
+          "after_relative_percent": -13.046123552935063
+        },
+        {
+          "historical_line": 4080,
+          "current_id": "4:13",
+          "historical": 1.70214e-16,
+          "before": 1.70204e-16,
+          "after": 1.46216e-16,
+          "before_relative_percent": -0.005874957406559744,
+          "after_relative_percent": -14.09872278425982
+        },
+        {
+          "historical_line": 4081,
+          "current_id": "4:14",
+          "historical": 1.34146e-16,
+          "before": 1.34143e-16,
+          "after": 1.10193e-16,
+          "before_relative_percent": -0.002236369328945109,
+          "after_relative_percent": -17.855918178700826
+        },
+        {
+          "historical_line": 4085,
+          "current_id": "4:18",
+          "historical": 1.9752e-16,
+          "before": 1.97511e-16,
+          "after": 1.74456e-16,
+          "before_relative_percent": -0.004556500607533209,
+          "after_relative_percent": -11.676792223572296
+        },
+        {
+          "historical_line": 4090,
+          "current_id": "4:23",
+          "historical": 2.16647e-16,
+          "before": 2.16638e-16,
+          "after": 1.97281e-16,
+          "before_relative_percent": -0.004154223229491105,
+          "after_relative_percent": -8.938965229151574
+        },
+        {
+          "historical_line": 4095,
+          "current_id": "4:28",
+          "historical": 1.67465e-16,
+          "before": 1.67459e-16,
+          "after": 1.52414e-16,
+          "before_relative_percent": -0.003582838204996275,
+          "after_relative_percent": -8.987549637237635
+        },
+        {
+          "historical_line": 4100,
+          "current_id": "4:33",
+          "historical": 1.42883e-16,
+          "before": 1.42873e-16,
+          "after": 1.27474e-16,
+          "before_relative_percent": -0.006998733229279797,
+          "after_relative_percent": -10.784348033006019
+        },
+        {
+          "historical_line": 4105,
+          "current_id": "4:38",
+          "historical": 1.14542e-16,
+          "before": 1.14539e-16,
+          "after": 1.04744e-16,
+          "before_relative_percent": -0.002619126608582878,
+          "after_relative_percent": -8.55406750362312
+        },
+        {
+          "historical_line": 4197,
+          "current_id": "5:11",
+          "historical": 5.88593e-17,
+          "before": 5.88735e-17,
+          "after": 5.14039e-17,
+          "before_relative_percent": 0.02412532938718126,
+          "after_relative_percent": -12.66647751502311
+        },
+        {
+          "historical_line": 4202,
+          "current_id": "5:16",
+          "historical": 6.20763e-17,
+          "before": 6.20746e-17,
+          "after": 5.00024e-17,
+          "before_relative_percent": -0.002738565281756866,
+          "after_relative_percent": -19.450096091422985
+        },
+        {
+          "historical_line": 4206,
+          "current_id": "5:20",
+          "historical": 5.3812e-17,
+          "before": 5.38014e-17,
+          "after": 4.48711e-17,
+          "before_relative_percent": -0.019698208578011744,
+          "after_relative_percent": -16.615067271240612
+        },
+        {
+          "historical_line": 4270,
+          "current_id": "8:8",
+          "historical": 5.61874e-17,
+          "before": 5.62013e-17,
+          "after": 5.09474e-17,
+          "before_relative_percent": 0.024738642471433536,
+          "after_relative_percent": -9.325934284198933
+        },
+        {
+          "historical_line": 4273,
+          "current_id": "8:11",
+          "historical": 5.68211e-17,
+          "before": 5.68332e-17,
+          "after": 5.1116e-17,
+          "before_relative_percent": 0.021294906293589655,
+          "after_relative_percent": -10.040460321957879
+        },
+        {
+          "historical_line": 5875,
+          "current_id": "9:13",
+          "historical": 2.87128e-17,
+          "before": 2.57689e-17,
+          "after": 2.56405e-17,
+          "before_relative_percent": -10.252918558970215,
+          "after_relative_percent": -10.700105876124933
+        },
+        {
+          "historical_line": 6418,
+          "current_id": "10:4",
+          "historical": 2.1531e-17,
+          "before": 2.19602e-17,
+          "after": 2.39326e-17,
+          "before_relative_percent": 1.9934048581115693,
+          "after_relative_percent": 11.154149830476978
+        },
+        {
+          "historical_line": 6425,
+          "current_id": "10:11",
+          "historical": 1.65856e-17,
+          "before": 1.77366e-17,
+          "after": 1.97774e-17,
+          "before_relative_percent": 6.939754968165146,
+          "after_relative_percent": 19.244404784873637
+        },
+        {
+          "historical_line": 6709,
+          "current_id": "11:17",
+          "historical": 2.33742e-17,
+          "before": 2.33708e-17,
+          "after": 2.20497e-17,
+          "before_relative_percent": -0.014545952374844795,
+          "after_relative_percent": -5.666504094257774
+        },
+        {
+          "historical_line": 6717,
+          "current_id": "11:25",
+          "historical": 3.05838e-17,
+          "before": 3.05743e-17,
+          "after": 2.86309e-17,
+          "before_relative_percent": -0.031062196326170355,
+          "after_relative_percent": -6.385406653195491
+        },
+        {
+          "historical_line": 6725,
+          "current_id": "11:33",
+          "historical": 1.7139e-17,
+          "before": 1.71369e-17,
+          "after": 1.42762e-17,
+          "before_relative_percent": -0.012252756870301251,
+          "after_relative_percent": -16.703424937277557
+        },
+        {
+          "historical_line": 6807,
+          "current_id": "12:19",
+          "historical": 1.08923e-16,
+          "before": 1.08953e-16,
+          "after": 1.02719e-16,
+          "before_relative_percent": 0.02754239233220268,
+          "after_relative_percent": -5.695766734298546
+        },
+        {
+          "historical_line": 6975,
+          "current_id": "13:21",
+          "historical": 2.61617e-17,
+          "before": 2.61619e-17,
+          "after": 2.17022e-17,
+          "before_relative_percent": 0.0007644763146075206,
+          "after_relative_percent": -17.045910625074047
+        },
+        {
+          "historical_line": 7124,
+          "current_id": "14:25",
+          "historical": 5.18477e-17,
+          "before": 5.18488e-17,
+          "after": 4.7468e-17,
+          "before_relative_percent": 0.0021215984508549113,
+          "after_relative_percent": -8.447240668342094
+        },
+        {
+          "historical_line": 7129,
+          "current_id": "14:30",
+          "historical": 9.03304e-17,
+          "before": 9.0332e-17,
+          "after": 8.41985e-17,
+          "before_relative_percent": 0.0017712752296006329,
+          "after_relative_percent": -6.788301612746084
+        },
+        {
+          "historical_line": 7133,
+          "current_id": "14:34",
+          "historical": 1.07103e-16,
+          "before": 1.07108e-16,
+          "after": 9.7439e-17,
+          "before_relative_percent": 0.004668403312702019,
+          "after_relative_percent": -9.02308992278461
+        },
+        {
+          "historical_line": 7270,
+          "current_id": "15:17",
+          "historical": 3.87314e-17,
+          "before": 3.8748e-17,
+          "after": 3.85604e-17,
+          "before_relative_percent": 0.04285928213283441,
+          "after_relative_percent": -0.4415022436575877
+        },
+        {
+          "historical_line": 7271,
+          "current_id": "15:18",
+          "historical": 1.86504e-17,
+          "before": 1.86545e-17,
+          "after": 1.83419e-17,
+          "before_relative_percent": 0.02198344271435726,
+          "after_relative_percent": -1.654120018873595
+        }
+      ],
+      "before": {
+        "median_absolute_percent": 0.00786454997920849,
+        "median_signed_percent": -0.0019293721180035917,
+        "max_absolute_percent": 10.252918558970215
+      },
+      "after": {
+        "median_absolute_percent": 10.040460321957879,
+        "median_signed_percent": -8.938965229151574,
+        "max_absolute_percent": 26.941070973250003
+      }
+    },
+    "U": {
+      "count": 149,
+      "events": [
+        {
+          "historical_line": 3336,
+          "current_id": "1:13",
+          "historical": 2.71513e-15,
+          "before": 2.71514e-15,
+          "after": 2.57706e-15,
+          "before_relative_percent": 0.0003683064899284716,
+          "after_relative_percent": -5.085207706444994
+        },
+        {
+          "historical_line": 3343,
+          "current_id": "1:20",
+          "historical": 2.01572e-15,
+          "before": 2.0157e-15,
+          "after": 1.91333e-15,
+          "before_relative_percent": -0.0009922012978003103,
+          "after_relative_percent": -5.07957454408351
+        },
+        {
+          "historical_line": 3344,
+          "current_id": "1:21",
+          "historical": 1.33588e-15,
+          "before": 1.33606e-15,
+          "after": 1.24645e-15,
+          "before_relative_percent": 0.013474264155477478,
+          "after_relative_percent": -6.694463574572563
+        },
+        {
+          "historical_line": 3348,
+          "current_id": "1:25",
+          "historical": 1.38123e-15,
+          "before": 1.38131e-15,
+          "after": 1.32236e-15,
+          "before_relative_percent": 0.005791939068799934,
+          "after_relative_percent": -4.2621431622539285
+        },
+        {
+          "historical_line": 3349,
+          "current_id": "1:26",
+          "historical": 1.26463e-15,
+          "before": 1.26473e-15,
+          "after": 1.19676e-15,
+          "before_relative_percent": 0.00790745119125802,
+          "after_relative_percent": -5.366787123506489
+        },
+        {
+          "historical_line": 3353,
+          "current_id": "1:30",
+          "historical": 1.44312e-15,
+          "before": 1.44312e-15,
+          "after": 1.41584e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -1.8903486889517263
+        },
+        {
+          "historical_line": 3371,
+          "current_id": "2:4",
+          "historical": 4.0094e-15,
+          "before": 4.00938e-15,
+          "after": 3.94462e-15,
+          "before_relative_percent": -0.0004988277547801623,
+          "after_relative_percent": -1.6157030977203668
+        },
+        {
+          "historical_line": 3374,
+          "current_id": "2:7",
+          "historical": 6.2317e-15,
+          "before": 6.23167e-15,
+          "after": 6.18073e-15,
+          "before_relative_percent": -0.0004814095672101004,
+          "after_relative_percent": -0.8179148546945458
+        },
+        {
+          "historical_line": 3377,
+          "current_id": "2:10",
+          "historical": 7.20082e-15,
+          "before": 7.20079e-15,
+          "after": 7.21973e-15,
+          "before_relative_percent": -0.0004166192183574502,
+          "after_relative_percent": 0.2626089806438747
+        },
+        {
+          "historical_line": 3394,
+          "current_id": "2:28",
+          "historical": 2.25155e-15,
+          "before": 2.25154e-15,
+          "after": 2.2009e-15,
+          "before_relative_percent": -0.000444138482391665,
+          "after_relative_percent": -2.2495614132486574
+        },
+        {
+          "historical_line": 3399,
+          "current_id": "2:31",
+          "historical": 2.16345e-15,
+          "before": 2.16344e-15,
+          "after": 2.11265e-15,
+          "before_relative_percent": -0.00046222468742529443,
+          "after_relative_percent": -2.348101412096415
+        },
+        {
+          "historical_line": 3400,
+          "current_id": "2:32",
+          "historical": 1.19184e-15,
+          "before": 1.19178e-15,
+          "after": 1.14589e-15,
+          "before_relative_percent": -0.005034232782930026,
+          "after_relative_percent": -3.8553832729225523
+        },
+        {
+          "historical_line": 3405,
+          "current_id": "2:37",
+          "historical": 1.73684e-15,
+          "before": 1.73684e-15,
+          "after": 1.67432e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -3.59964072683725
+        },
+        {
+          "historical_line": 3406,
+          "current_id": "2:38",
+          "historical": 1.3563e-15,
+          "before": 1.3563e-15,
+          "after": 1.28511e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -5.248838752488383
+        },
+        {
+          "historical_line": 3407,
+          "current_id": "2:39",
+          "historical": 1.06448e-15,
+          "before": 1.06443e-15,
+          "after": 9.939e-16,
+          "before_relative_percent": -0.004697129114694665,
+          "after_relative_percent": -6.630467458289502
+        },
+        {
+          "historical_line": 3408,
+          "current_id": "2:40",
+          "historical": 9.43909e-16,
+          "before": 9.43943e-16,
+          "after": 8.77974e-16,
+          "before_relative_percent": 0.0036020421460003504,
+          "after_relative_percent": -6.985313202861709
+        },
+        {
+          "historical_line": 3413,
+          "current_id": "2:45",
+          "historical": 1.34421e-15,
+          "before": 1.34407e-15,
+          "after": 1.25512e-15,
+          "before_relative_percent": -0.010415039316780117,
+          "after_relative_percent": -6.62768466236675
+        },
+        {
+          "historical_line": 3414,
+          "current_id": "2:46",
+          "historical": 1.21323e-15,
+          "before": 1.21323e-15,
+          "after": 1.13692e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -6.289821385887262
+        },
+        {
+          "historical_line": 3415,
+          "current_id": "2:47",
+          "historical": 1.08071e-15,
+          "before": 1.08051e-15,
+          "after": 9.92237e-16,
+          "before_relative_percent": -0.018506352305414087,
+          "after_relative_percent": -8.186562537591014
+        },
+        {
+          "historical_line": 3420,
+          "current_id": "2:51",
+          "historical": 1.70259e-15,
+          "before": 1.70259e-15,
+          "after": 1.60108e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -5.962093046476246
+        },
+        {
+          "historical_line": 3424,
+          "current_id": "2:55",
+          "historical": 1.23565e-15,
+          "before": 1.23556e-15,
+          "after": 1.14616e-15,
+          "before_relative_percent": -0.007283615910669283,
+          "after_relative_percent": -7.242342087160603
+        },
+        {
+          "historical_line": 3425,
+          "current_id": "2:56",
+          "historical": 1.34966e-15,
+          "before": 1.28826e-15,
+          "after": 1.18486e-15,
+          "before_relative_percent": -4.5492938962405365,
+          "after_relative_percent": -12.210482640072307
+        },
+        {
+          "historical_line": 3430,
+          "current_id": "2:61",
+          "historical": 7.31557e-16,
+          "before": 7.31569e-16,
+          "after": 6.66696e-16,
+          "before_relative_percent": 0.0016403369798911882,
+          "after_relative_percent": -8.866158071073071
+        },
+        {
+          "historical_line": 3431,
+          "current_id": "2:62",
+          "historical": 7.32005e-16,
+          "before": 7.31999e-16,
+          "after": 6.82831e-16,
+          "before_relative_percent": -0.0008196665323367824,
+          "after_relative_percent": -6.717713676819148
+        },
+        {
+          "historical_line": 3441,
+          "current_id": "2:73",
+          "historical": 1.698e-15,
+          "before": 1.69796e-15,
+          "after": 1.67028e-15,
+          "before_relative_percent": -0.002355712603052673,
+          "after_relative_percent": -1.6325088339222638
+        },
+        {
+          "historical_line": 3482,
+          "current_id": "2:114",
+          "historical": 1.3349e-15,
+          "before": 1.3349e-15,
+          "after": 1.28788e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -3.522361225559978
+        },
+        {
+          "historical_line": 3488,
+          "current_id": "2:120",
+          "historical": 1.51389e-15,
+          "before": 1.51389e-15,
+          "after": 1.46646e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -3.1329885262469603
+        },
+        {
+          "historical_line": 3491,
+          "current_id": "2:124",
+          "historical": 1.03309e-15,
+          "before": 1.03307e-15,
+          "after": 9.87206e-16,
+          "before_relative_percent": -0.0019359397535501088,
+          "after_relative_percent": -4.441432982605575
+        },
+        {
+          "historical_line": 3496,
+          "current_id": "2:129",
+          "historical": 9.29229e-16,
+          "before": 9.29226e-16,
+          "after": 8.83416e-16,
+          "before_relative_percent": -0.00032284829681872296,
+          "after_relative_percent": -4.9302163406437005
+        },
+        {
+          "historical_line": 3497,
+          "current_id": "2:130",
+          "historical": 9.53533e-16,
+          "before": 9.5354e-16,
+          "after": 9.05687e-16,
+          "before_relative_percent": 0.0007341119814263664,
+          "after_relative_percent": -5.01776026629387
+        },
+        {
+          "historical_line": 3498,
+          "current_id": "2:131",
+          "historical": 8.4938e-16,
+          "before": 8.49356e-16,
+          "after": 7.99092e-16,
+          "before_relative_percent": -0.002825590430666214,
+          "after_relative_percent": -5.920553815724416
+        },
+        {
+          "historical_line": 3503,
+          "current_id": "3:1",
+          "historical": 1.35824e-15,
+          "before": 1.35438e-15,
+          "after": 1.3055e-15,
+          "before_relative_percent": -0.28419130639651957,
+          "after_relative_percent": -3.882966191541992
+        },
+        {
+          "historical_line": 3508,
+          "current_id": "3:6",
+          "historical": 1.58213e-15,
+          "before": 1.58204e-15,
+          "after": 1.53156e-15,
+          "before_relative_percent": -0.0056885338120094,
+          "after_relative_percent": -3.1963239430388146
+        },
+        {
+          "historical_line": 3512,
+          "current_id": "3:10",
+          "historical": 1.34852e-15,
+          "before": 1.34846e-15,
+          "after": 1.29226e-15,
+          "before_relative_percent": -0.004449322219923779,
+          "after_relative_percent": -4.171981134873793
+        },
+        {
+          "historical_line": 3547,
+          "current_id": "3:46",
+          "historical": 1.58684e-15,
+          "before": 1.58687e-15,
+          "after": 1.50184e-15,
+          "before_relative_percent": 0.0018905497718879616,
+          "after_relative_percent": -5.356557686975371
+        },
+        {
+          "historical_line": 3557,
+          "current_id": "3:56",
+          "historical": 7.58023e-16,
+          "before": 7.58079e-16,
+          "after": 7.13331e-16,
+          "before_relative_percent": 0.0073876386336602096,
+          "after_relative_percent": -5.8958633181315
+        },
+        {
+          "historical_line": 3577,
+          "current_id": "3:77",
+          "historical": 1.18975e-15,
+          "before": 1.18985e-15,
+          "after": 1.13834e-15,
+          "before_relative_percent": 0.008405127127542045,
+          "after_relative_percent": -4.321075856272327
+        },
+        {
+          "historical_line": 3598,
+          "current_id": "3:97",
+          "historical": 1.50702e-15,
+          "before": 1.50683e-15,
+          "after": 1.54833e-15,
+          "before_relative_percent": -0.012607662804731135,
+          "after_relative_percent": 2.741171318230684
+        },
+        {
+          "historical_line": 3606,
+          "current_id": "3:105",
+          "historical": 5.81112e-16,
+          "before": 5.81136e-16,
+          "after": 5.44278e-16,
+          "before_relative_percent": 0.004130012803038596,
+          "after_relative_percent": -6.338537149465163
+        },
+        {
+          "historical_line": 3607,
+          "current_id": "3:106",
+          "historical": 7.54503e-16,
+          "before": 7.54422e-16,
+          "after": 7.90605e-16,
+          "before_relative_percent": -0.010735543795059588,
+          "after_relative_percent": 4.784871630729093
+        },
+        {
+          "historical_line": 3617,
+          "current_id": "3:116",
+          "historical": 5.00415e-16,
+          "before": 5.00454e-16,
+          "after": 4.65562e-16,
+          "before_relative_percent": 0.007793531368971429,
+          "after_relative_percent": -6.964819200063954
+        },
+        {
+          "historical_line": 3618,
+          "current_id": "3:117",
+          "historical": 7.31018e-16,
+          "before": 7.30932e-16,
+          "after": 7.65053e-16,
+          "before_relative_percent": -0.01176441619769042,
+          "after_relative_percent": 4.65583610800282
+        },
+        {
+          "historical_line": 3629,
+          "current_id": "3:126",
+          "historical": 5.36962e-16,
+          "before": 5.36988e-16,
+          "after": 5.09158e-16,
+          "before_relative_percent": 0.004842055862441796,
+          "after_relative_percent": -5.178020046111264
+        },
+        {
+          "historical_line": 3637,
+          "current_id": "3:134",
+          "historical": 5.47808e-16,
+          "before": 5.47866e-16,
+          "after": 5.20458e-16,
+          "before_relative_percent": 0.010587651147853094,
+          "after_relative_percent": -4.992625153338381
+        },
+        {
+          "historical_line": 3640,
+          "current_id": "3:138",
+          "historical": 9.12331e-16,
+          "before": 9.12319e-16,
+          "after": 8.86486e-16,
+          "before_relative_percent": -0.0013153120961617581,
+          "after_relative_percent": -2.832853427100479
+        },
+        {
+          "historical_line": 3645,
+          "current_id": "3:143",
+          "historical": 9.96017e-16,
+          "before": 9.36669e-16,
+          "after": 9.15237e-16,
+          "before_relative_percent": -5.958532836286912,
+          "after_relative_percent": -8.110303338196022
+        },
+        {
+          "historical_line": 3648,
+          "current_id": "3:146",
+          "historical": 1.14528e-15,
+          "before": 1.14525e-15,
+          "after": 1.12367e-15,
+          "before_relative_percent": -0.0026194467728335447,
+          "after_relative_percent": -1.8868748253702106
+        },
+        {
+          "historical_line": 3650,
+          "current_id": "3:149",
+          "historical": 1.16448e-15,
+          "before": 1.16446e-15,
+          "after": 1.15246e-15,
+          "before_relative_percent": -0.0017175048090067868,
+          "after_relative_percent": -1.0322203902170868
+        },
+        {
+          "historical_line": 3753,
+          "current_id": "6:1",
+          "historical": 1.80739e-15,
+          "before": 1.80753e-15,
+          "after": 1.79783e-15,
+          "before_relative_percent": 0.007745976241979591,
+          "after_relative_percent": -0.5289395205240743
+        },
+        {
+          "historical_line": 3757,
+          "current_id": "6:5",
+          "historical": 1.38597e-15,
+          "before": 1.38601e-15,
+          "after": 1.36108e-15,
+          "before_relative_percent": 0.002886065354967826,
+          "after_relative_percent": -1.7958541671176054
+        },
+        {
+          "historical_line": 3761,
+          "current_id": "6:9",
+          "historical": 3.1525e-15,
+          "before": 3.15248e-15,
+          "after": 3.11864e-15,
+          "before_relative_percent": -0.0006344171292638201,
+          "after_relative_percent": -1.0740681998413826
+        },
+        {
+          "historical_line": 3765,
+          "current_id": "6:13",
+          "historical": 2.75947e-15,
+          "before": 2.75937e-15,
+          "after": 2.72117e-15,
+          "before_relative_percent": -0.0036238842966107576,
+          "after_relative_percent": -1.3879476856062833
+        },
+        {
+          "historical_line": 3769,
+          "current_id": "6:17",
+          "historical": 1.49852e-15,
+          "before": 1.49857e-15,
+          "after": 1.46089e-15,
+          "before_relative_percent": 0.003336625470473642,
+          "after_relative_percent": -2.5111443290713464
+        },
+        {
+          "historical_line": 3772,
+          "current_id": "6:20",
+          "historical": 7.00865e-16,
+          "before": 7.00816e-16,
+          "after": 6.69563e-16,
+          "before_relative_percent": -0.006991360675734359,
+          "after_relative_percent": -4.466195344324508
+        },
+        {
+          "historical_line": 3775,
+          "current_id": "6:24",
+          "historical": 5.52656e-16,
+          "before": 5.52661e-16,
+          "after": 5.24197e-16,
+          "before_relative_percent": 0.0009047219246660632,
+          "after_relative_percent": -5.149496250832353
+        },
+        {
+          "historical_line": 4047,
+          "current_id": "7:1",
+          "historical": 1.32124e-15,
+          "before": 1.32074e-15,
+          "after": 1.30175e-15,
+          "before_relative_percent": -0.037843238170198745,
+          "after_relative_percent": -1.4751294238745438
+        },
+        {
+          "historical_line": 4048,
+          "current_id": "7:2",
+          "historical": 6.56852e-16,
+          "before": 6.53903e-16,
+          "after": 6.21563e-16,
+          "before_relative_percent": -0.44895958298064587,
+          "after_relative_percent": -5.372443107427549
+        },
+        {
+          "historical_line": 4053,
+          "current_id": "7:7",
+          "historical": 7.80871e-16,
+          "before": 7.80872e-16,
+          "after": 7.68624e-16,
+          "before_relative_percent": 0.00012806212550398044,
+          "after_relative_percent": -1.5683768509779483
+        },
+        {
+          "historical_line": 4054,
+          "current_id": "7:8",
+          "historical": 6.15009e-16,
+          "before": 6.15042e-16,
+          "after": 5.80294e-16,
+          "before_relative_percent": 0.0053657751349911464,
+          "after_relative_percent": -5.644632842771413
+        },
+        {
+          "historical_line": 4059,
+          "current_id": "7:13",
+          "historical": 5.81696e-16,
+          "before": 5.81696e-16,
+          "after": 5.7367e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -1.3797584992848444
+        },
+        {
+          "historical_line": 4060,
+          "current_id": "7:14",
+          "historical": 5.1427e-16,
+          "before": 5.14256e-16,
+          "after": 4.78365e-16,
+          "before_relative_percent": -0.002722305403768388,
+          "after_relative_percent": -6.98174110875609
+        },
+        {
+          "historical_line": 4065,
+          "current_id": "7:19",
+          "historical": 9.48947e-16,
+          "before": 9.48945e-16,
+          "after": 9.36817e-16,
+          "before_relative_percent": -0.00021075992651109487,
+          "after_relative_percent": -1.2782589543989142
+        },
+        {
+          "historical_line": 4069,
+          "current_id": "4:1",
+          "historical": 2.4177e-15,
+          "before": 2.43127e-15,
+          "after": 2.41842e-15,
+          "before_relative_percent": 0.561277246970282,
+          "after_relative_percent": 0.029780369772924864
+        },
+        {
+          "historical_line": 4076,
+          "current_id": "4:9",
+          "historical": 2.10478e-15,
+          "before": 2.10478e-15,
+          "after": 2.08603e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -0.8908294453576993
+        },
+        {
+          "historical_line": 4082,
+          "current_id": "4:15",
+          "historical": 2.84352e-15,
+          "before": 2.84351e-15,
+          "after": 2.82336e-15,
+          "before_relative_percent": -0.0003516767949629518,
+          "after_relative_percent": -0.7089804186360515
+        },
+        {
+          "historical_line": 4086,
+          "current_id": "4:19",
+          "historical": 3.16634e-15,
+          "before": 3.16633e-15,
+          "after": 3.14814e-15,
+          "before_relative_percent": -0.0003158220532317735,
+          "after_relative_percent": -0.5747961368646526
+        },
+        {
+          "historical_line": 4091,
+          "current_id": "4:24",
+          "historical": 2.78873e-15,
+          "before": 2.78872e-15,
+          "after": 2.77306e-15,
+          "before_relative_percent": -0.00035858616646011754,
+          "after_relative_percent": -0.5619045228473118
+        },
+        {
+          "historical_line": 4096,
+          "current_id": "4:29",
+          "historical": 2.35009e-15,
+          "before": 2.35009e-15,
+          "after": 2.33958e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -0.4472169150968597
+        },
+        {
+          "historical_line": 4101,
+          "current_id": "4:34",
+          "historical": 1.65117e-15,
+          "before": 1.65117e-15,
+          "after": 1.64674e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -0.2682946032207423
+        },
+        {
+          "historical_line": 4191,
+          "current_id": "5:4",
+          "historical": 8.29294e-16,
+          "before": 8.29337e-16,
+          "after": 8.06317e-16,
+          "before_relative_percent": 0.005185133378526885,
+          "after_relative_percent": -2.7706699915831967
+        },
+        {
+          "historical_line": 4194,
+          "current_id": "5:8",
+          "historical": 8.68567e-16,
+          "before": 8.68665e-16,
+          "after": 8.44274e-16,
+          "before_relative_percent": 0.011282952265045942,
+          "after_relative_percent": -2.7969057079073933
+        },
+        {
+          "historical_line": 4198,
+          "current_id": "5:12",
+          "historical": 7.91212e-16,
+          "before": 7.91225e-16,
+          "after": 7.65365e-16,
+          "before_relative_percent": 0.0016430488920748942,
+          "after_relative_percent": -3.2667603625829766
+        },
+        {
+          "historical_line": 4199,
+          "current_id": "5:13",
+          "historical": 5.87134e-16,
+          "before": 5.8715e-16,
+          "after": 5.6144e-16,
+          "before_relative_percent": 0.002725101935840968,
+          "after_relative_percent": -4.376173071223944
+        },
+        {
+          "historical_line": 4203,
+          "current_id": "5:17",
+          "historical": 6.04469e-16,
+          "before": 6.04535e-16,
+          "after": 5.81203e-16,
+          "before_relative_percent": 0.010918674075921508,
+          "after_relative_percent": -3.8489980462190765
+        },
+        {
+          "historical_line": 4204,
+          "current_id": "5:18",
+          "historical": 6.61367e-16,
+          "before": 6.61418e-16,
+          "after": 6.38294e-16,
+          "before_relative_percent": 0.007711300987200964,
+          "after_relative_percent": -3.4886832877963347
+        },
+        {
+          "historical_line": 4207,
+          "current_id": "5:21",
+          "historical": 5.4635e-16,
+          "before": 5.46405e-16,
+          "after": 5.25133e-16,
+          "before_relative_percent": 0.010066806991848587,
+          "after_relative_percent": -3.883408071748884
+        },
+        {
+          "historical_line": 4208,
+          "current_id": "5:22",
+          "historical": 5.08799e-16,
+          "before": 5.08858e-16,
+          "after": 4.87517e-16,
+          "before_relative_percent": 0.011595934740449287,
+          "after_relative_percent": -4.1827912397626505
+        },
+        {
+          "historical_line": 4263,
+          "current_id": "8:1",
+          "historical": 7.61018e-16,
+          "before": 7.61403e-16,
+          "after": 7.36102e-16,
+          "before_relative_percent": 0.05059013058823503,
+          "after_relative_percent": -3.2740355681468714
+        },
+        {
+          "historical_line": 4267,
+          "current_id": "8:5",
+          "historical": 9.43793e-16,
+          "before": 9.44025e-16,
+          "after": 9.19136e-16,
+          "before_relative_percent": 0.024581661444833536,
+          "after_relative_percent": -2.6125432165739815
+        },
+        {
+          "historical_line": 4271,
+          "current_id": "8:9",
+          "historical": 9.72058e-16,
+          "before": 9.72257e-16,
+          "after": 9.49862e-16,
+          "before_relative_percent": 0.020472029446816364,
+          "after_relative_percent": -2.2834028422172303
+        },
+        {
+          "historical_line": 4274,
+          "current_id": "8:12",
+          "historical": 6.3586e-16,
+          "before": 6.35986e-16,
+          "after": 6.17407e-16,
+          "before_relative_percent": 0.019815682697443826,
+          "after_relative_percent": -2.9020539112383337
+        },
+        {
+          "historical_line": 5862,
+          "current_id": "9:1",
+          "historical": 3.45352e-16,
+          "before": 3.44225e-16,
+          "after": 3.37942e-16,
+          "before_relative_percent": -0.32633371169127345,
+          "after_relative_percent": -2.14563691537909
+        },
+        {
+          "historical_line": 5863,
+          "current_id": "9:2",
+          "historical": 2.72952e-16,
+          "before": 2.73446e-16,
+          "after": 2.75862e-16,
+          "before_relative_percent": 0.1809842023505981,
+          "after_relative_percent": 1.0661215158709103
+        },
+        {
+          "historical_line": 5867,
+          "current_id": "9:5",
+          "historical": 2.89501e-16,
+          "before": 2.89495e-16,
+          "after": 2.9228e-16,
+          "before_relative_percent": -0.0020725317011027755,
+          "after_relative_percent": 0.9599275995592516
+        },
+        {
+          "historical_line": 5868,
+          "current_id": "9:6",
+          "historical": 2.71094e-16,
+          "before": 2.71081e-16,
+          "after": 2.65465e-16,
+          "before_relative_percent": -0.0047953846267434486,
+          "after_relative_percent": -2.076401543376094
+        },
+        {
+          "historical_line": 5872,
+          "current_id": "9:10",
+          "historical": 2.70154e-16,
+          "before": 2.70148e-16,
+          "after": 2.72418e-16,
+          "before_relative_percent": -0.0022209554550345345,
+          "after_relative_percent": 0.8380405250338896
+        },
+        {
+          "historical_line": 5873,
+          "current_id": "9:11",
+          "historical": 2.62975e-16,
+          "before": 2.62959e-16,
+          "after": 2.57806e-16,
+          "before_relative_percent": -0.0060842285388273964,
+          "after_relative_percent": -1.9655860823272087
+        },
+        {
+          "historical_line": 5876,
+          "current_id": "9:14",
+          "historical": 2.53366e-16,
+          "before": 2.53362e-16,
+          "after": 2.5565e-16,
+          "before_relative_percent": -0.0015787437935510518,
+          "after_relative_percent": 0.9014627061247449
+        },
+        {
+          "historical_line": 5877,
+          "current_id": "9:15",
+          "historical": 2.30719e-16,
+          "before": 2.30706e-16,
+          "after": 2.257e-16,
+          "before_relative_percent": -0.005634559789191584,
+          "after_relative_percent": -2.1753735062998714
+        },
+        {
+          "historical_line": 5878,
+          "current_id": "9:16",
+          "historical": 1.95538e-16,
+          "before": 1.93414e-16,
+          "after": 1.89401e-16,
+          "before_relative_percent": -1.0862338778140357,
+          "after_relative_percent": -3.138520389898647
+        },
+        {
+          "historical_line": 6415,
+          "current_id": "10:1",
+          "historical": 3.86707e-16,
+          "before": 3.8844e-16,
+          "after": 3.84424e-16,
+          "before_relative_percent": 0.4481429092310085,
+          "after_relative_percent": -0.5903694528415548
+        },
+        {
+          "historical_line": 6416,
+          "current_id": "10:2",
+          "historical": 1.88129e-16,
+          "before": 1.89431e-16,
+          "after": 1.79898e-16,
+          "before_relative_percent": 0.6920783079695347,
+          "after_relative_percent": -4.3751893647444025
+        },
+        {
+          "historical_line": 6420,
+          "current_id": "10:6",
+          "historical": 3.49341e-16,
+          "before": 3.49323e-16,
+          "after": 3.45948e-16,
+          "before_relative_percent": -0.005152558674770269,
+          "after_relative_percent": -0.9712573101926192
+        },
+        {
+          "historical_line": 6421,
+          "current_id": "10:7",
+          "historical": 2.14092e-16,
+          "before": 2.14099e-16,
+          "after": 2.06375e-16,
+          "before_relative_percent": 0.0032696224053108125,
+          "after_relative_percent": -3.6045251574089665
+        },
+        {
+          "historical_line": 6427,
+          "current_id": "10:13",
+          "historical": 2.73645e-16,
+          "before": 2.7363e-16,
+          "after": 2.70881e-16,
+          "before_relative_percent": -0.005481554568864677,
+          "after_relative_percent": -1.0100677885581666
+        },
+        {
+          "historical_line": 6428,
+          "current_id": "10:14",
+          "historical": 2.34018e-16,
+          "before": 2.3401e-16,
+          "after": 2.27667e-16,
+          "before_relative_percent": -0.003418540454169783,
+          "after_relative_percent": -2.713893803040801
+        },
+        {
+          "historical_line": 6429,
+          "current_id": "10:15",
+          "historical": 1.13295e-16,
+          "before": 1.13296e-16,
+          "after": 1.15427e-16,
+          "before_relative_percent": 0.0008826514850568401,
+          "after_relative_percent": 1.8818129661503313
+        },
+        {
+          "historical_line": 6430,
+          "current_id": "10:16",
+          "historical": 1.39151e-16,
+          "before": 1.39146e-16,
+          "after": 1.35661e-16,
+          "before_relative_percent": -0.0035932188773291074,
+          "after_relative_percent": -2.5080667763796027
+        },
+        {
+          "historical_line": 6437,
+          "current_id": "10:24",
+          "historical": 2.73383e-16,
+          "before": 2.73374e-16,
+          "after": 2.67456e-16,
+          "before_relative_percent": -0.0032920847309436674,
+          "after_relative_percent": -2.168020688923611
+        },
+        {
+          "historical_line": 6438,
+          "current_id": "10:25",
+          "historical": 2.06704e-16,
+          "before": 2.06695e-16,
+          "after": 2.0438e-16,
+          "before_relative_percent": -0.004354052171229306,
+          "after_relative_percent": -1.1243130273240975
+        },
+        {
+          "historical_line": 6693,
+          "current_id": "11:1",
+          "historical": 4.84554e-16,
+          "before": 4.8457e-16,
+          "after": 4.73617e-16,
+          "before_relative_percent": 0.0033020055556276517,
+          "after_relative_percent": -2.257127172616469
+        },
+        {
+          "historical_line": 6694,
+          "current_id": "11:2",
+          "historical": 3.20869e-16,
+          "before": 3.2086e-16,
+          "after": 3.12401e-16,
+          "before_relative_percent": -0.002804882989637658,
+          "after_relative_percent": -2.639083239577533
+        },
+        {
+          "historical_line": 6698,
+          "current_id": "11:6",
+          "historical": 4.24936e-16,
+          "before": 4.25022e-16,
+          "after": 4.15048e-16,
+          "before_relative_percent": 0.020238341773826107,
+          "after_relative_percent": -2.3269386448782847
+        },
+        {
+          "historical_line": 6699,
+          "current_id": "11:7",
+          "historical": 3.2796e-16,
+          "before": 3.27956e-16,
+          "after": 3.20058e-16,
+          "before_relative_percent": -0.0012196609342707276,
+          "after_relative_percent": -2.4094401756311834
+        },
+        {
+          "historical_line": 6700,
+          "current_id": "11:8",
+          "historical": 1.87059e-16,
+          "before": 1.87059e-16,
+          "after": 1.91945e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": 2.612010114455865
+        },
+        {
+          "historical_line": 6704,
+          "current_id": "11:12",
+          "historical": 8.88391e-16,
+          "before": 8.88459e-16,
+          "after": 8.78286e-16,
+          "before_relative_percent": 0.007654287357694578,
+          "after_relative_percent": -1.1374496139650248
+        },
+        {
+          "historical_line": 6705,
+          "current_id": "11:13",
+          "historical": 2.63353e-16,
+          "before": 2.63342e-16,
+          "after": 2.70045e-16,
+          "before_relative_percent": -0.0041769032439353815,
+          "after_relative_percent": 2.541076046219337
+        },
+        {
+          "historical_line": 6706,
+          "current_id": "11:14",
+          "historical": 2.72397e-16,
+          "before": 2.72394e-16,
+          "after": 2.6342e-16,
+          "before_relative_percent": -0.001101333715125552,
+          "after_relative_percent": -3.2955575869044074
+        },
+        {
+          "historical_line": 6712,
+          "current_id": "11:20",
+          "historical": 9.14078e-16,
+          "before": 9.14153e-16,
+          "after": 9.04019e-16,
+          "before_relative_percent": 0.00820498907094791,
+          "after_relative_percent": -1.1004531341964219
+        },
+        {
+          "historical_line": 6713,
+          "current_id": "11:21",
+          "historical": 3.21778e-16,
+          "before": 3.21763e-16,
+          "after": 3.29001e-16,
+          "before_relative_percent": -0.004661598990607363,
+          "after_relative_percent": 2.244715300610989
+        },
+        {
+          "historical_line": 6714,
+          "current_id": "11:22",
+          "historical": 2.69113e-16,
+          "before": 2.6911e-16,
+          "after": 2.59603e-16,
+          "before_relative_percent": -0.0011147733479988098,
+          "after_relative_percent": -3.5338315131561715
+        },
+        {
+          "historical_line": 6720,
+          "current_id": "11:28",
+          "historical": 5.8576e-16,
+          "before": 5.85845e-16,
+          "after": 5.77721e-16,
+          "before_relative_percent": 0.014511062551214593,
+          "after_relative_percent": -1.3724050805790755
+        },
+        {
+          "historical_line": 6721,
+          "current_id": "11:29",
+          "historical": 4.64792e-16,
+          "before": 4.64788e-16,
+          "after": 4.57388e-16,
+          "before_relative_percent": -0.0008606000103439371,
+          "after_relative_percent": -1.5929706191156634
+        },
+        {
+          "historical_line": 6722,
+          "current_id": "11:30",
+          "historical": 2.74893e-16,
+          "before": 2.74882e-16,
+          "after": 2.8032e-16,
+          "before_relative_percent": -0.004001556969457365,
+          "after_relative_percent": 1.9742226975586696
+        },
+        {
+          "historical_line": 6728,
+          "current_id": "11:36",
+          "historical": 4.58651e-16,
+          "before": 4.58649e-16,
+          "after": 4.52559e-16,
+          "before_relative_percent": -0.0004360614061726942,
+          "after_relative_percent": -1.3282430431853398
+        },
+        {
+          "historical_line": 6729,
+          "current_id": "11:37",
+          "historical": 2.97647e-16,
+          "before": 2.97693e-16,
+          "after": 2.90882e-16,
+          "before_relative_percent": 0.015454548508797572,
+          "after_relative_percent": -2.2728265361317335
+        },
+        {
+          "historical_line": 6730,
+          "current_id": "11:38",
+          "historical": 2.31608e-16,
+          "before": 2.31597e-16,
+          "after": 2.36039e-16,
+          "before_relative_percent": -0.004749404165660387,
+          "after_relative_percent": 1.9131463507305435
+        },
+        {
+          "historical_line": 6735,
+          "current_id": "11:44",
+          "historical": 4.59007e-16,
+          "before": 4.59005e-16,
+          "after": 4.50867e-16,
+          "before_relative_percent": -0.0004357232024854163,
+          "after_relative_percent": -1.773393434087056
+        },
+        {
+          "historical_line": 6736,
+          "current_id": "11:45",
+          "historical": 4.57921e-16,
+          "before": 4.5796e-16,
+          "after": 4.49661e-16,
+          "before_relative_percent": 0.008516752889686785,
+          "after_relative_percent": -1.8038045863806085
+        },
+        {
+          "historical_line": 6741,
+          "current_id": "11:50",
+          "historical": 4.66208e-16,
+          "before": 4.66205e-16,
+          "after": 4.58822e-16,
+          "before_relative_percent": -0.0006434896011930924,
+          "after_relative_percent": -1.5842713981742085
+        },
+        {
+          "historical_line": 6742,
+          "current_id": "11:51",
+          "historical": 4.14612e-16,
+          "before": 4.14632e-16,
+          "after": 4.07008e-16,
+          "before_relative_percent": 0.004823787058749751,
+          "after_relative_percent": -1.8340038397344993
+        },
+        {
+          "historical_line": 6789,
+          "current_id": "12:1",
+          "historical": 1.62068e-15,
+          "before": 1.62069e-15,
+          "after": 1.60675e-15,
+          "before_relative_percent": 0.0006170249524872773,
+          "after_relative_percent": -0.8595157588172864
+        },
+        {
+          "historical_line": 6799,
+          "current_id": "12:11",
+          "historical": 1.07114e-15,
+          "before": 1.07114e-15,
+          "after": 1.05251e-15,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -1.7392684429673122
+        },
+        {
+          "historical_line": 6800,
+          "current_id": "12:12",
+          "historical": 8.41098e-16,
+          "before": 8.41011e-16,
+          "after": 8.24462e-16,
+          "before_relative_percent": -0.01034362226518537,
+          "after_relative_percent": -1.9778908046386934
+        },
+        {
+          "historical_line": 6804,
+          "current_id": "12:16",
+          "historical": 1.11602e-15,
+          "before": 1.11137e-15,
+          "after": 1.09077e-15,
+          "before_relative_percent": -0.41665919965592213,
+          "after_relative_percent": -2.2625042561961184
+        },
+        {
+          "historical_line": 6955,
+          "current_id": "13:1",
+          "historical": 4.50974e-16,
+          "before": 4.50771e-16,
+          "after": 4.4429e-16,
+          "before_relative_percent": -0.04501368149825158,
+          "after_relative_percent": -1.482125355342001
+        },
+        {
+          "historical_line": 6956,
+          "current_id": "13:2",
+          "historical": 1.06443e-16,
+          "before": 1.07214e-16,
+          "after": 1.13461e-16,
+          "before_relative_percent": 0.7243313322623512,
+          "after_relative_percent": 6.593200116494269
+        },
+        {
+          "historical_line": 6962,
+          "current_id": "13:8",
+          "historical": 5.51152e-16,
+          "before": 5.51148e-16,
+          "after": 5.44839e-16,
+          "before_relative_percent": -0.000725752605468255,
+          "after_relative_percent": -1.145419049554397
+        },
+        {
+          "historical_line": 6963,
+          "current_id": "13:9",
+          "historical": 1.27435e-16,
+          "before": 1.27431e-16,
+          "after": 1.33466e-16,
+          "before_relative_percent": -0.003138855102602367,
+          "after_relative_percent": 4.732608780947167
+        },
+        {
+          "historical_line": 6969,
+          "current_id": "13:15",
+          "historical": 6.8862e-16,
+          "before": 6.88617e-16,
+          "after": 6.82335e-16,
+          "before_relative_percent": -0.000435653916530665,
+          "after_relative_percent": -0.9126949551276575
+        },
+        {
+          "historical_line": 6972,
+          "current_id": "13:18",
+          "historical": 9.55666e-16,
+          "before": 9.55665e-16,
+          "after": 9.49023e-16,
+          "before_relative_percent": -0.00010463906846558402,
+          "after_relative_percent": -0.6951173317874537
+        },
+        {
+          "historical_line": 7104,
+          "current_id": "14:6",
+          "historical": 2.14268e-16,
+          "before": 2.14266e-16,
+          "after": 2.11106e-16,
+          "before_relative_percent": -0.0009334104952629652,
+          "after_relative_percent": -1.4757219930180865
+        },
+        {
+          "historical_line": 7105,
+          "current_id": "14:7",
+          "historical": 1.86464e-16,
+          "before": 1.86449e-16,
+          "after": 1.94316e-16,
+          "before_relative_percent": -0.008044448258104353,
+          "after_relative_percent": 4.211000514844687
+        },
+        {
+          "historical_line": 7116,
+          "current_id": "14:17",
+          "historical": 3.8521e-16,
+          "before": 3.8521e-16,
+          "after": 3.82236e-16,
+          "before_relative_percent": 0.0,
+          "after_relative_percent": -0.7720464162404905
+        },
+        {
+          "historical_line": 7117,
+          "current_id": "14:18",
+          "historical": 2.00423e-16,
+          "before": 2.00403e-16,
+          "after": 2.07858e-16,
+          "before_relative_percent": -0.009978894637840963,
+          "after_relative_percent": 3.709654081617386
+        },
+        {
+          "historical_line": 7122,
+          "current_id": "14:23",
+          "historical": 8.03735e-16,
+          "before": 8.03728e-16,
+          "after": 8.00454e-16,
+          "before_relative_percent": -0.0008709338276902123,
+          "after_relative_percent": -0.40821912695104823
+        },
+        {
+          "historical_line": 7125,
+          "current_id": "14:26",
+          "historical": 1.26921e-15,
+          "before": 1.2692e-15,
+          "after": 1.26408e-15,
+          "before_relative_percent": -0.0007878916806536296,
+          "after_relative_percent": -0.404188432174335
+        },
+        {
+          "historical_line": 7130,
+          "current_id": "14:31",
+          "historical": 2.30361e-15,
+          "before": 2.30359e-15,
+          "after": 2.29515e-15,
+          "before_relative_percent": -0.0008682025169126639,
+          "after_relative_percent": -0.367249664656788
+        },
+        {
+          "historical_line": 7134,
+          "current_id": "14:35",
+          "historical": 2.55561e-15,
+          "before": 2.55559e-15,
+          "after": 2.54395e-15,
+          "before_relative_percent": -0.0007825920230408734,
+          "after_relative_percent": -0.4562511494320409
+        },
+        {
+          "historical_line": 7138,
+          "current_id": "14:39",
+          "historical": 1.76896e-15,
+          "before": 1.76895e-15,
+          "after": 1.75531e-15,
+          "before_relative_percent": -0.0005653039073738597,
+          "after_relative_percent": -0.7716398335745334
+        },
+        {
+          "historical_line": 7254,
+          "current_id": "15:1",
+          "historical": 4.14349e-16,
+          "before": 4.15678e-16,
+          "after": 4.0467e-16,
+          "before_relative_percent": 0.3207441070208983,
+          "after_relative_percent": -2.3359535077917437
+        },
+        {
+          "historical_line": 7255,
+          "current_id": "15:2",
+          "historical": 2.68056e-16,
+          "before": 2.68196e-16,
+          "after": 2.59349e-16,
+          "before_relative_percent": 0.0522278926791353,
+          "after_relative_percent": -3.2482018682663316
+        },
+        {
+          "historical_line": 7260,
+          "current_id": "15:7",
+          "historical": 4.12927e-16,
+          "before": 4.12954e-16,
+          "after": 4.02743e-16,
+          "before_relative_percent": 0.006538686014723183,
+          "after_relative_percent": -2.4662954953296734
+        },
+        {
+          "historical_line": 7261,
+          "current_id": "15:8",
+          "historical": 1.98632e-16,
+          "before": 2.03407e-16,
+          "after": 1.96684e-16,
+          "before_relative_percent": 2.403942969914219,
+          "after_relative_percent": -0.9807080430142223
+        },
+        {
+          "historical_line": 7262,
+          "current_id": "15:9",
+          "historical": 1.9901e-16,
+          "before": 1.99029e-16,
+          "after": 1.88197e-16,
+          "before_relative_percent": 0.00954725893171915,
+          "after_relative_percent": -5.433395306768507
+        },
+        {
+          "historical_line": 7267,
+          "current_id": "15:14",
+          "historical": 4.40961e-16,
+          "before": 4.40996e-16,
+          "after": 4.30634e-16,
+          "before_relative_percent": 0.007937209866626382,
+          "after_relative_percent": -2.341930465506026
+        },
+        {
+          "historical_line": 7272,
+          "current_id": "15:19",
+          "historical": 3.34651e-16,
+          "before": 3.34671e-16,
+          "after": 3.23069e-16,
+          "before_relative_percent": 0.00597637538808371,
+          "after_relative_percent": -3.460918987243422
+        },
+        {
+          "historical_line": 7273,
+          "current_id": "15:20",
+          "historical": 1.78087e-16,
+          "before": 1.78086e-16,
+          "after": 1.70651e-16,
+          "before_relative_percent": -0.0005615233004019338,
+          "after_relative_percent": -4.175487261843935
+        },
+        {
+          "historical_line": 7274,
+          "current_id": "15:21",
+          "historical": 1.89478e-16,
+          "before": 1.89468e-16,
+          "after": 1.99796e-16,
+          "before_relative_percent": -0.005277657564461968,
+          "after_relative_percent": 5.4454870750166195
+        }
+      ],
+      "before": {
+        "median_absolute_percent": 0.0036238842966107576,
+        "median_signed_percent": -0.00035858616646011754,
+        "max_absolute_percent": 5.958532836286912
+      },
+      "after": {
+        "median_absolute_percent": 2.5080667763796027,
+        "median_signed_percent": -2.257127172616469,
+        "max_absolute_percent": 12.210482640072307
+      }
+    }
+  }
+}

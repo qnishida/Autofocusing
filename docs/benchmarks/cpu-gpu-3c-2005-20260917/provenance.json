@@ -1,0 +1,30 @@
+{
+  "cpu_relative_path": "../matrix-ratio-threshold-2005-20260916/continuity-mar15-17",
+  "event_metric_difference_definition": "100 * (GPU - CPU) / abs(CPU), computed from printed catalog values",
+  "event_metric_differences": {
+    "max": {
+      "max_abs_relative_difference_percent": 0.0006852224917379449,
+      "mean_signed_relative_difference_percent": -4.347573813738279e-06
+    },
+    "mad": {
+      "max_abs_relative_difference_percent": 0.0017670966601997687,
+      "mean_signed_relative_difference_percent": -1.1420540172127764e-05
+    },
+    "max_over_mad": {
+      "max_abs_relative_difference_percent": 0.0017670654344458935,
+      "mean_signed_relative_difference_percent": -8.40341196224348e-05
+    }
+  },
+  "sha256": {
+    "docs/benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/report.json": "d31ed16f2332b50a8139c4c26e77a277d7de152a19b8a95229bb01d159da5758",
+    "docs/benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/run.log": "ef4a8a8531d6874d97bbb5c1d75f2cb292a3466e97b578d53a3346da020f43dc",
+    "docs/benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/reference-events.dat": "c94ebd091f09c341ddd2e59f9d37f66813266ceca31b0e0514900427dd6431e8",
+    "docs/benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/corrected-events.dat": "c05db99b21c542a3d2f46b43881e63c72fe7222f0340b85e9a44ba3e0fa4e73b",
+    "docs/benchmarks/cpu-gpu-3c-2005-20260917/kernel-700.json": "3a57cfdc18e75c22b8b06b57947cb92b0a7fb1586a9b9d26eb8b0ea835c140e5",
+    "tests/run_cpu_gpu_events.py": "bac17c803ddaefd8980fecc42131526a4dca62e0ac4aa255cf27cfc8ff6d807f",
+    "docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json": "0ca7557568c1aee15403ad779c8ec628857de1ef414ea437700786670106a5b8",
+    "docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/run.log": "18918f338b1cafb366c90f0d750aa6d38b0e32eef6236909d28c22f8f15bb48f",
+    "docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/reference-events.dat": "620260760cbeaa50540b23834631a71a41a9d34228bcc028703a7c75f2445e51",
+    "docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/corrected-events.dat": "3467d668df48de0b3eaf7a1b791d46b87fed6805a8b8380d6720dbafd055d3b3"
+  }
+}

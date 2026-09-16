@@ -1,0 +1,663 @@
+{
+  "events": 45,
+  "reference_file_sha256": "587d449b60f9efcc7b9c9a0f499e4ce8f6cd960ad5d68d4e68d1df974400f8cf",
+  "corrected_file_sha256": "c1cd0d94ed26da2bfbfbdd9358386451d1bd061146912e02cd68b83f2e4a9d73",
+  "definition": "old is existing implementation; corrected is full same-station self-term subtraction; ratios use the same event and fitted steering parameters",
+  "ratio_error": "100*((old_a/old_b)/(corrected_a/corrected_b)-1)",
+  "ratio_inclusion": "Both components strictly positive in both versions; finite output previously checked",
+  "ratios": {
+    "R/U": {
+      "summary": {
+        "count": 34,
+        "unit": "percent",
+        "mean_signed": -2.9593522289873917,
+        "median_signed": -2.2091005831710033,
+        "median_absolute": 4.988540717929374,
+        "p95_absolute": 28.029552351068684,
+        "maximum_absolute": 51.06903133919353
+      },
+      "median_old_ratio": 0.7491130873697558,
+      "median_corrected_ratio": 0.7619923631442777,
+      "rows": [
+        {
+          "row": 1,
+          "start": "20050102T000000",
+          "end": "20050102T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.10868100436134995,
+          "corrected_ratio": 0.11548579808721783,
+          "relative_error_pct": -5.89232082089326
+        },
+        {
+          "row": 4,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.820066792507623,
+          "corrected_ratio": 0.8531058539185317,
+          "relative_error_pct": -3.8727974095069007
+        },
+        {
+          "row": 5,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.7977890981693263,
+          "corrected_ratio": 0.8070150268868627,
+          "relative_error_pct": -1.1432164718327753
+        },
+        {
+          "row": 6,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.5249773751581488,
+          "corrected_ratio": 0.552549106157581,
+          "relative_error_pct": -4.989915048667015
+        },
+        {
+          "row": 7,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.8394000365831352,
+          "corrected_ratio": 0.912589402656536,
+          "relative_error_pct": -8.019966686041657
+        },
+        {
+          "row": 8,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.0515541601255887,
+          "corrected_ratio": 0.08341134979159986,
+          "relative_error_pct": -38.192871528401305
+        },
+        {
+          "row": 9,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 0,
+          "old_ratio": 0.9189120249869861,
+          "corrected_ratio": 0.9659961056833042,
+          "relative_error_pct": -4.874148086033204
+        },
+        {
+          "row": 10,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 0,
+          "old_ratio": 1.6795886556408024,
+          "corrected_ratio": 1.9057246766913265,
+          "relative_error_pct": -11.866143300570364
+        },
+        {
+          "row": 11,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 0,
+          "old_ratio": 2.4282884890940934,
+          "corrected_ratio": 2.921576565270547,
+          "relative_error_pct": -16.884311095601
+        },
+        {
+          "row": 13,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 2,
+          "old_ratio": 0.48391611482280833,
+          "corrected_ratio": 0.49079959333504064,
+          "relative_error_pct": -1.4025028964384956
+        },
+        {
+          "row": 14,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.964566279658462,
+          "corrected_ratio": 0.9853804570749894,
+          "relative_error_pct": -2.1122985814344686
+        },
+        {
+          "row": 15,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.9844719952814488,
+          "corrected_ratio": 1.0361463371288575,
+          "relative_error_pct": -4.987166387191733
+        },
+        {
+          "row": 16,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 1.4907241774773703,
+          "corrected_ratio": 1.60186372335879,
+          "relative_error_pct": -6.93813988423323
+        },
+        {
+          "row": 17,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.7004370765701852,
+          "corrected_ratio": 0.7169696994016926,
+          "relative_error_pct": -2.3059025849075376
+        },
+        {
+          "row": 18,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.5627085174657016,
+          "corrected_ratio": 0.5763582502138562,
+          "relative_error_pct": -2.368272292986162
+        },
+        {
+          "row": 19,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 1,
+          "old_ratio": 0.8162038538532941,
+          "corrected_ratio": 1.6680721354839443,
+          "relative_error_pct": -51.06903133919353
+        },
+        {
+          "row": 20,
+          "start": "20050102T174712",
+          "end": "20050103T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.6101701642109442,
+          "corrected_ratio": 0.6208442871851694,
+          "relative_error_pct": -1.719291486536878
+        },
+        {
+          "row": 21,
+          "start": "20050102T174712",
+          "end": "20050103T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.8243117824049818,
+          "corrected_ratio": 0.8250952705684144,
+          "relative_error_pct": -0.09495729661530561
+        },
+        {
+          "row": 22,
+          "start": "20050102T174712",
+          "end": "20050103T000000",
+          "fitted_component": 0,
+          "old_ratio": 1.0126474879472216,
+          "corrected_ratio": 1.0561314094837977,
+          "relative_error_pct": -4.117283242037995
+        },
+        {
+          "row": 23,
+          "start": "20050102T174712",
+          "end": "20050103T000000",
+          "fitted_component": 0,
+          "old_ratio": 0.6380950935607728,
+          "corrected_ratio": 0.6489008820674723,
+          "relative_error_pct": -1.6652448479143822
+        },
+        {
+          "row": 25,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.33978180133351676,
+          "corrected_ratio": 0.307261260171209,
+          "relative_error_pct": 10.584003054660052
+        },
+        {
+          "row": 26,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.5320455749448499,
+          "corrected_ratio": 0.5272861726661988,
+          "relative_error_pct": 0.9026222429815434
+        },
+        {
+          "row": 27,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 0,
+          "old_ratio": 0.9752246460477809,
+          "corrected_ratio": 1.0029501895110344,
+          "relative_error_pct": -2.7643988458460167
+        },
+        {
+          "row": 28,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 0,
+          "old_ratio": 0.8527956863204783,
+          "corrected_ratio": 0.8677362982844506,
+          "relative_error_pct": -1.721791746353185
+        },
+        {
+          "row": 29,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 1,
+          "old_ratio": 1.2822302894908313,
+          "corrected_ratio": 1.373244433861174,
+          "relative_error_pct": -6.627672548756436
+        },
+        {
+          "row": 30,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.30044001884805144,
+          "corrected_ratio": 0.27413761441970846,
+          "relative_error_pct": 9.594598860145332
+        },
+        {
+          "row": 31,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 2,
+          "old_ratio": 0.5401507656421782,
+          "corrected_ratio": 0.5220034546975791,
+          "relative_error_pct": 3.47647334156298
+        },
+        {
+          "row": 32,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 0,
+          "old_ratio": 0.40723776134949063,
+          "corrected_ratio": 0.38890515772492573,
+          "relative_error_pct": 4.7139008728528164
+        },
+        {
+          "row": 33,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 1,
+          "old_ratio": 2.005534995560337,
+          "corrected_ratio": 2.169164547377431,
+          "relative_error_pct": -7.543436573999218
+        },
+        {
+          "row": 34,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 2,
+          "old_ratio": 0.2952886739544629,
+          "corrected_ratio": 0.2736806909654517,
+          "relative_error_pct": 7.8953260870489705
+        },
+        {
+          "row": 35,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 2,
+          "old_ratio": 0.20364526290423357,
+          "corrected_ratio": 0.18540099877784746,
+          "relative_error_pct": 9.840434650649787
+        },
+        {
+          "row": 36,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 0,
+          "old_ratio": 4.252153219623423,
+          "corrected_ratio": 3.469531208239046,
+          "relative_error_pct": 22.556995870966556
+        },
+        {
+          "row": 40,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.1932889386047704,
+          "corrected_ratio": 0.167409518719753,
+          "relative_error_pct": 15.458750543533961
+        },
+        {
+          "row": 41,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.3406711873581019,
+          "corrected_ratio": 0.31680912503609593,
+          "relative_error_pct": 7.531999692018743
+        }
+      ],
+      "excluded": 11
+    },
+    "T/U": {
+      "summary": {
+        "count": 11,
+        "unit": "percent",
+        "mean_signed": 77.35590343092815,
+        "median_signed": -3.461308495080717,
+        "median_absolute": 60.508303849940035,
+        "p95_absolute": 337.5864737794235,
+        "maximum_absolute": 407.376342082096
+      },
+      "median_old_ratio": 0.11028918816350149,
+      "median_corrected_ratio": 0.07042015593416114,
+      "rows": [
+        {
+          "row": 1,
+          "start": "20050102T000000",
+          "end": "20050102T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.25476037592668266,
+          "corrected_ratio": 0.06926664687305999,
+          "relative_error_pct": 267.7966054767509
+        },
+        {
+          "row": 3,
+          "start": "20050102T000000",
+          "end": "20050102T060504",
+          "fitted_component": 1,
+          "old_ratio": 19.376375127360788,
+          "corrected_ratio": 49.064428769366415,
+          "relative_error_pct": -60.508303849940035
+        },
+        {
+          "row": 14,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.011428668945862464,
+          "corrected_ratio": 0.003510061649412586,
+          "relative_error_pct": 225.59738509934917
+        },
+        {
+          "row": 18,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.010622904872241996,
+          "corrected_ratio": 0.008124470626904162,
+          "relative_error_pct": 30.751963544114204
+        },
+        {
+          "row": 19,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 1,
+          "old_ratio": 0.42370857890557717,
+          "corrected_ratio": 1.1848979532149488,
+          "relative_error_pct": -64.24092237175859
+        },
+        {
+          "row": 26,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.013185739248693396,
+          "corrected_ratio": 0.0025988084494802635,
+          "relative_error_pct": 407.376342082096
+        },
+        {
+          "row": 29,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 1,
+          "old_ratio": 0.20352825095410965,
+          "corrected_ratio": 0.21082557447315156,
+          "relative_error_pct": -3.461308495080717
+        },
+        {
+          "row": 32,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 0,
+          "old_ratio": 0.0013712814063968702,
+          "corrected_ratio": 0.0006589008169691159,
+          "relative_error_pct": 108.11651330235716
+        },
+        {
+          "row": 33,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 1,
+          "old_ratio": 0.5665826263359496,
+          "corrected_ratio": 0.6338864060969688,
+          "relative_error_pct": -10.617640497361192
+        },
+        {
+          "row": 35,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 2,
+          "old_ratio": 0.11028918816350149,
+          "corrected_ratio": 0.1361682389865136,
+          "relative_error_pct": -19.005203427485927
+        },
+        {
+          "row": 41,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.04866702250823197,
+          "corrected_ratio": 0.07042015593416114,
+          "relative_error_pct": -30.890493122831366
+        }
+      ],
+      "excluded": 34
+    },
+    "T/R": {
+      "summary": {
+        "count": 16,
+        "unit": "percent",
+        "mean_signed": 81.78259244619473,
+        "median_signed": -5.4317797143757005,
+        "median_absolute": 34.827428809142,
+        "p95_absolute": 422.8344177188335,
+        "maximum_absolute": 482.82481718469336
+      },
+      "median_old_ratio": 0.35031391866985,
+      "median_corrected_ratio": 0.25725275092353145,
+      "rows": [
+        {
+          "row": 1,
+          "start": "20050102T000000",
+          "end": "20050102T060504",
+          "fitted_component": 2,
+          "old_ratio": 2.3441113506794444,
+          "corrected_ratio": 0.5997849780693211,
+          "relative_error_pct": 290.82528512551715
+        },
+        {
+          "row": 2,
+          "start": "20050102T000000",
+          "end": "20050102T060504",
+          "fitted_component": 0,
+          "old_ratio": 0.43238881995920775,
+          "corrected_ratio": 0.07418847091100902,
+          "relative_error_pct": 482.82481718469336
+        },
+        {
+          "row": 12,
+          "start": "20050102T055544",
+          "end": "20050102T120048",
+          "fitted_component": 1,
+          "old_ratio": 1.141658549519094,
+          "corrected_ratio": 1.2347398361684567,
+          "relative_error_pct": -7.538534347300629
+        },
+        {
+          "row": 14,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.011848505579014413,
+          "corrected_ratio": 0.0035621384859122114,
+          "relative_error_pct": 232.62338412371366
+        },
+        {
+          "row": 18,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 0,
+          "old_ratio": 0.018878166124239423,
+          "corrected_ratio": 0.014096216413818315,
+          "relative_error_pct": 33.92364000408956
+        },
+        {
+          "row": 19,
+          "start": "20050102T115128",
+          "end": "20050102T175632",
+          "fitted_component": 1,
+          "old_ratio": 0.5191210221628473,
+          "corrected_ratio": 0.7103397557031813,
+          "relative_error_pct": -26.919334305179397
+        },
+        {
+          "row": 24,
+          "start": "20050102T174712",
+          "end": "20050103T000000",
+          "fitted_component": 1,
+          "old_ratio": 0.47483074183913365,
+          "corrected_ratio": 0.7617285571510103,
+          "relative_error_pct": -37.664048776761305
+        },
+        {
+          "row": 26,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 2,
+          "old_ratio": 0.024783101053063333,
+          "corrected_ratio": 0.004928648965588279,
+          "relative_error_pct": 402.8376178968802
+        },
+        {
+          "row": 29,
+          "start": "20050103T000000",
+          "end": "20050103T060504",
+          "fitted_component": 1,
+          "old_ratio": 0.15872987295825772,
+          "corrected_ratio": 0.15352370581278807,
+          "relative_error_pct": 3.391116126273186
+        },
+        {
+          "row": 32,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 0,
+          "old_ratio": 0.003367274689490396,
+          "corrected_ratio": 0.0016942455091715682,
+          "relative_error_pct": 98.74774176836306
+        },
+        {
+          "row": 33,
+          "start": "20050103T055544",
+          "end": "20050103T120048",
+          "fitted_component": 1,
+          "old_ratio": 0.28250946884008327,
+          "corrected_ratio": 0.29222605858248596,
+          "relative_error_pct": -3.325025081450772
+        },
+        {
+          "row": 35,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 2,
+          "old_ratio": 0.5415750240916047,
+          "corrected_ratio": 0.7344525643557837,
+          "relative_error_pct": -26.26140197813308
+        },
+        {
+          "row": 38,
+          "start": "20050103T115128",
+          "end": "20050103T175632",
+          "fitted_component": 1,
+          "old_ratio": 0.41811836849961675,
+          "corrected_ratio": 0.5497449707740231,
+          "relative_error_pct": -23.943211720351044
+        },
+        {
+          "row": 41,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 2,
+          "old_ratio": 0.1428562916800911,
+          "corrected_ratio": 0.2222794432645769,
+          "relative_error_pct": -35.731217614194435
+        },
+        {
+          "row": 43,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 0,
+          "old_ratio": 0.08310271480133702,
+          "corrected_ratio": 0.1749377974348359,
+          "relative_error_pct": -52.495849370521164
+        },
+        {
+          "row": 45,
+          "start": "20050103T174712",
+          "end": "20050104T000000",
+          "fitted_component": 1,
+          "old_ratio": 1.7907068681919902,
+          "corrected_ratio": 2.3187725272964403,
+          "relative_error_pct": -22.77349989652263
+        }
+      ],
+      "excluded": 29
+    }
+  },
+  "diagonal_signs": {
+    "R": {
+      "old_nonpositive": 3,
+      "corrected_nonpositive": 3
+    },
+    "T": {
+      "old_nonpositive": 24,
+      "corrected_nonpositive": 24
+    },
+    "U": {
+      "old_nonpositive": 5,
+      "corrected_nonpositive": 8
+    }
+  },
+  "fractions": {
+    "R": {
+      "mean_old_fraction": 0.3400783724142453,
+      "mean_corrected_fraction": 0.34846010161910385,
+      "change": {
+        "count": 10,
+        "unit": "percentage points",
+        "mean_signed": -0.8381729204858577,
+        "median_signed": -0.6698865107689467,
+        "median_absolute": 1.1965515178477397,
+        "p95_absolute": 4.569196581712378,
+        "maximum_absolute": 6.854053859951409
+      }
+    },
+    "T": {
+      "mean_old_fraction": 0.07575135956972744,
+      "mean_corrected_fraction": 0.07771222289694434,
+      "change": {
+        "count": 10,
+        "unit": "percentage points",
+        "mean_signed": -0.19608633272168974,
+        "median_signed": 0.0395205896205743,
+        "median_absolute": 0.7450170771618302,
+        "p95_absolute": 12.387670378004502,
+        "maximum_absolute": 12.838591275374373
+      }
+    },
+    "U": {
+      "mean_old_fraction": 0.5841702680160272,
+      "mean_corrected_fraction": 0.5738276754839517,
+      "change": {
+        "count": 10,
+        "unit": "percentage points",
+        "mean_signed": 1.0342592532075483,
+        "median_signed": 0.3839024740279584,
+        "median_absolute": 0.8110790182518424,
+        "p95_absolute": 15.257728398378688,
+        "maximum_absolute": 18.690598696726074
+      }
+    }
+  },
+  "fraction_inclusion": "All three diagonal entries strictly positive in both versions; common subset only"
+}

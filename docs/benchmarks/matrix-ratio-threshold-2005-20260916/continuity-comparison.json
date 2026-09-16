@@ -1,0 +1,80 @@
+{
+  "results": {
+    "20050316": {
+      "historical_lines": [
+        4069,
+        4070,
+        4071,
+        4072,
+        4073,
+        4074,
+        4075,
+        4076,
+        4077,
+        4078,
+        4079,
+        4080,
+        4081,
+        4082,
+        4083,
+        4084,
+        4085
+      ],
+      "common_pairs": 17,
+      "cold_start_mar16": {
+        "accepted_windows_equal": 13,
+        "score_absolute_relative_percent_median": 0.11610416329057571,
+        "score_absolute_relative_percent_max": 1.1426173263272998,
+        "slowness_distance_median": 6.99213844254552e-07,
+        "slowness_distance_max": 3.273787409102791e-05
+      },
+      "warm_start_mar15": {
+        "accepted_windows_equal": 17,
+        "score_absolute_relative_percent_median": 0.09256934017816132,
+        "score_absolute_relative_percent_max": 0.21349390748566233,
+        "slowness_distance_median": 4.2059481689605306e-07,
+        "slowness_distance_max": 2.0880613017783497e-06
+      }
+    },
+    "20050317": {
+      "historical_lines": [
+        4086,
+        4087,
+        4088,
+        4089,
+        4090,
+        4091,
+        4092,
+        4093,
+        4094,
+        4095,
+        4096,
+        4097,
+        4098,
+        4099,
+        4100,
+        4101,
+        4102,
+        4103,
+        4104,
+        4105
+      ],
+      "common_pairs": 20,
+      "cold_start_mar16": {
+        "accepted_windows_equal": 20,
+        "score_absolute_relative_percent_median": 0.07641923854867505,
+        "score_absolute_relative_percent_max": 0.35532920747103347,
+        "slowness_distance_median": 7.292005011107298e-07,
+        "slowness_distance_max": 2.6476404589733047e-06
+      },
+      "warm_start_mar15": {
+        "accepted_windows_equal": 20,
+        "score_absolute_relative_percent_median": 0.07641923854867505,
+        "score_absolute_relative_percent_max": 0.35532920747103347,
+        "slowness_distance_median": 7.292005011107298e-07,
+        "slowness_distance_max": 2.6476404589733047e-06
+      }
+    }
+  },
+  "interpretation": "Same current CPU executable, FFT and seeds; only preceding-day input history differs. Comparison is on common historical row matches. This does not prove a one-day warm-up always recovers an arbitrary long-run state."
+}

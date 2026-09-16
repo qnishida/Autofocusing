@@ -1,0 +1,94 @@
+{
+  "start": "2005-03-27",
+  "end": "2005-03-28",
+  "component_mode": "3c",
+  "settings": {
+    "AUTOFOCUSING_BACKEND": "cpu",
+    "AUTOFOCUSING_GPU_POWER": "off",
+    "AUTOFOCUSING_FREQ_MIN": "0.1",
+    "AUTOFOCUSING_FREQ_MAX": "0.25",
+    "AUTOFOCUSING_SLOWNESS_MAX": "0.165",
+    "AUTOFOCUSING_SLOWNESS_STEP": "0.005",
+    "AUTOFOCUSING_PROFILE": "1",
+    "OMP_NUM_THREADS": "4",
+    "OMP_DYNAMIC": "FALSE"
+  },
+  "sources": [
+    {
+      "path": "/Volumes/Seismic_Data/hdf5/Hi-net/2005/0327/20050860000.h5",
+      "size": 911078207,
+      "mtime_ns": 1789558434327730652,
+      "sha256": "274c3a80278378cf818219a045d56fd757e61f186dccc78d97b05ef2aa1510ba"
+    },
+    {
+      "path": "/Volumes/Seismic_Data/hdf5/Hi-net/2005/0328/20050870000.h5",
+      "size": 904131127,
+      "mtime_ns": 1789558444117511154,
+      "sha256": "e2e676dfb60f8e41d02492d955b79ea47ec30f1d5864725f2b8de2177402ab02"
+    }
+  ],
+  "checks": {
+    "columns_valid": true,
+    "non_matrix_columns_exact": true,
+    "all_output_finite": true,
+    "all_days_loaded": true,
+    "grid_settings_verified": true,
+    "diagonal_matches_scalar": true,
+    "inputs_unchanged": true,
+    "catalog_unchanged": true
+  },
+  "binary_sha256": "9d6bb404b7f8f2c4c697b78cea65d264a6b13e712c25ca4d788a89cadc6095a9",
+  "catalog_sha256": "d8935f2d2dc260438d08236060bf9c2b004b8f5527ace29d83ef5b353b849b86",
+  "seed": "1837 + 104729 * replicate",
+  "fftw": "ESTIMATE | UNALIGNED",
+  "frequency_band": {
+    "requested_min_hz": 0.1,
+    "requested_max_hz": 0.25,
+    "min_hz": 0.099609375,
+    "max_hz": 0.25,
+    "df_hz": 0.0009765625,
+    "min_bin": 102,
+    "max_bin": 256,
+    "fft_length": 2048,
+    "sample_interval_s": 0.5,
+    "spectrum_bins": 266
+  },
+  "command": [
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit/cal_ccf_matrix_audit",
+    "2005",
+    "matrix-audit",
+    "corrected",
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-20050327-28/input",
+    "/Users/knishida/Projects/Autofocusing/moment_loc_76_24",
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-20050327-28/results",
+    "3c",
+    "2005-03-27",
+    "2005-03-28"
+  ],
+  "exit_code": 0,
+  "segments": [
+    "#Segment 2005-Mar-27 0 accepted_windows=25",
+    "#Segment 2005-Mar-27 1 accepted_windows=45",
+    "#Segment 2005-Mar-27 2 accepted_windows=48",
+    "#Segment 2005-Mar-27 3 accepted_windows=44",
+    "#Segment 2005-Mar-28 0 accepted_windows=48",
+    "#Segment 2005-Mar-28 1 accepted_windows=45",
+    "#Segment 2005-Mar-28 2 accepted_windows=48",
+    "#Segment 2005-Mar-28 3 accepted_windows=43"
+  ],
+  "loaded_station_counts": [
+    685,
+    684
+  ],
+  "events": 32,
+  "threshold_counts": {
+    "0": 10,
+    "1": 3,
+    "2": 8
+  },
+  "diagonal_scalar_max_scaled_error": 2.980228021072668e-06,
+  "event_hashes": {
+    "reference": "6be1cd0f955d043614d0e64db0482383084b6cd3cfae87d56757792be88f578a",
+    "corrected": "80cc6e8b802cd832599e731b6b88c8ffac6e037379a9956fb44cbcd281640e0c"
+  }
+}

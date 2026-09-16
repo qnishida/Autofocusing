@@ -1,0 +1,15 @@
+{
+  "base_commit": "9ca6a93ee7600f2598b12d89deccfdabe89582c0",
+  "branch": "test/spectral-matrix-3c-2005",
+  "source_sha256": {
+    "src/cal_ccf.cpp": "c83e0299ff814d5dd1b474b0feb0d688d86d08257b18a8185be1c983246d6d38",
+    "src/station_info.cpp": "fcdb5633d0f76c105b335c42fee85b79ba4c6258cd18db97499ac0f97a78b5ec",
+    "tests/spectral_matrix.cpp": "bef46bf0b835641093bd61a87904e40a0290a517e305d1a57671c99d25670257",
+    "tests/run_spectral_matrix_events.py": "58a313883cf974f79620b3779db6d1941d601a86e63bc1fc548f4e9256fb6b1a",
+    "tests/build_io_probe.py": "2fe3271b78039ca6bfb359dd36aa4b2b7360aa141391ddf68911a5f72aed30ac",
+    "CMakeLists.txt": "9ad7bad2a899edcb419c9c384aa919409202200c2a83ccb8dbb4bcd2d2afe78e"
+  },
+  "baseline_test_failure_log": "spectral-test-before.log",
+  "corrected_ctest_log": "spectral-ctest.log",
+  "installed_binary_modified": false
+}

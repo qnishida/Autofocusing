@@ -1,0 +1,83 @@
+{
+  "start": "2005-04-02",
+  "end": "2005-04-02",
+  "component_mode": "3c",
+  "settings": {
+    "AUTOFOCUSING_BACKEND": "cpu",
+    "AUTOFOCUSING_GPU_POWER": "off",
+    "AUTOFOCUSING_FREQ_MIN": "0.1",
+    "AUTOFOCUSING_FREQ_MAX": "0.25",
+    "AUTOFOCUSING_SLOWNESS_MAX": "0.165",
+    "AUTOFOCUSING_SLOWNESS_STEP": "0.005",
+    "AUTOFOCUSING_PROFILE": "1",
+    "OMP_NUM_THREADS": "4",
+    "OMP_DYNAMIC": "FALSE"
+  },
+  "sources": [
+    {
+      "path": "/Volumes/Seismic_Data/hdf5/Hi-net/2005/0402/20050920000.h5",
+      "size": 908282644,
+      "mtime_ns": 1789558494714802505,
+      "sha256": "a37557ea765fd6740873609ea2c241ad07f3baafbcb11a604ac01c14134a5fed"
+    }
+  ],
+  "checks": {
+    "columns_valid": true,
+    "non_matrix_columns_exact": true,
+    "all_output_finite": true,
+    "all_days_loaded": true,
+    "grid_settings_verified": true,
+    "diagonal_matches_scalar": true,
+    "inputs_unchanged": true,
+    "catalog_unchanged": true
+  },
+  "binary_sha256": "9d6bb404b7f8f2c4c697b78cea65d264a6b13e712c25ca4d788a89cadc6095a9",
+  "catalog_sha256": "d8935f2d2dc260438d08236060bf9c2b004b8f5527ace29d83ef5b353b849b86",
+  "seed": "1837 + 104729 * replicate",
+  "fftw": "ESTIMATE | UNALIGNED",
+  "frequency_band": {
+    "requested_min_hz": 0.1,
+    "requested_max_hz": 0.25,
+    "min_hz": 0.099609375,
+    "max_hz": 0.25,
+    "df_hz": 0.0009765625,
+    "min_bin": 102,
+    "max_bin": 256,
+    "fft_length": 2048,
+    "sample_interval_s": 0.5,
+    "spectrum_bins": 266
+  },
+  "command": [
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit/cal_ccf_matrix_audit",
+    "2005",
+    "matrix-audit",
+    "corrected",
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-extension-20050402/input",
+    "/Users/knishida/Projects/Autofocusing/moment_loc_76_24",
+    "/Users/knishida/Projects/Autofocusing/repo/build-clang/matrix-audit-extension-20050402/results",
+    "3c",
+    "2005-04-02",
+    "2005-04-02"
+  ],
+  "exit_code": 0,
+  "segments": [
+    "#Segment 2005-Apr-02 0 accepted_windows=40",
+    "#Segment 2005-Apr-02 1 accepted_windows=41",
+    "#Segment 2005-Apr-02 2 accepted_windows=39",
+    "#Segment 2005-Apr-02 3 accepted_windows=31"
+  ],
+  "loaded_station_counts": [
+    691
+  ],
+  "events": 15,
+  "threshold_counts": {
+    "0": 7,
+    "1": 2,
+    "2": 4
+  },
+  "diagonal_scalar_max_scaled_error": 2.7871235034800625e-06,
+  "event_hashes": {
+    "reference": "20a724d6d8fb4e83ea1ccba36f73ece2dd8457b95110d413a535198e85c43204",
+    "corrected": "ad6bb4cdb216809caf2de906111532e180240afbeafffc374092840f9941bedb"
+  }
+}

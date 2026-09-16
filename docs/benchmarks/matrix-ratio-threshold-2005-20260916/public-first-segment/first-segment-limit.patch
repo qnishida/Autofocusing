@@ -1,0 +1,11 @@
+--- a/src/cal_ccf.cpp
++++ b/src/cal_ccf.cpp
+@@ -270,7 +270,7 @@
+                 << elapsed_seconds.count() << "s\n";
+ 
+       const int num_segments = 4;
+-      for (int iloc = 0; iloc < num_segments; iloc++) {
++      for (int iloc = 0; iloc < 1; iloc++) {
+         if (sta_num > 0)
+           count0 += search_events(sta0, ssRTU, iloc, num_segments, ofs);
+       }

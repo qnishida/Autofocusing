@@ -1,0 +1,121 @@
+{
+  "date": "2026-09-17",
+  "base_commit": "9ca6a93ee7600f2598b12d89deccfdabe89582c0",
+  "adopted_definition": "Subtract each full complex same-station term from the matching matrix entry; retain existing distinct-station weight normalization",
+  "source_matches_real_data_validation": {
+    "src/cal_ccf.cpp": true,
+    "src/station_info.cpp": true,
+    "tests/spectral_matrix.cpp": true,
+    "tests/run_spectral_matrix_events.py": true,
+    "tests/build_io_probe.py": true,
+    "CMakeLists.txt": true
+  },
+  "source_sha256": {
+    "src/cal_ccf.cpp": "c83e0299ff814d5dd1b474b0feb0d688d86d08257b18a8185be1c983246d6d38",
+    "src/station_info.cpp": "fcdb5633d0f76c105b335c42fee85b79ba4c6258cd18db97499ac0f97a78b5ec",
+    "tests/spectral_matrix.cpp": "bef46bf0b835641093bd61a87904e40a0290a517e305d1a57671c99d25670257",
+    "tests/run_spectral_matrix_events.py": "58a313883cf974f79620b3779db6d1941d601a86e63bc1fc548f4e9256fb6b1a",
+    "tests/build_io_probe.py": "2fe3271b78039ca6bfb359dd36aa4b2b7360aa141391ddf68911a5f72aed30ac",
+    "CMakeLists.txt": "9ad7bad2a899edcb419c9c384aa919409202200c2a83ccb8dbb4bcd2d2afe78e"
+  },
+  "ctest_passed": 10,
+  "ctest_log": "commit-ctest.log",
+  "ctest_log_sha256": "6c861b864bcc4f67f75559eb5c7b460ec3532db835343e18bd3ffc975711dc2e",
+  "saved_run_checks": [
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20050918/report.json",
+      "sha256": "38b722d7a7d574c211655b50e8b0c71e110d0141046ba4b90306dc5a33d91b60",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20051005/report.json",
+      "sha256": "0be9fc2c217a5c1cf6df6c0d6c7d1a5a3c66e43b5cd722a665d0e0fc13fb9578",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/mar16-17/report.json",
+      "sha256": "3e2d61f712c5310dcb47e317636e4d752cd003070ac4fe3a174ac8ad6f90e5db",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20051125/report.json",
+      "sha256": "d5eb91c5baf2226ee1998d1419512d027684e68b13481791a5b908888380c384",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20050809/report.json",
+      "sha256": "bf7a95e55761d4ce2b4dffbab18b92e2591b96419b49f55e688e8930cbd4ad9f",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20050402/report.json",
+      "sha256": "c6b05dc3a02e4e7317ad23914fb222e582bd1f9960ee8a029bb92b2466dfc5c8",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/jan04-14/report.json",
+      "sha256": "60e97c27e596b72cd36cfc5cd73609ed4b4c0f6d018890f5aa8c21ec8b328d87",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/mar27-28/report.json",
+      "sha256": "34373aa3c8f156a98174cf783368af174452e0bf0ad3e632ed78bc8a4ac88a20",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20050212/report.json",
+      "sha256": "30b6f82974ef6d5f1c0e7a77089b5361390b3ddfde273a07efb398d2949b45a1",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/audit-check/report.json",
+      "sha256": "1dd80ec9d0663eb7cca0a9126053d5743dbe68be16010a2da5347af862701473",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20051028/report.json",
+      "sha256": "0d261ce54bfb723923202320d3c70146c104a20e79dc7a4ac82c05a7de680ff8",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/jan15-31/report.json",
+      "sha256": "9a51d3705eb48ed408a1771af9ac7ca2db2d3dbe274f4a34305d8871ed883486",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/continuity-mar15-17/report.json",
+      "sha256": "0ca7557568c1aee15403ad779c8ec628857de1ef414ea437700786670106a5b8",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20050315/report.json",
+      "sha256": "fc063867f736d065a75c989489b7808b449fd90f5f5a2476b415a5acf03eed62",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20051009/report.json",
+      "sha256": "93bfa64aa50e03f385f5ad3b36376fdb7ad9535a0d8f9de16f403effc3c06227",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/matrix-ratio-threshold-2005-20260916/extra-20051104/report.json",
+      "sha256": "1e76813209338dfea2333b5ebaa0f3437b19ced36a9af3d52618caa491af127c",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/spectral-matrix-3c-2005-20260916/report.json",
+      "sha256": "b36aff5f2bfc9fbba3a7542ffe221d68a8f48c362c27b97e74af49dc15a08c96",
+      "all_checks_passed": true
+    },
+    {
+      "report": "docs/benchmarks/cpu-gpu-3c-2005-20260917/mar15-17/report.json",
+      "sha256": "d31ed16f2332b50a8139c4c26e77a277d7de152a19b8a95229bb01d159da5758",
+      "all_checks_passed": true
+    }
+  ],
+  "new_real_data_runs_required": false,
+  "reason": "Numerical source is byte-identical to the previously validated source.",
+  "installed_binary_replaced": false,
+  "implementation_commit": "6ddbd21f2b345592ed646f76567acb609180eb17",
+  "whitespace_check": "Source/scripts/Markdown checked normally; archived raw patch files preserve original context whitespace."
+}
