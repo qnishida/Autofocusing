@@ -7,9 +7,9 @@
 #include <stdexcept>
 
 static void run_case(int stations, int half_width, int threads, bool horizontal,
-                     int repeats, bool benchmark, bool offset = false) {
+                     int repeats, bool benchmark, bool offset = false, bool primary = false) {
   omp_set_dynamic(0); omp_set_num_threads(threads);
-  STATION::if1=102; STATION::if2=256; STATION::df=1./1024;
+  STATION::if1=primary?51:102; STATION::if2=primary?102:256; STATION::df=1./1024;
   ipmax=half_width; dp=.005; px0=offset?.007:0; py0=offset?-.012:0;
   const int capacity=stations+3, nf=STATION::if2-STATION::if1+1;
   array3c spectra(boost::extents[3][capacity][range3c(STATION::if1,STATION::if2+1)]);
@@ -63,7 +63,8 @@ int main(int argc,char **argv) {
     } else {
       for(bool horizontal:{true,false})
         for(int threads:{1,4})
-          for(bool offset:{false,true}) run_case(17,6,threads,horizontal,2,false,offset);
+          for(bool offset:{false,true})
+            for(bool primary:{false,true}) run_case(17,6,threads,horizontal,2,false,offset,primary);
     }
   } catch(const std::exception &e) { std::cerr << e.what() << '\n'; return 1; }
 }

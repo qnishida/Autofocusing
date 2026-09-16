@@ -125,6 +125,10 @@ install(TARGETS ${TARGET_NAME1} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(test_frequency_band tests/frequency_band.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
+    target_include_directories(test_frequency_band PRIVATE ${DELTAP_INCLUDE_DIRS})
+    target_link_libraries(test_frequency_band PRIVATE ${DELTAP_LIBS})
+    add_test(NAME frequency_band_processing COMMAND test_frequency_band)
     add_executable(test_cpu_parallel tests/cpu_parallel.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
     target_include_directories(test_cpu_parallel PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_cpu_parallel PRIVATE ${DELTAP_LIBS})
@@ -163,6 +167,9 @@ if(BUILD_TESTING)
     add_test(NAME slant_stack_equivalence COMMAND test_slant_stack)
     find_package(Python3 QUIET COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME frequency_configuration COMMAND ${Python3_EXECUTABLE} -B
+            ${PROJECT_SOURCE_DIR}/tests/frequency_cli.py ${PROJECT_SOURCE_DIR}
+            $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
         add_test(NAME workspace_scripts COMMAND ${Python3_EXECUTABLE} -B
             ${PROJECT_SOURCE_DIR}/tests/workspace.py)
         add_test(NAME gpu_qualification_tools COMMAND ${Python3_EXECUTABLE}

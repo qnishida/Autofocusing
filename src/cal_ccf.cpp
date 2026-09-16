@@ -12,6 +12,8 @@
 #include <complex>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <limits>
 #include <memory>
 #include <unistd.h>
@@ -137,19 +139,72 @@ static int count_gap = 0;
 std::vector<ptime> CMT_ptime;
 std::vector<double> CMT_slat, CMT_slon, CMT_sdep, CMT_moment;
 
+static double positive_setting(const char *name, double fallback) {
+  const char *value = std::getenv(name);
+  if (!value) return fallback;
+  std::size_t end = 0;
+  double result;
+  try {
+    result = std::stod(value, &end);
+  } catch (const std::exception &) {
+    throw std::invalid_argument(std::string(name) + " must be a positive finite number");
+  }
+  if (end != std::string(value).size() || !std::isfinite(result) || result <= 0)
+    throw std::invalid_argument(std::string(name) + " must be a positive finite number");
+  return result;
+}
+
+struct FrequencyBand {
+  static constexpr int fft_length = 2048;
+  static constexpr int dt_msec = 500;
+  double requested_min, requested_max;
+  double df = 1. / (fft_length * dt_msec * 1E-3);
+  int first, last, spectrum_bins;
+};
+
+static FrequencyBand frequency_band_from_environment() {
+  FrequencyBand band;
+  band.requested_min = positive_setting("AUTOFOCUSING_FREQ_MIN", 0.1);
+  band.requested_max = positive_setting("AUTOFOCUSING_FREQ_MAX", 0.25);
+  if (band.requested_min >= band.requested_max)
+    throw std::invalid_argument("AUTOFOCUSING_FREQ_MIN must be less than AUTOFOCUSING_FREQ_MAX");
+  const double nyquist = 500. / FrequencyBand::dt_msec;
+  if (band.requested_max >= nyquist)
+    throw std::invalid_argument("AUTOFOCUSING_FREQ_MAX must be below the Nyquist frequency (1 Hz)");
+  // Preserve the legacy floor-to-bin convention for both endpoints.
+  band.first = static_cast<int>(band.requested_min / band.df);
+  band.last = static_cast<int>(band.requested_max / band.df);
+  if (band.first < 1)
+    throw std::invalid_argument("AUTOFOCUSING_FREQ_MIN must resolve to a non-DC FFT bin (at least 0.0009765625 Hz)");
+  // Retain the full fixed QC bands, even for low-frequency analysis.
+  band.spectrum_bins = std::max(static_cast<int>(0.26 / band.df), band.last + 1);
+  return band;
+}
+
+static std::string frequency_band_json(const FrequencyBand &band) {
+  std::ostringstream out;
+  out << std::setprecision(17)
+      << "{\"requested_min_hz\":" << band.requested_min
+      << ",\"requested_max_hz\":" << band.requested_max
+      << ",\"min_hz\":" << band.first * band.df
+      << ",\"max_hz\":" << band.last * band.df
+      << ",\"df_hz\":" << band.df
+      << ",\"min_bin\":" << band.first << ",\"max_bin\":" << band.last
+      << ",\"fft_length\":" << FrequencyBand::fft_length
+      << ",\"sample_interval_s\":" << FrequencyBand::dt_msec * 1E-3
+      << ",\"spectrum_bins\":" << band.spectrum_bins << '}';
+  return out.str();
+}
+
 int main(int argc, char *argv[]) try {
+  const auto frequency_band = frequency_band_from_environment();
+  if (argc == 2 && std::string(argv[1]) == "--frequency-info") {
+    std::cout << frequency_band_json(frequency_band) << '\n';
+    return 0;
+  }
   std::cerr << "#SlantStack backend=" << slant_stack_backend_name() << '\n';
   std::cerr << "#Power mode=" << gpu_power_mode() << '\n';
   // All backends use exactly the same requested grid, in seconds/km.
-  auto positive_setting = [](const char *name, double fallback) {
-    const char *value = std::getenv(name);
-    if (!value) return fallback;
-    std::size_t end = 0;
-    double result = std::stod(value, &end);
-    if (end != std::string(value).size() || !std::isfinite(result) || result <= 0)
-      throw std::invalid_argument(std::string(name) + " must be a positive finite number");
-    return result;
-  };
   dp = positive_setting("AUTOFOCUSING_SLOWNESS_STEP", 5e-3);
   const double slowness_max = positive_setting("AUTOFOCUSING_SLOWNESS_MAX", 1.65e-1);
   const double half_width = std::floor(slowness_max / dp + 1e-10);
@@ -158,18 +213,18 @@ int main(int argc, char *argv[]) try {
   ipmax = static_cast<int>(half_width);
   std::cerr << "#SlantStack step_s_per_km=" << dp << " max_s_per_km=" << ipmax*dp
             << " grid=" << 2*ipmax+1 << 'x' << 2*ipmax+1 << '\n';
-  STATION::dt_msec = 500;  // Sampling interval in millisecond
-  STATION::len = 1024 * 2; // 2^x
+  STATION::dt_msec = FrequencyBand::dt_msec;
+  STATION::len = FrequencyBand::fft_length;
   STATION::stride = 928;   // 667*2; //667*2*128 = (86400*2-1024*2) //824;
-  STATION::df = 1. / (STATION::len * STATION::dt_msec * 1E-3);
-  STATION::nfreq = (int)(2.6E-1 / STATION::df); // STATION::len/2;
+  STATION::df = frequency_band.df;
+  STATION::if1 = frequency_band.first;
+  STATION::if2 = frequency_band.last;
+  STATION::nfreq = frequency_band.spectrum_bins;
   STATION::npts = 86400 * 1000 / (STATION::dt_msec);
   STATION::init_Freq();
   STATION::nl_h = 50;
   STATION::nl_v = 50;
-  // STATION::flag_ary=0;
-  STATION::if1 = (int)(0.1 / STATION::df);
-  STATION::if2 = (int)(0.25 / STATION::df);
+  std::cerr << "#FrequencyBand " << frequency_band_json(frequency_band) << '\n';
 
   // init_ttTable(); // Initialize the travel time table based on IASP91 model
 
@@ -432,7 +487,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
 
   const int len_buf = (pos_end - pos_start) / stride_msec + 1;
   array4c buf_specENURT(boost::extents[5][len_buf][(int)sta0.size()]
-                                      [range4c(STATION::if1, STATION::nfreq)]);
+                                      [range4c(STATION::if1, STATION::if2 + 1)]);
   array3d w_specENURT(boost::extents[5][len_buf][(int)sta0.size()]);
 
   for (long int_t = pos_start; int_t < pos_end; int_t += stride_msec) {
@@ -510,7 +565,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
           }
 
           sta0[ist].print_spec(specE, specN, specZ);
-          for (int k = STATION::if1; k < STATION::nfreq; ++k) {
+          for (int k = STATION::if1; k <= STATION::if2; ++k) {
             buf_specENURT[0][num_ss][ist][k] = specE.spec[k];
             buf_specENURT[1][num_ss][ist][k] = specN.spec[k];
             buf_specENURT[2][num_ss][ist][k] = specZ.spec[k];
@@ -1304,8 +1359,8 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
                        const array2d &w_spec, const dvector &dx,
                        const dvector &dy, const int num_ss) {
   const int num_sta = buf_spec.shape()[1];
-  cvector phi(STATION::nfreq, 0.);
-  dvector psd(STATION::nfreq, 0.);
+  cvector phi(STATION::if2 + 1, 0.);
+  dvector psd(STATION::if2 + 1, 0.);
 
   double p = prm.p;
   double ex = cos(prm.θ);
@@ -1322,7 +1377,7 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
   }
 
   for (int ibuf = 0; ibuf < num_ss; ibuf++) {
-    for (int k = STATION::if1; k < STATION::nfreq; ++k)
+    for (int k = STATION::if1; k <= STATION::if2; ++k)
       phi[k] = 0;
     for (int i = 0; i < num_sta; i++) {
       double phase = tau[i] * 2. * M_PI * STATION::df;
@@ -1331,7 +1386,7 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
       double cp0 = cos(phase * STATION::if1);
       double sp0 = sin(phase * STATION::if1);
 
-      for (int k = STATION::if1; k < STATION::nfreq; ++k) {
+      for (int k = STATION::if1; k <= STATION::if2; ++k) {
         double cp1 = cp0 * dc - sp0 * ds;
         double sp1 = sp0 * dc + cp0 * ds;
         phi[k] += (buf_spec[ibuf][i][k] * std::complex<double>(cp0, sp0) *
@@ -1340,10 +1395,10 @@ static double est_fmax(const PARAM prm, const array3c &buf_spec,
         sp0 = sp1;
       }
     }
-    for (int k = STATION::if1; k < STATION::nfreq; ++k)
+    for (int k = STATION::if1; k <= STATION::if2; ++k)
       psd[k] += real(conj(phi[k]) * phi[k]);
   }
-  auto itr = std::max_element(psd.begin(), psd.end());
+  auto itr = std::max_element(psd.begin() + STATION::if1, psd.end());
   size_t ifmax = std::distance(psd.begin(), itr);
 
   return (ifmax * STATION::df);

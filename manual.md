@@ -140,9 +140,31 @@ is retained. The `gap` attribute does not describe individual missing intervals;
 this change retains the existing waveform/QC handling of gaps.
 
 Horizontal amplitude checks use E and N only. Stability checks use their mean
-band power instead of U. Existing thresholds, frequency band, window length,
-and array selection are retained. Candidate searches use R and T only; no
+band power instead of U. Existing thresholds, QC bands, window length,
+and array selection are retained. The analysis frequency band is configurable. Candidate searches use R and T only; no
 vertical candidates or vertical-derived horizontal seeds are used.
+
+### Analysis frequency settings
+
+Set the band in `analysis/<experiment>/config.sh`, for example:
+
+```bash
+export AUTOFOCUSING_FREQ_MIN=0.05
+export AUTOFOCUSING_FREQ_MAX=0.1
+```
+
+The default remains 0.1–0.25 Hz. Endpoints round down to the fixed 1/1024 Hz FFT
+grid, giving 0.0498046875–0.099609375 Hz for the example. The selected bins apply
+to stacking, fitting, matrices and peak-frequency estimation. Requested and
+actual bands are saved in run metadata and logs; filenames use the actual band.
+Quality-control bands, thresholds and 0.03 Hz high-pass preprocessing retain
+their prior behavior. See [frequency configuration](Scripts/README.md#analysis-frequency-band)
+for validation rules and diagnostic compatibility details.
+
+The launcher queries `cal_ccf --frequency-info` before starting; rebuild/install
+the binary after updating source. This mode outputs JSON without loading data
+or starting the GPU. The frequency environment variables also work for direct
+`cal_ccf` calls; the separate `cal_ccf_eq` executable is unchanged.
 
 ### Direct invocation and compatibility
 

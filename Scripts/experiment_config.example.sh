@@ -7,5 +7,7 @@ export AUTOFOCUSING_SLOWNESS_STEP=0.005
 export AUTOFOCUSING_SLOWNESS_MAX=0.165
 # MAX sets each px/py grid extent in s/km (rounded down to a STEP multiple).
 # Peak candidates are also masked to radial slowness <= that grid extent.
-# Frequency is currently fixed in C++ at nominal 0.1-0.25 Hz.
-# Naming an experiment primary-microseisms does NOT change its frequency band.
+export AUTOFOCUSING_FREQ_MIN=0.1
+export AUTOFOCUSING_FREQ_MAX=0.25
+# Hz; for primary microseisms set MIN=0.05 and MAX=0.1 explicitly.
+# Both endpoints round down to FFT bins; requested/effective bands are recorded.

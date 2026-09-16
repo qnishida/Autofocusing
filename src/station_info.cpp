@@ -289,7 +289,9 @@ int STATION::cal_spec_1st(ptime t1,SAC_data sac0,SPCTRM &spec0){//double Dt,SPCT
 
   spec0.integ[2]=0.;
   count=0;
-  for(int i=(int)(2E-1/STATION::df);i<STATION::nfreq;++i){
+  // QC retains its original upper bound even when analysis needs more FFT bins.
+  const int qc_end = std::min(STATION::nfreq, (int)(2.6E-1/STATION::df));
+  for(int i=(int)(2E-1/STATION::df);i<qc_end;++i){
     spec0.integ[2] += norm(spec0.spec[i])/STATION::NLNM[i];
     count++;
   }

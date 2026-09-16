@@ -145,8 +145,11 @@ Use `--workspace PATH` to select a workspace other than the checkout's parent.
 Bash, Git and Python 3.7+ are required for the scripts.
 
 The template still uses the nominal **0.1–0.25 Hz** band and ±0.165 s/km px/py
-range. The experiment name does not select a frequency band; the proposed
-0.05–0.1 Hz primary-microseism analysis requires a separate code change.
+range. The experiment name does not select a frequency band. To analyze
+primary microseisms, set `AUTOFOCUSING_FREQ_MIN=0.05` and
+`AUTOFOCUSING_FREQ_MAX=0.1` in the experiment's `config.sh`. Both endpoints round
+down to FFT bins; requested and effective bands are recorded. See
+[frequency settings](Scripts/README.md#analysis-frequency-band).
 The launcher defaults to horizontal-only analysis. Input paths and inclusive
 `START_DATE`/`END_DATE` values must be configured in the workspace.
 `--experiment NAME` is required: omitting it prints usage and an example and

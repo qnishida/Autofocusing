@@ -62,8 +62,9 @@ conditions. Commit analysis definitions independently when ready.
 
 **The template retains the nominal 0.1–0.25 Hz band and ±0.165 s/km px/py grid.**
 Naming an experiment `primary-microseisms` does not change its frequency band.
-The intended 0.05–0.1 Hz analysis needs a separate change to the C++ frequency
-handling. `AUTOFOCUSING_SLOWNESS_MAX=0.4` already widens each of px and py to
+Set `AUTOFOCUSING_FREQ_MIN=0.05` and `AUTOFOCUSING_FREQ_MAX=0.1` in that
+experiment's `config.sh` for the primary-microseism band. Rebuild and install
+the executable when updating from a version without frequency configuration. `AUTOFOCUSING_SLOWNESS_MAX=0.4` already widens each of px and py to
 ±0.4 s/km at the default step. The grid is square, but peak selection masks out
 points with radial slowness greater than 0.4 s/km. More generally, the effective
 limit is MAX rounded down to a STEP multiple. This is the initial peak-search
@@ -111,8 +112,55 @@ same usage and example with status 0. Neither the current directory nor
 Defaults are horizontal components, CPU backend, slowness step
 0.005 s/km and maximum 0.165 s/km. Inputs and both dates must be supplied. The executable defaults
 to `bin/cal_ccf_clang`, then `bin/cal_ccf_gcc`, in the source checkout.
-`RESULTS_ROOT` defaults to workspace `results/`. The frequency band remains
-fixed in C++; there is no frequency option yet.
+`RESULTS_ROOT` defaults to workspace `results/`. The nominal frequency band defaults
+to 0.1–0.25 Hz and is configurable per experiment.
+
+### Analysis frequency band
+
+```bash
+export AUTOFOCUSING_FREQ_MIN=0.05
+export AUTOFOCUSING_FREQ_MAX=0.1
+```
+
+Units are Hz. Both values must be finite and positive, MIN < MAX, MAX < 1 Hz
+(the Nyquist frequency for the fixed 2 Hz sampling), and MIN must resolve to a
+nonzero FFT bin. The 2048-sample transform has spacing 1/1024 Hz. As in the
+original code, both endpoints round down to FFT bins, and both resulting bins
+are included. A sufficiently narrow interval may select just one bin.
+
+| Requested band (Hz) | Bins | Effective band (Hz) |
+| --- | --- | --- |
+| 0.1–0.25 (default) | 102–256 | 0.099609375–0.25 |
+| 0.05–0.1 | 51–102 | 0.0498046875–0.099609375 |
+
+Slant stacking, fitting, beam matrices and the estimated peak frequency use the
+selected bins. The output filename uses the effective endpoints rounded to six
+decimal places. `manifest.json` records both the requested settings and the
+binary-reported `frequency_band` (bins, effective endpoints, FFT spacing and
+sampling). `run.log` includes the same information on its `#FrequencyBand` line.
+
+Before allocating a run, the launcher calls the selected executable's
+`--frequency-info` mode with the resolved environment. This validates settings
+and obtains the actual bins without opening seismic data or initializing a GPU.
+Older binaries without that mode are rejected instead of silently ignoring the
+new settings. To inspect the band directly:
+
+```bash
+AUTOFOCUSING_FREQ_MIN=0.05 AUTOFOCUSING_FREQ_MAX=0.1 ./bin/cal_ccf_clang --frequency-info
+```
+
+Quality-control thresholds and bands retain their existing definitions
+(approximately 0.04–0.1, 0.1–0.2, and 0.2–0.26 Hz); spectrum storage always covers
+them, even for a lower analysis band. The existing 0.03 Hz high-pass preprocessing
+and stability tests are also unchanged. Frequency selection does not retune these
+scientific acceptance criteria, so changing the band still requires scientific
+validation. A mathematically valid low-frequency setting below the high-pass
+cutoff does not remove that filter.
+
+The default analysis bins remain unchanged. One diagnostic correction also
+applies to default runs: estimated peak frequency is now restricted to the
+analysis band. Previously it could inspect stored bins above the analysis upper
+bound (particularly for U); it no longer reports those out-of-band peaks.
 
 ### Analysis dates and missing days
 
@@ -226,7 +274,7 @@ remote separately if desired, and back up large outputs independently.
 
 ```bash
 python3 -B tests/workspace.py
-ctest --test-dir build -R 'workspace_scripts|parent_launcher|analysis_date_range' --output-on-failure
+ctest --test-dir build -R 'workspace_scripts|parent_launcher|analysis_date_range|frequency_' --output-on-failure
 ```
 
 The standalone integration checks use temporary workspaces and a mock executable.

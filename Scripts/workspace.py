@@ -17,6 +17,7 @@ DEFAULTS = {
     'COMPONENT_MODE': 'horizontal',
     'AUTOFOCUSING_BACKEND': 'cpu', 'AUTOFOCUSING_SLOWNESS_STEP': '0.005',
     'AUTOFOCUSING_SLOWNESS_MAX': '0.165',
+    'AUTOFOCUSING_FREQ_MIN': '0.1', 'AUTOFOCUSING_FREQ_MAX': '0.25',
 }
 OPTIONAL_SETTINGS = (
     'OMP_NUM_THREADS', 'OMP_DYNAMIC', 'OMP_PROC_BIND', 'OMP_PLACES',
@@ -92,7 +93,8 @@ Refer to output runs by their timestamp ID and record comparisons here.
 
 The template retains the current nominal 0.1–0.25 Hz frequency band and
 px/py range ±0.165 s/km. An experiment name does not change the calculation.
-Primary microseism analysis at 0.05–0.1 Hz requires a separate code change.
+For primary microseisms, set AUTOFOCUSING_FREQ_MIN=0.05 and
+AUTOFOCUSING_FREQ_MAX=0.1 in config.sh; choose dates and slowness separately.
 ''')
     create_file(workspace / 'local_config.sh',
                 (repo / 'Scripts/local_config.example.sh').read_text())
@@ -228,6 +230,18 @@ def run(args):
     settings.update(AUTOFOCUSING_BIN=str(binary), RESULTS_ROOT=str(results), PARAM_ID=name)
     # Every recorded setting is passed to the child, including normalized defaults.
     env = dict(os.environ, **settings)
+    info = subprocess.run([str(binary), '--frequency-info'], cwd=repo, env=env,
+                          capture_output=True, text=True, timeout=30)
+    if info.returncode != 0:
+        raise ValueError('Cannot read frequency configuration; use a rebuilt cal_ccf with '
+                         '--frequency-info support.\n' + info.stderr.strip())
+    try:
+        frequency_band = json.loads(info.stdout)
+        if not isinstance(frequency_band, dict) or not all(key in frequency_band for key in
+                ('requested_min_hz', 'requested_max_hz', 'min_hz', 'max_hz', 'df_hz', 'min_bin', 'max_bin')):
+            raise ValueError('Missing frequency fields')
+    except (ValueError, TypeError):
+        raise ValueError('Invalid --frequency-info response; rebuild the selected cal_ccf') from None
     output = allocate_run(results / name)
     command = [str(binary), settings['START_YEAR'], name, output.name,
                settings['HINET_ROOT'], settings['CMT_CATALOG'], str(results), settings['COMPONENT_MODE'],
@@ -235,7 +249,8 @@ def run(args):
     manifest = {'schema_version': 1, 'experiment': name, 'run_id': output.name,
                 'started_at': utc_now().isoformat(), 'finished_at': None,
                 'status': 'running', 'exit_code': None, 'command': command,
-                'cwd': str(repo), 'workspace': str(workspace), 'settings': settings}
+                'cwd': str(repo), 'workspace': str(workspace), 'settings': settings,
+                'frequency_band': frequency_band}
     manifest_path = output / 'manifest.json'
     write_json(manifest_path, manifest)
     child = None
@@ -332,7 +347,7 @@ def main():
     args.workspace = args.workspace.resolve() if args.workspace else args.repo.parent
     try:
         return setup(args) if args.command == 'setup' else run(args)
-    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+    except (ValueError, OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         print(str(error), file=sys.stderr)
         return 1
 

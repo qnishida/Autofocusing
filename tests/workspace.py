@@ -35,7 +35,16 @@ class WorkspaceTests(unittest.TestCase):
         (self.workspace / 'catalog').write_text('catalog fixture\n')
         binary = self.workspace / 'mock program'
         binary.write_text('''#!/usr/bin/env python3
-import os, pathlib, sys, time
+import json, os, pathlib, sys, time
+if sys.argv[1:] == ['--frequency-info']:
+    if os.environ.get('MOCK_OLD_BINARY'):
+        sys.exit(1)
+    lo = float(os.environ['AUTOFOCUSING_FREQ_MIN'])
+    hi = float(os.environ['AUTOFOCUSING_FREQ_MAX'])
+    print(json.dumps(dict(requested_min_hz=lo, requested_max_hz=hi,
+                          min_hz=int(lo*1024)/1024, max_hz=int(hi*1024)/1024,
+                          df_hz=1/1024, min_bin=int(lo*1024), max_bin=int(hi*1024))))
+    sys.exit(0)
 root = pathlib.Path(sys.argv[6]) / sys.argv[2] / sys.argv[3]
 (root / 'result.dat').write_text(os.environ['AUTOFOCUSING_SLOWNESS_MAX'])
 print('mock stdout', flush=True)
@@ -141,6 +150,24 @@ sys.exit(int(os.environ.get('MOCK_EXIT', '0')))
             self.assertNotEqual(result.returncode, 0, override)
             self.assertIn('DATE', result.stderr)
             self.assertEqual(self.outputs(), before)
+
+    def test_frequency_metadata_and_unsupported_binary(self):
+        self.env['AUTOFOCUSING_FREQ_MIN'] = '0.2'
+        self.local.write_text(self.local.read_text() + 'AUTOFOCUSING_FREQ_MIN=0.15\n')
+        self.config.write_text(self.config.read_text() +
+                               'AUTOFOCUSING_FREQ_MIN=0.05\nAUTOFOCUSING_FREQ_MAX=0.1\n')
+        result = self.command(self.run_command())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads(self.outputs()[0].read_text())
+        self.assertEqual(manifest['settings']['AUTOFOCUSING_FREQ_MIN'], '0.05')
+        self.assertEqual(manifest['frequency_band']['min_bin'], 51)
+        self.assertEqual(manifest['frequency_band']['max_hz'], 102 / 1024)
+        before = self.outputs()
+        self.env['MOCK_OLD_BINARY'] = '1'
+        result = self.command(self.run_command())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('--frequency-info', result.stderr)
+        self.assertEqual(self.outputs(), before)
 
     def test_repeat_and_parallel_runs(self):
         for _ in range(2):
