@@ -1,5 +1,7 @@
 # Metal: CPU 並列化と CPU 最適化前からの累積高速化
 
+[English](metal-cpu-parallel-performance-20260914_en.md)
+
 2026-09-14、Apple M4 Max、macOS 26.6.2 で測定。
 **Hessian・RT 回転の並列化で全体 1.600 倍、CPU 最適化前からの累積で 8.887 倍**。
 前者は同じ Metal 設定でのコード変更比較、後者は旧 CPU 版と現在の Metal 版の比較。
@@ -118,7 +120,7 @@ CUDA は3990X＋RTX PRO 2000上で並列化1.445倍、CPU最適化前から5.683
 実3成分データ、5日間の並列化前後比較、全アーカイブ、1スレッド性能の追加測定は
 今回の範囲外で、すべての main マージ条件を完了したという意味ではない。
 
-追試の [5日分・1スレッド Metal 検証](metal-main-qualification-20260914.md)で、
+追試の [5日分・1スレッド Metal 検証](metal-main-qualification-20260914_jp.md)で、
 5日間の並列化前後のバイト単位一致と、1スレッドの全体・Hessian・回転の
 5%回帰判定を確認し、いずれも合格した。main への統合はまだ実施していない。
 

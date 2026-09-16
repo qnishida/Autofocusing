@@ -305,11 +305,12 @@ so an experiment does not launch the full archive or replace previous results.
 The CPU optimization, numerical checks, measurements and Metal follow-up
 boundary are documented in [the performance report](docs/cpu-slant-stack-performance.md).
 
-### 共通 I/O の処理と検証
+### Shared I/O processing and validation
 
-日単位の HDF5 読み込み後に波形フィルタを CPU 並列処理します。
-スレッド数は `OMP_NUM_THREADS`、内訳の計測ログは `AUTOFOCUSING_PROFILE=1` で設定できます。
-実装範囲と検証状況は [共通 CPU I/O 最適化](docs/cpu-io-optimization.md) を参照してください。
+After loading each day's HDF5 data, waveform filtering runs in parallel on the CPU.
+Set `OMP_NUM_THREADS` to control the thread count and `AUTOFOCUSING_PROFILE=1`
+to enable timing breakdowns. See [shared CPU I/O optimization](docs/cpu-io-optimization_en.md)
+for the implementation scope and validation status.
 
 ## 11. Metal GPU slant stacking
 
@@ -372,7 +373,7 @@ For validated horizontal inputs, `AUTOFOCUSING_METAL_POWER` selects additional
 GPU power evaluations: `off` (default), `bootstrap`, `grid`, or `all`.
 Set `AUTOFOCUSING_BACKEND=metal` as well. CPU and three-component runs retain
 the existing CPU objectives. Final gradient fitting and Hessians are unchanged.
-See [Metal power evaluation](docs/metal-power-optimization.md) for numerical
+See [Metal power evaluation](docs/metal-power-optimization_en.md) for numerical
 limits, measurements and reproduction commands. Record these settings in the
 experiment configuration when comparing runs. Launcher runs are preserved
 separately; direct executable calls still require distinct destinations.

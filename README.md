@@ -230,6 +230,6 @@ See [CUDA setup](manual.md#12-nvidia-cuda-gpu-backend) and
 
 CPU Hessian evaluation and RT rotation are also parallelized with OpenMP.
 See [CPU parallelization and validation](docs/cpu-fitting-parallel.md) for
-thread settings and numerical checks. The [M4 Max Metal measurements](docs/metal-cpu-parallel-performance-20260914.md)
+thread settings and numerical checks. The [M4 Max Metal measurements](docs/metal-cpu-parallel-performance-20260914_en.md)
 show 1.60× speedup from CPU parallelization and 8.89× cumulative speedup against
 the pre-optimization CPU implementation, with the remaining validation scope documented.

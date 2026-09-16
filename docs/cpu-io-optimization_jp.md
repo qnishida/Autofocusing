@@ -1,5 +1,7 @@
 # 共通 CPU I/O 最適化
 
+[English](cpu-io-optimization_en.md)
+
 ## 実装（2026-09-12）
 
 `perf/cpu-io` は CPU 最適化済み `main` (`51f60a7`) を基点とする。

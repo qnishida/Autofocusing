@@ -1,5 +1,7 @@
 # Metal パワー評価の最適化
 
+[English](metal-power-optimization_en.md)
+
 ## 対象と使い方
 
 共通 I/O 改善済み `metal` (`f745119`) を基点に、`perf/metal-power` で
