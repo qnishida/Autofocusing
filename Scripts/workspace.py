@@ -14,7 +14,7 @@ import sys
 
 
 DEFAULTS = {
-    'COMPONENT_MODE': 'horizontal', 'START_YEAR': '2004',
+    'COMPONENT_MODE': 'horizontal',
     'AUTOFOCUSING_BACKEND': 'cpu', 'AUTOFOCUSING_SLOWNESS_STEP': '0.005',
     'AUTOFOCUSING_SLOWNESS_MAX': '0.165',
 }
@@ -180,7 +180,7 @@ def allocate_run(root):
 
 def run(args):
     workspace, repo = args.workspace, args.repo
-    name = experiment_name(args.experiment or os.environ.get('PARAM_ID') or 'tilt_horizontal')
+    name = experiment_name(args.experiment)
     settings = {key: os.environ.get(key) or default for key, default in DEFAULTS.items()}
     # An explicitly empty backend/grid setting is invalid to C++, not a default.
     for key in DEFAULTS:
@@ -193,8 +193,21 @@ def run(args):
             if settings['AUTOFOCUSING_BACKEND'] == 'metal' else 'off')
     if settings['COMPONENT_MODE'] not in ('horizontal', '3c'):
         raise ValueError('COMPONENT_MODE must be horizontal or 3c')
-    if not re.fullmatch(r'\d{4}', settings['START_YEAR']):
-        raise ValueError('START_YEAR must be a four-digit year')
+    dates = {}
+    for key in ('START_DATE', 'END_DATE'):
+        value = os.environ.get(key, '')
+        if not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', value):
+            raise ValueError('Set ' + key + ' in experiment config.sh using YYYY-MM-DD')
+        try:
+            dates[key] = dt.date.fromisoformat(value)
+        except ValueError:
+            raise ValueError(key + ' is not a valid calendar date: ' + value) from None
+        if dates[key].year < 1400:
+            raise ValueError(key + ' must be in the supported year range 1400–9999')
+        settings[key] = value
+    if dates['END_DATE'] < dates['START_DATE']:
+        raise ValueError('END_DATE must be on or after START_DATE')
+    settings['START_YEAR'] = str(dates['START_DATE'].year)
     for key, is_directory in [('HINET_ROOT', True), ('CMT_CATALOG', False)]:
         value = os.environ.get(key)
         if not value:
@@ -217,7 +230,8 @@ def run(args):
     env = dict(os.environ, **settings)
     output = allocate_run(results / name)
     command = [str(binary), settings['START_YEAR'], name, output.name,
-               settings['HINET_ROOT'], settings['CMT_CATALOG'], str(results), settings['COMPONENT_MODE']]
+               settings['HINET_ROOT'], settings['CMT_CATALOG'], str(results), settings['COMPONENT_MODE'],
+               settings['START_DATE'], settings['END_DATE']]
     manifest = {'schema_version': 1, 'experiment': name, 'run_id': output.name,
                 'started_at': utc_now().isoformat(), 'finished_at': None,
                 'status': 'running', 'exit_code': None, 'command': command,
@@ -251,9 +265,8 @@ def run(args):
         if model.is_file():
             manifest['velocity_model'] = file_identity(model)
         manifest['config_snapshots'] = []
-        configs = [('local_config.sh', workspace / 'local_config.sh')]
-        if args.experiment:
-            configs.append(('experiment_config.sh', analysis / name / 'config.sh'))
+        configs = [('local_config.sh', workspace / 'local_config.sh'),
+                   ('experiment_config.sh', analysis / name / 'config.sh')]
         for filename, source in configs:
             if source.is_file():
                 (output / filename).write_bytes(source.read_bytes())
@@ -311,7 +324,7 @@ def main():
         sub = commands.add_parser(command)
         sub.add_argument('--repo', type=Path, required=True)
         sub.add_argument('--workspace', type=Path)
-        sub.add_argument('--experiment', required=command == 'setup')
+        sub.add_argument('--experiment', required=True)
         if command == 'setup':
             sub.add_argument('--init-git', action='store_true')
     args = parser.parse_args()

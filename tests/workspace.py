@@ -28,7 +28,7 @@ class WorkspaceTests(unittest.TestCase):
         self.workspace = self.base / 'analysis workspace'
         self.env = {k: v for k, v in os.environ.items()
                     if not k.startswith(('AUTOFOCUSING_', 'OMP_', 'GIT_')) and
-                    k not in ('PARAM_ID', 'START_YEAR', 'HINET_ROOT', 'CMT_CATALOG',
+                    k not in ('PARAM_ID', 'START_YEAR', 'START_DATE', 'END_DATE', 'HINET_ROOT', 'CMT_CATALOG',
                               'COMPONENT_MODE', 'RESULTS_ROOT', 'EXPERIMENT', 'WORK_DIR', 'REPO_DIR')}
         self.setup()
         (self.workspace / 'input data').mkdir()
@@ -121,6 +121,27 @@ sys.exit(int(os.environ.get('MOCK_EXIT', '0')))
         self.assertFalse(manifest['binary']['source_revision_verified'])
         self.assertTrue(manifest['finished_at'])
 
+    def test_date_range_validation_and_recording(self):
+        original = self.config.read_text()
+        # The old local year must not override explicit experiment dates.
+        self.local.write_text(self.local.read_text() + 'START_YEAR=2004\n')
+        self.config.write_text(original + 'START_DATE=2025-12-31\nEND_DATE=2026-01-01\n')
+        result = self.command(self.run_command())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads(self.outputs()[0].read_text())
+        self.assertEqual(manifest['settings']['START_YEAR'], '2025')
+        self.assertEqual(manifest['command'][1], '2025')
+        self.assertEqual(manifest['command'][-2:], ['2025-12-31', '2026-01-01'])
+        before = self.outputs()
+        for override in ('unset START_DATE', 'unset END_DATE',
+                         'START_DATE=2025-02-29', 'START_DATE=2004-2-01',
+                         'START_DATE=1399-01-01', 'END_DATE=2003-12-31'):
+            self.config.write_text(original + override + '\n')
+            result = self.command(self.run_command())
+            self.assertNotEqual(result.returncode, 0, override)
+            self.assertIn('DATE', result.stderr)
+            self.assertEqual(self.outputs(), before)
+
     def test_repeat_and_parallel_runs(self):
         for _ in range(2):
             self.assertEqual(self.command(self.run_command()).returncode, 0)
@@ -160,19 +181,41 @@ sys.exit(int(os.environ.get('MOCK_EXIT', '0')))
         manifest = json.loads((set(self.outputs()) - before).pop().read_text())
         self.assertEqual(manifest['settings']['AUTOFOCUSING_GPU_POWER'], 'off')
 
-    def test_legacy_failure_and_missing_inputs(self):
-        self.env.update(PARAM_ID='legacy', MOCK_EXIT='7')
-        result = self.command(self.run_command(experiment=False))
+    def test_experiment_required_before_reading_config(self):
+        self.env['PARAM_ID'] = 'trial'
+        self.local.write_text(self.local.read_text() + 'touch config-was-sourced\n')
+        launchers = [self.run_command(experiment=False),
+                     ['bash', str(self.repo / 'Scripts/run.sh')]]
+        for launcher in launchers:
+            for options in ([], ['--workspace', str(self.workspace)], ['--experiment'],
+                            ['--experiment', '']):
+                result = self.command(launcher + options)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn('Usage:', result.stderr)
+                self.assertIn('Example:', result.stderr)
+            result = self.command(launcher + ['--help'])
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn('Example:', result.stdout)
+        result = self.command([sys.executable, str(self.repo / 'Scripts/workspace.py'),
+                               'run', '--repo', str(self.repo), '--workspace', str(self.workspace)])
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('--experiment', result.stderr)
+        self.assertFalse((self.workspace / 'config-was-sourced').exists())
+        self.assertFalse(list((self.workspace / 'results').iterdir()))
+
+    def test_failure_and_missing_inputs(self):
+        self.env.update(PARAM_ID='ignored', MOCK_EXIT='7')
+        result = self.command(self.run_command())
         self.assertEqual(result.returncode, 7, result.stderr)
-        manifest = json.loads(self.outputs('legacy')[0].read_text())
+        manifest = json.loads(self.outputs()[0].read_text())
         self.assertEqual(manifest['status'], 'failed')
         self.assertEqual(manifest['exit_code'], 7)
-        self.assertEqual(manifest['settings']['AUTOFOCUSING_SLOWNESS_MAX'], '0.2')
+        self.assertEqual(manifest['settings']['AUTOFOCUSING_SLOWNESS_MAX'], '0.165')
         (self.workspace / 'catalog').unlink()
         result = self.command(self.run_command())
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('CMT_CATALOG', result.stderr)
-        self.assertEqual(self.outputs(), [])
+        self.assertEqual(len(self.outputs()), 1)
         for name in ('../escape', 'nested/name', '..', '-option'):
             result = self.command(['bash', str(self.workspace / 'run.sh'), '--experiment', name])
             self.assertNotEqual(result.returncode, 0)

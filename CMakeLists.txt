@@ -170,5 +170,8 @@ if(BUILD_TESTING)
         add_test(NAME parent_launcher COMMAND ${Python3_EXECUTABLE}
             ${PROJECT_SOURCE_DIR}/tests/launcher.py ${PROJECT_SOURCE_DIR}
             $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
+        add_test(NAME analysis_date_range COMMAND ${Python3_EXECUTABLE} -B
+            ${PROJECT_SOURCE_DIR}/tests/date_range.py
+            $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 endif()

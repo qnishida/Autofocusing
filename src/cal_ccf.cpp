@@ -181,11 +181,12 @@ int main(int argc, char *argv[]) try {
   H5Pset_cache(fapl, 0, rdcc_nslots, rdcc_nbytes, rdcc_w0);
 
   int yr0;
+  date d_start, d_end;
   std::ofstream ofs; // スコープの外で宣言
   std::string dir_Hinet;
   std::string cmt_catalog;
 
-  if (argc >= 6 && argc <= 8) {
+  if ((argc >= 6 && argc <= 8) || argc == 10) {
     if (argc >= 8) {
       const std::string mode = argv[7];
       if (mode != "horizontal" && mode != "3c") {
@@ -196,6 +197,38 @@ int main(int argc, char *argv[]) try {
       STATION::horizontal_only = mode == "horizontal";
     }
     yr0 = std::stoi(argv[1]);
+    d_start = date(yr0, 1, 1);
+    if (argc == 10) {
+      auto parse_date = [](const char *value, const char *name) {
+        const std::string text(value);
+        bool valid = text.size() == 10;
+        for (std::size_t i = 0; valid && i < text.size(); ++i)
+          valid = (i == 4 || i == 7) ? text[i] == '-'
+                                    : text[i] >= '0' && text[i] <= '9';
+        if (!valid)
+          throw std::invalid_argument(std::string(name) + " must use YYYY-MM-DD");
+        try {
+          return date(std::stoi(text.substr(0, 4)), std::stoi(text.substr(5, 2)),
+                      std::stoi(text.substr(8, 2)));
+        } catch (const std::exception &) {
+          throw std::invalid_argument(std::string(name) + " is not a valid calendar date: " + text);
+        }
+      };
+      d_start = parse_date(argv[8], "START_DATE");
+      d_end = parse_date(argv[9], "END_DATE");
+      if (d_end < d_start)
+        throw std::invalid_argument("END_DATE must be on or after START_DATE");
+      if (yr0 != static_cast<int>(d_start.year()))
+        throw std::invalid_argument("YYYY must match the year of START_DATE");
+    } else {
+      // Retain the historical limits for direct callers using the year-only CLI.
+      // The old days < 366 * 20.75 loop visited offsets 0 through 7594.
+      d_end = date(2024, 12, 31);
+      if ((d_end - d_start).days() > 7594)
+        d_end = d_start + date_duration(7594);
+    }
+    std::cerr << "#DateRange start=" << to_iso_extended_string(d_start)
+              << " end=" << to_iso_extended_string(d_end) << " inclusive=true\n";
 
     std::string param_id = argv[2];
     std::string git_version = argv[3];
@@ -219,7 +252,7 @@ int main(int argc, char *argv[]) try {
     }
   } else {
     std::cerr << "Usage:   ./bin/cal_ccf YYYY <param-id> <GIT_version> "
-                 "<hinet-root> <cmt-catalog> [output-root] [3c|horizontal]"
+                 "<hinet-root> <cmt-catalog> [output-root] [3c|horizontal] [START_DATE END_DATE]"
               << std::endl;
     std::cerr << "Output:  ./output/<param-id>/<GIT_version>/YYYY.*.dat"
               << std::endl;
@@ -243,43 +276,40 @@ int main(int argc, char *argv[]) try {
   int sta_num = 0;
   int count0 = 0;
 
-  date d_end(2024, 12, 31);
+  int scanned_days = 0, missing_days = 0, empty_days = 0, multiple_days = 0;
+  int loaded_days = 0;
   auto start_tm = std::chrono::system_clock::now();
-  for (int days = 0; days < 366 * 20.75;
-       days += 1) { //*14.67 //  for(int days=0;days<365*16.75;days+=1){//*14.67
-                    // for(int days=0;days<366;days+=1){//*14.67 //  for(int
-    // days=0;days<365*16.75;days+=1){//*14.67
-    date d(date(yr0, 1, 1) +
-           date_duration(
-               days)); // 4/ /date d(date(yr0,4,1)+date_duration(days));//4
-    // for(int days=0;days<5;days+=1){//*14.67 //  for(int
-    // days=0;days<365*16.75;days+=1){//*14.67 date
-    // d(date(2014,12,8)+date_duration(days));//4/ /date
-    // d(date(yr0,4,1)+date_duration(days));//4 date
-    // d(date(2004,9,9)+date_duration(days));//4//Test std::string h5file =
-    // dir_Hinet+ (boost::format("%d/%02d%02d/%d%03d0000.h5")%d.year()%
-    // (int)(d.month())%d.day()%d.year() %((d-d0).days()+1)).str(); if(d.year()
-    // != yr0)continue;//One year stack
-    if (d > d_end)
-      break;
-
+  for (long days = 0; days <= (d_end - d_start).days(); ++days) {
+    const date d = d_start + date_duration(days);
+    ++scanned_days;
     std::string h5file;
     int count_files = 0;
     std::string h5dir = dir_Hinet + (boost::format("%d/%02d%02d") % d.year() %
                                      (int)(d.month()) % d.day())
                                         .str();
     const fs::path path_1(h5dir);
-    if (!fs::exists(path_1))
+    if (!fs::is_directory(path_1)) {
+      ++missing_days;
       continue;
+    }
     BOOST_FOREACH (const fs::path &p,
                    std::make_pair(fs::directory_iterator(path_1),
                                   fs::directory_iterator())) {
-      if (!fs::is_directory(p)) {
+      if (fs::is_regular_file(p)) {
         h5file = p.string();
         count_files++;
       }
     }
-    prefetchFile(dir_Hinet, d);
+    if (count_files == 0) {
+      ++empty_days;
+      continue;
+    }
+    if (count_files != 1) {
+      ++multiple_days;
+      continue;
+    }
+    if (d < d_end)
+      prefetchFile(dir_Hinet, d);
 
     auto now_tm = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = now_tm - start_tm;
@@ -290,6 +320,7 @@ int main(int argc, char *argv[]) try {
     if (count_files == 1 && fs::exists(path)) {
       std::vector<STATION> sta0;
       sta_num = load_h5(sta0, h5file, rad0, rad1, fapl);
+      ++loaded_days;
       std::fill_n(ssRTU.data(), ssRTU.num_elements(), 0.);
 
       now_tm = std::chrono::system_clock::now();
@@ -308,6 +339,11 @@ int main(int argc, char *argv[]) try {
       }
     }
   }
+  std::cerr << "#ScanSummary days=" << scanned_days << " missing=" << missing_days
+            << " empty=" << empty_days << " multiple=" << multiple_days
+            << " loaded=" << loaded_days << '\n';
+  if (loaded_days == 0)
+    std::cerr << "#No input files loaded in the selected date range.\n";
   if (std::getenv("AUTOFOCUSING_PROFILE"))
     std::cerr << "#PROFILE accepted_windows_total=" << count0 << std::endl;
   H5Pclose(fapl);

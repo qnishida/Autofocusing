@@ -64,7 +64,10 @@ conditions. Commit analysis definitions independently when ready.
 Naming an experiment `primary-microseisms` does not change its frequency band.
 The intended 0.05–0.1 Hz analysis needs a separate change to the C++ frequency
 handling. `AUTOFOCUSING_SLOWNESS_MAX=0.4` already widens each of px and py to
-±0.4 s/km; it does not impose a radial 0.4 s/km limit.
+±0.4 s/km at the default step. The grid is square, but peak selection masks out
+points with radial slowness greater than 0.4 s/km. More generally, the effective
+limit is MAX rounded down to a STEP multiple. This is the initial peak-search
+limit, not a bound imposed on all subsequent fitted parameters.
 
 ## Run and settings
 
@@ -85,7 +88,7 @@ Settings are applied in this order, with later assignments taking precedence:
 
 1. Inherited environment.
 2. Workspace `local_config.sh`, if present.
-3. `analysis/<experiment>/config.sh` when `--experiment` is supplied (required).
+3. `analysis/<experiment>/config.sh` (required).
 4. Defaults for settings not supplied.
 
 Configuration files are trusted Bash scripts. Ordinary assignments are exported
@@ -96,17 +99,59 @@ thread limits and device preferences in `local_config.sh`, and scientific
 conditions in the experiment config. Experiment settings may also override
 backend choices for controlled comparisons.
 
-`--experiment` fixes the experiment name regardless of `PARAM_ID`. Names must
+`--experiment NAME` is required and fixes the experiment name regardless of
+`PARAM_ID`. Names must
 start with an ASCII letter or digit and contain only letters, digits, dots,
 underscores or hyphens; `..` is forbidden. With no `--experiment`, the runner
-uses only local/environment settings and `PARAM_ID` (default `tilt_horizontal`),
-retaining the old no-argument entry point. Every new run uses a timestamp folder.
+prints usage and an example, then exits with status 2 before reading configs,
+starting the executable or creating output directories. `--help` displays the
+same usage and example with status 0. Neither the current directory nor
+`PARAM_ID` selects an experiment automatically. Every new run uses a timestamp folder.
 
-Defaults are horizontal components, start year 2004, CPU backend, slowness step
-0.005 s/km and maximum 0.165 s/km. Inputs must be supplied. The executable defaults
+Defaults are horizontal components, CPU backend, slowness step
+0.005 s/km and maximum 0.165 s/km. Inputs and both dates must be supplied. The executable defaults
 to `bin/cal_ccf_clang`, then `bin/cal_ccf_gcc`, in the source checkout.
-`RESULTS_ROOT` defaults to workspace `results/`. The existing C++ daily scan and
-frequency band are unchanged; there is no new end-date or frequency option.
+`RESULTS_ROOT` defaults to workspace `results/`. The frequency band remains
+fixed in C++; there is no frequency option yet.
+
+### Analysis dates and missing days
+
+Set both dates in `analysis/<experiment>/config.sh`:
+
+```bash
+export START_DATE=2004-01-01
+export END_DATE=2004-01-07
+```
+
+Both endpoints are included; equal dates select one day. Dates refer to archive
+calendar days in `HINET_ROOT/YYYY/MMDD/`, not the UTC run timestamp. The launcher
+requires valid `YYYY-MM-DD` dates (years 1400–9999) and END_DATE >= START_DATE.
+Missing, malformed or reversed dates fail before allocating a run directory.
+The template shows a one-week trial interval; edit it for your intended analysis.
+
+Replace `START_YEAR` in existing experiment configs with these two settings.
+Existing configs are not rewritten by setup. A legacy `START_YEAR` in
+`local_config.sh` does not override explicit dates: the launcher derives the
+start year from START_DATE for the C++ argument and output filename. The chosen
+dates are saved in the manifest, effective settings, command and startup log.
+
+Within the selected interval, missing daily directories and directories with
+zero or multiple regular files are skipped. The scanner resumes at the next day
+and never extends the requested interval to find data. A day with exactly one
+regular file is treated as HDF5 input, as before; malformed HDF5 or invalid
+metadata still fails rather than silently skipping corrupt data. The final
+`#ScanSummary` reports scanned/missing/empty/multiple/loaded day counts. If no
+input was loaded, an explicit message is logged and an empty result is retained
+with a successful process exit (assuming other required inputs are valid).
+
+Explicit date ranges have no 2024 cutoff or 20.75-year cap. Supply a suitable
+external waveform archive and CMT catalog for the dates; the existing catalog
+loader still requires accepted events from the start year or later. This change
+does not download/update catalogs or change earthquake exclusion behavior.
+
+Rebuild and install `cal_ccf` before using this runner. It passes both dates as
+new trailing CLI arguments; older binaries reject the argument count rather
+than silently processing their historical default period.
 
 ## What each run records
 
@@ -144,10 +189,18 @@ archived, except the selected config snapshots; dirty runs are not guaranteed
 reconstructible. Freeze/version the external waveform archive separately when
 exact input reproducibility is required.
 
-The C++ CLI is unchanged. The launcher passes the run ID in its existing
-`<git-version>` directory argument and stores the actual Git revisions in the
-manifest. Direct calls still use their supplied directory label and do not
-create these run records; repeating a direct call can overwrite its data file.
+The launcher passes the run ID in the existing `<git-version>` directory argument
+and stores the actual Git revisions in the manifest. The C++ CLI accepts an
+optional trailing date pair after the output root and component mode:
+
+```text
+cal_ccf_<compiler> YYYY <param-id> <git-version> <hinet-root> <cmt-catalog> <output-root> <3c|horizontal> START_DATE END_DATE
+```
+
+`YYYY` must match START_DATE's year. Direct calls without the date pair retain
+the historical year-based interval (January 1 through the earlier of December 31,
+2024 and start + 7594 days). Direct calls still use their supplied directory label
+and do not create run records; repeating a direct call can overwrite its data file.
 
 ## Existing workspaces
 
@@ -173,12 +226,14 @@ remote separately if desired, and back up large outputs independently.
 
 ```bash
 python3 -B tests/workspace.py
-ctest --test-dir build -R 'workspace_scripts|parent_launcher' --output-on-failure
+ctest --test-dir build -R 'workspace_scripts|parent_launcher|analysis_date_range' --output-on-failure
 ```
 
 The standalone integration checks use temporary workspaces and a mock executable.
 The CTest parent-launcher check also exercises the built executable with an empty
-archive; neither test performs a scientific waveform analysis.
+archive. The date-range checks exercise the real executable with sparse synthetic
+directories, including malformed singleton files to verify scanning and error
+boundaries. These checks do not perform a scientific waveform analysis.
 
 `compare_profiles.py` compares profiling logs. Global CMT conversion tools and
 catalog provenance are documented in [GlobalCMT/README.md](GlobalCMT/README.md).

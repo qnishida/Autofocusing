@@ -147,9 +147,11 @@ Bash, Git and Python 3.7+ are required for the scripts.
 The template still uses the nominal **0.1–0.25 Hz** band and ±0.165 s/km px/py
 range. The experiment name does not select a frequency band; the proposed
 0.05–0.1 Hz primary-microseism analysis requires a separate code change.
-The launcher defaults to horizontal-only analysis starting in 2004. Input paths
-must be configured. With no `--experiment`, local settings and `PARAM_ID` remain
-supported. See [Scripts/README.md](Scripts/README.md) for setting precedence,
+The launcher defaults to horizontal-only analysis. Input paths and inclusive
+`START_DATE`/`END_DATE` values must be configured in the workspace.
+`--experiment NAME` is required: omitting it prints usage and an example and
+exits without starting an analysis. See
+[Scripts/README.md](Scripts/README.md) for setting precedence,
 run records, setup options and migration, and [manual.md](manual.md) for the
 scientific input requirements and build details.
 
@@ -157,17 +159,23 @@ Direct execution remains available from the repository root:
 
 ```bash
 ./bin/cal_ccf_clang 2004 tilt_horizontal "$(git describe --tags --always --dirty)" \
-  /path/to/hdf5 /path/to/moment_loc_76_24 ../results horizontal
+  /path/to/hdf5 /path/to/moment_loc_76_24 ../results horizontal 2004-01-01 2004-01-07
 ```
 
-The compiler determines the executable suffix (`gcc` or `clang`). The two
-optional trailing arguments are `[output-root] [3c|horizontal]`; omitting both
-preserves three-component mode and the `output/` destination.
+The compiler determines the executable suffix (`gcc` or `clang`). The optional
+trailing arguments are `[output-root] [3c|horizontal] [START_DATE END_DATE]`.
+The date pair requires both preceding options, and `YYYY` must match the start
+date year. Omitting all optional arguments preserves three-component mode and
+the `output/` destination.
 
-The existing daily scan ends at its built-in limit (2024-12-31, also bounded
-by 366 × 20.75 days from the start year). It has not been extended to 2025.
-Daily input directories use `HINET_ROOT/YYYY/MMDD/` and must contain exactly
-one regular HDF5 file. Missing/empty/multiple-file days are skipped.
+The launcher scans the configured date interval, including both endpoints.
+Missing/empty/multiple-file daily directories are skipped until the next day
+within that interval. Input directories use `HINET_ROOT/YYYY/MMDD/` and must
+contain exactly one regular file, interpreted as HDF5. If no input is loaded,
+the log says so and the result is empty. Explicit dates remove the historical
+2024 cutoff; year-only direct calls retain their old bounds. Rebuild and install
+the executable to use the new date arguments. See
+[date settings](Scripts/README.md#analysis-dates-and-missing-days).
 
 ## Output
 
@@ -178,7 +186,7 @@ results/<experiment>/<UTC-timestamp>/YYYY_2048_0.099609-0.250000.dat
 ```
 
 Here `YYYY` is the start year, not the year of each individual event.
-Without an experiment argument, the default parameter ID is `tilt_horizontal`.
+The experiment name is explicitly selected with `--experiment`.
 Horizontal mode preserves the 38-column format, emits R=0 and T=1 events, and
 writes `nan` for U-related matrix values (columns 36–38). Each launcher execution
 allocates a new run directory and records settings,

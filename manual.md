@@ -107,15 +107,18 @@ workspace is not a Git repository. Use `--workspace PATH` to select another
 location. The scripts require Bash, Git and Python 3.7+.
 
 Set waveform and catalog locations (`HINET_ROOT`, `CMT_CATALOG`) and optional
-binary/thread/backend choices in `local_config.sh`. Put scientific settings
+binary/thread/backend choices in `local_config.sh`. Put scientific settings,
+including required `START_DATE` and `END_DATE`,
 in `analysis/<experiment>/config.sh`. Settings override the inherited environment
 in that order. Relative paths refer to the workspace. `RESULTS_ROOT` defaults
 to `results/`, and `AUTOFOCUSING_BIN` can override executable discovery in the
 source checkout's `bin/`. The runner does not build automatically.
 
 The template retains nominal 0.1–0.25 Hz processing and the ±0.165 s/km px/py
-range regardless of experiment name. No-argument runs still accept local settings
-and `PARAM_ID`. See [Scripts/README.md](Scripts/README.md) for the full workflow,
+range regardless of experiment name. `--experiment NAME` is required. With no
+experiment specified, the runner prints usage and an example and exits with
+status 2 without reading configs or starting an analysis. See
+[Scripts/README.md](Scripts/README.md) for the full workflow,
 recorded metadata, configuration precedence and existing-launcher migration.
 
 ### Horizontal input and processing
@@ -144,16 +147,36 @@ vertical candidates or vertical-derived horizontal seeds are used.
 ### Direct invocation and compatibility
 
 ```text
-cal_ccf_<compiler> YYYY <param-id> <git-version> <hinet-root> <cmt-catalog> [output-root] [3c|horizontal]
+cal_ccf_<compiler> YYYY <param-id> <git-version> <hinet-root> <cmt-catalog> [output-root] [3c|horizontal] [START_DATE END_DATE]
 ```
 
 Omitting the optional arguments retains `output/` and `3c`. The parent launcher
 uses `horizontal` and a separate result directory by default. `cal_ccf_eq` has
 not been extended with horizontal mode.
 
-The start year defaults to 2004 in the launcher. The existing scan stops at
-2024-12-31 or its original 366 × 20.75-day iteration bound, whichever comes
-first. This change does not add support for 2025 or a date-range interface.
+The launcher requires `START_DATE` and `END_DATE` as `YYYY-MM-DD`, includes both
+endpoints, and derives the positional year from START_DATE. For example:
+
+```bash
+export START_DATE=2004-01-01
+export END_DATE=2004-01-07
+```
+
+Missing/invalid/reversed dates fail before starting. Replace `START_YEAR` in
+existing experiment configs with the date pair; setup preserves existing files.
+An old START_YEAR setting does not override explicit dates. Rebuild and install
+the executable to accept the new trailing arguments. Direct calls with dates
+must supply output root and component mode, with YYYY matching START_DATE.
+Direct calls without dates retain January 1 of YYYY through the earlier of
+2024-12-31 and start + 7594 days. Explicit intervals have neither historical cap.
+
+Missing daily directories, empty directories and directories with multiple
+regular files are skipped within the selected interval. A malformed singleton
+HDF5 file still causes an error. The final `#ScanSummary` records skipped/loaded
+day counts; if none was loaded, the log reports this and the output is empty.
+The scanner does not continue beyond END_DATE to find input. External waveform
+and CMT inputs must cover the intended period; catalog validation is unchanged.
+See [date configuration](Scripts/README.md#analysis-dates-and-missing-days).
 
 ## 6. Output
 
@@ -224,6 +247,7 @@ operations at runtime. A consistent Homebrew LLVM build is:
 cmake -S . -B build-clang \
   -DCMAKE_C_COMPILER="$(brew --prefix llvm)/bin/clang" \
   -DCMAKE_CXX_COMPILER="$(brew --prefix llvm)/bin/clang++" \
+  -DCMAKE_OBJCXX_COMPILER="$(xcrun --find clang++)" \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build-clang -j 4
 ctest --test-dir build-clang --output-on-failure
@@ -233,6 +257,10 @@ cmake --install build-clang
 This requires the dependencies listed in README plus LLVM/OpenMP. Current
 Boost/Eigen require C++14. The C language is enabled for HDF5 discovery;
 Boost.System is header-only in modern Boost and is not requested separately.
+Apple's Objective-C++ compiler is used for the Metal implementation to match
+the installed Apple SDK/linker; C/C++ use Homebrew LLVM for OpenMP support.
+When changing compilers, use a fresh build directory or configure with
+`cmake --fresh` (CMake 3.24+) rather than retaining stale compiler/library paths.
 
 The synthetic regression check can additionally compare the current 3c loader
 against a specified Git revision:
@@ -277,7 +305,6 @@ if that file does not override them:
 ```bash
 export AUTOFOCUSING_BACKEND=metal
 export OMP_NUM_THREADS=16
-export PARAM_ID=tilt_horizontal_metal
 ```
 
 Both `horizontal` and `3c` are supported. Only slant stacking and its power
@@ -298,10 +325,12 @@ Grid settings apply equally to CPU and Metal, without recompilation:
 
 For example, spacing `0.0025` and maximum `0.25` produce a 201×201 grid
 instead of the default 67×67. The upper limit is rounded down to a grid multiple;
-the actual grid is logged. Positive finite settings and a half-width from 1 to
+the actual grid is logged. The grid is square, but initial peak candidates are
+restricted to the circle whose radius is the effective grid maximum; subsequent
+fitting is not bounded by this mask. Positive finite settings and a half-width from 1 to
 1024 are required. Finer/wider grids change the search itself and may change
-detected events. Use distinct experiment names (or `PARAM_ID` for no-argument
-launches) to organize backend/grid comparisons. Each launcher run is preserved
+detected events. Use distinct names selected with `--experiment` to organize
+backend/grid comparisons. Each launcher run is preserved
 in a separate timestamp directory; see section 6 for direct-call behavior.
 
 `AUTOFOCUSING_PROFILE=1` measures normal processing, including float packing,
@@ -360,7 +389,6 @@ export AUTOFOCUSING_BIN="/absolute/path/to/build-cuda/src/cal_ccf_gcc"
 export AUTOFOCUSING_BACKEND=cuda
 export AUTOFOCUSING_GPU_POWER=bootstrap
 export OMP_NUM_THREADS=16
-export PARAM_ID=tilt_horizontal_cuda
 ```
 
 `AUTOFOCUSING_BACKEND` accepts `cpu`, `metal`, or `cuda`. An unavailable or
