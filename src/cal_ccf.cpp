@@ -1303,16 +1303,16 @@ static cmatrix cal_S_matrix(const PARAM prm, const array4c &buf_specENURT,
     // S_RTU = phi^* phi = phi^* phi - bias
     for (int icmp1 = 0; icmp1 < 3; icmp1++) {
       for (int icmp2 = 0; icmp2 < 3; icmp2++) {
-        double bias = 0;
+        std::complex<double> bias = 0.;
         for (int ist = 0; ist < num_sta; ist++) {
           for (int k = STATION::if1; k <= STATION::if2; ++k) {
-            bias += real(conj(buf_specENURT[idx_RTU[icmp1]][ibuf][ist][k]) *
+            bias += conj(buf_specENURT[idx_RTU[icmp1]][ibuf][ist][k]) *
                          buf_specENURT[idx_RTU[icmp2]][ibuf][ist][k] *
                          w_spec[idx_RTU[icmp1]][ibuf][ist] *
-                         w_spec[idx_RTU[icmp2]][ibuf][ist]);
+                         w_spec[idx_RTU[icmp2]][ibuf][ist];
           }
         }
-        S_RTU(icmp1, icmp1) -= bias;
+        S_RTU(icmp1, icmp2) -= bias;
       }
     }
     // Compute the weight matrix
