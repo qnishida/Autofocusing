@@ -4,6 +4,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -18,6 +19,9 @@ DEFAULTS = {
     'AUTOFOCUSING_BACKEND': 'cpu', 'AUTOFOCUSING_SLOWNESS_STEP': '0.005',
     'AUTOFOCUSING_SLOWNESS_MAX': '0.165',
     'AUTOFOCUSING_FREQ_MIN': '0.1', 'AUTOFOCUSING_FREQ_MAX': '0.25',
+    'AUTOFOCUSING_EVENT_SELECTION': 'all',
+    'AUTOFOCUSING_MIN_MAX_MAD_R': '7', 'AUTOFOCUSING_MIN_MAX_MAD_T': '7',
+    'AUTOFOCUSING_MIN_MAX_MAD_U': '35',
 }
 OPTIONAL_SETTINGS = (
     'OMP_NUM_THREADS', 'OMP_DYNAMIC', 'OMP_PROC_BIND', 'OMP_PLACES',
@@ -195,6 +199,20 @@ def run(args):
             if settings['AUTOFOCUSING_BACKEND'] == 'metal' else 'off')
     if settings['COMPONENT_MODE'] not in ('horizontal', '3c'):
         raise ValueError('COMPONENT_MODE must be horizontal or 3c')
+    if settings['AUTOFOCUSING_EVENT_SELECTION'] not in ('all', 'selected'):
+        raise ValueError('AUTOFOCUSING_EVENT_SELECTION must be all or selected')
+    selection = {'mode': settings['AUTOFOCUSING_EVENT_SELECTION'],
+                 'score': 'initial_grid_max_over_mad', 'comparison': '>',
+                 'minimum_max_mad': {}}
+    for component in ('R', 'T', 'U'):
+        key = 'AUTOFOCUSING_MIN_MAX_MAD_' + component
+        try:
+            value = float(settings[key])
+        except ValueError:
+            raise ValueError(key + ' must be a positive finite number') from None
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError(key + ' must be a positive finite number')
+        selection['minimum_max_mad'][component] = value
     dates = {}
     for key in ('START_DATE', 'END_DATE'):
         value = os.environ.get(key, '')
@@ -242,6 +260,20 @@ def run(args):
             raise ValueError('Missing frequency fields')
     except (ValueError, TypeError):
         raise ValueError('Invalid --frequency-info response; rebuild the selected cal_ccf') from None
+    # Legacy binaries still support the default full-catalog behavior. Require
+    # an explicit capability response before enabling early selection.
+    if selection['mode'] == 'selected':
+        info = subprocess.run([str(binary), '--event-selection-info'], cwd=repo, env=env,
+                              capture_output=True, text=True, timeout=30)
+        if info.returncode != 0:
+            raise ValueError('Early event selection requires a rebuilt cal_ccf with '
+                             '--event-selection-info support.\n' + info.stderr.strip())
+        try:
+            reported_selection = json.loads(info.stdout)
+        except ValueError:
+            raise ValueError('Invalid --event-selection-info response; rebuild cal_ccf') from None
+        if reported_selection != selection:
+            raise ValueError('The executable did not confirm the requested event selection settings')
     output = allocate_run(results / name)
     command = [str(binary), settings['START_YEAR'], name, output.name,
                settings['HINET_ROOT'], settings['CMT_CATALOG'], str(results), settings['COMPONENT_MODE'],
@@ -250,7 +282,7 @@ def run(args):
                 'started_at': utc_now().isoformat(), 'finished_at': None,
                 'status': 'running', 'exit_code': None, 'command': command,
                 'cwd': str(repo), 'workspace': str(workspace), 'settings': settings,
-                'frequency_band': frequency_band}
+                'frequency_band': frequency_band, 'event_selection': selection}
     manifest_path = output / 'manifest.json'
     write_json(manifest_path, manifest)
     child = None

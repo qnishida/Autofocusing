@@ -125,6 +125,10 @@ install(TARGETS ${TARGET_NAME1} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(test_event_selection tests/event_selection.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
+    target_include_directories(test_event_selection PRIVATE ${DELTAP_INCLUDE_DIRS})
+    target_link_libraries(test_event_selection PRIVATE ${DELTAP_LIBS})
+    add_test(NAME event_selection_thresholds COMMAND test_event_selection)
     add_executable(test_newton_roundoff tests/newton_roundoff.cpp src/slant_stack.cpp src/station_info.cpp src/util.cpp src/calTT.cpp)
     target_include_directories(test_newton_roundoff PRIVATE ${DELTAP_INCLUDE_DIRS})
     target_link_libraries(test_newton_roundoff PRIVATE ${DELTAP_LIBS})
@@ -183,6 +187,9 @@ if(BUILD_TESTING)
     add_test(NAME slant_stack_equivalence COMMAND test_slant_stack)
     find_package(Python3 QUIET COMPONENTS Interpreter)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME event_selection_configuration COMMAND ${Python3_EXECUTABLE} -B
+            ${PROJECT_SOURCE_DIR}/tests/event_selection_cli.py ${PROJECT_SOURCE_DIR}
+            $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})
         add_test(NAME frequency_configuration COMMAND ${Python3_EXECUTABLE} -B
             ${PROJECT_SOURCE_DIR}/tests/frequency_cli.py ${PROJECT_SOURCE_DIR}
             $<TARGET_FILE:${TARGET_NAME1}> ${CMAKE_CURRENT_BINARY_DIR})

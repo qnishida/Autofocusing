@@ -36,6 +36,14 @@ class WorkspaceTests(unittest.TestCase):
         binary = self.workspace / 'mock program'
         binary.write_text('''#!/usr/bin/env python3
 import json, os, pathlib, sys, time
+if sys.argv[1:] == ['--event-selection-info']:
+    if os.environ.get('MOCK_OLD_SELECTION_BINARY'):
+        sys.exit(1)
+    print(json.dumps(dict(mode=os.environ['AUTOFOCUSING_EVENT_SELECTION'],
+                         score='initial_grid_max_over_mad', comparison='>',
+                         minimum_max_mad={c: float(os.environ['AUTOFOCUSING_MIN_MAX_MAD_' + c])
+                                          for c in ('R', 'T', 'U')})))
+    sys.exit(0)
 if sys.argv[1:] == ['--frequency-info']:
     if os.environ.get('MOCK_OLD_BINARY'):
         sys.exit(1)
@@ -180,6 +188,27 @@ sys.exit(int(os.environ.get('MOCK_EXIT', '0')))
             manifest = json.loads(path.read_text())
             self.assertFalse(manifest['analysis']['git_initialized'])
             self.assertEqual(manifest['run_id'], path.parent.name)
+
+    def test_selection_precedence_and_unsupported_binary(self):
+        self.env['AUTOFOCUSING_MIN_MAX_MAD_R'] = '10'
+        self.local.write_text(self.local.read_text() + 'AUTOFOCUSING_MIN_MAX_MAD_R=9\n')
+        self.config.write_text(self.config.read_text() +
+                              'AUTOFOCUSING_EVENT_SELECTION=selected\nAUTOFOCUSING_MIN_MAX_MAD_R=8\n')
+        result = self.command(self.run_command())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads(self.outputs()[0].read_text())
+        self.assertEqual(manifest['event_selection']['minimum_max_mad'], dict(R=8, T=7, U=35))
+        self.assertEqual(manifest['settings']['AUTOFOCUSING_EVENT_SELECTION'], 'selected')
+        before = self.outputs()
+        self.env['MOCK_OLD_SELECTION_BINARY'] = '1'
+        result = self.command(self.run_command())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('--event-selection-info', result.stderr)
+        self.assertEqual(self.outputs(), before)
+        # Default full-catalog behavior remains usable with the older binary.
+        self.config.write_text(self.config.read_text() + 'AUTOFOCUSING_EVENT_SELECTION=all\n')
+        result = self.command(self.run_command())
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_timestamp_collision(self):
         spec = importlib.util.spec_from_file_location('workspace_helper', REPO / 'Scripts/workspace.py')

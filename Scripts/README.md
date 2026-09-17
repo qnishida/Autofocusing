@@ -113,7 +113,52 @@ Defaults are horizontal components, CPU backend, slowness step
 0.005 s/km and maximum 0.165 s/km. Inputs and both dates must be supplied. The executable defaults
 to `bin/cal_ccf_clang`, then `bin/cal_ccf_gcc`, in the source checkout.
 `RESULTS_ROOT` defaults to workspace `results/`. The nominal frequency band defaults
-to 0.1–0.25 Hz and is configurable per experiment.
+to 0.1–0.25 Hz and is configurable per experiment. Event selection defaults to
+`all`, retaining the full catalog.
+
+### Compute only events above max/MAD thresholds
+
+To skip expensive fitting, Bootstrap and spectral-matrix calculations for
+candidates you would discard using the existing max/MAD cutoffs, add to the
+experiment's `config.sh`:
+
+```bash
+export AUTOFOCUSING_EVENT_SELECTION=selected
+export AUTOFOCUSING_MIN_MAX_MAD_R=7
+export AUTOFOCUSING_MIN_MAX_MAD_T=7
+export AUTOFOCUSING_MIN_MAX_MAD_U=35
+```
+
+`AUTOFOCUSING_EVENT_SELECTION=all` is the default and preserves full-catalog
+behavior. In `selected` mode, the initial-grid `max / MAD` must be **strictly
+greater** than the corresponding threshold. Thresholds must be positive finite
+numbers; the defaults are R=7, T=7, U=35. Nonfinite peaks/MAD or MAD <= 0 fail
+selection. R and T thresholds are independent. U is unused in horizontal mode.
+These are experiment choices, not calibrated false-alarm probabilities.
+
+This check uses the initial-grid peak value, not the optimized power, and runs
+before per-candidate parameter searches. The full initial peak lists, U-derived
+horizontal seeds and duplicate exclusions remain unchanged. A skipped U fit
+does not remove its seed from horizontal candidate generation. Convergence and
+the 38-column output format are unchanged; only selected candidates that also
+converge are output. Skipped candidates have no covariance or energy result and
+are not written as placeholder rows. Use `all` if you need a full catalog for
+later threshold changes. Comparison uses full-precision values; near a cutoff,
+rounded text columns may appear equal to it.
+
+The launcher records the resolved settings and `event_selection` in the run
+manifest. Before starting `selected` mode, it calls `--event-selection-info` and
+requires the executable to confirm those settings, so an older binary cannot
+silently ignore the request. Rebuild and install the executable before enabling
+this mode. `run.log` records `#EventSelection` at startup and
+`#EventSelectionCounts` per component/time interval, including candidates,
+skipped fits, attempted fits and emitted rows. Count lines also appear in `all`
+mode when `AUTOFOCUSING_PROFILE` is enabled.
+
+Bootstrap's existing production RNG is time-seeded. Runtime changes can change
+Bootstrap samples; use deterministic test probes for exact before/after
+comparisons. Early selection does not change the Bootstrap estimator or seed
+policy.
 
 ### Analysis frequency band
 

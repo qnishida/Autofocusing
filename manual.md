@@ -215,6 +215,16 @@ numbers R=0 and T=1. Columns 34–35 contain R/T matrix diagonal values;
 columns 36–38 (U power and real/imaginary R–U cross-power) are `nan` in
 horizontal mode. These values indicate missing observations, not zero power.
 
+The default `AUTOFOCUSING_EVENT_SELECTION=all` computes the full catalog.
+Set `AUTOFOCUSING_EVENT_SELECTION=selected` in the experiment config to skip
+per-candidate fitting, Bootstrap and matrix calculation when the initial-grid
+max/MAD does not exceed `AUTOFOCUSING_MIN_MAX_MAD_R`, `_T` or `_U` (defaults
+7, 7 and 35). The initial peak lists and U-derived horizontal seeds are retained;
+the selected mode emits only passing candidates that also converge, with the
+same 38 columns. Thresholds and selection counts are recorded with the run.
+See [early event selection](Scripts/README.md#compute-only-events-above-maxmad-thresholds)
+for settings, validation and full-catalog compatibility.
+
 Direct executable invocations truncate their output file if the destination is
 reused. The launcher avoids this by allocating a new timestamp directory on every
 run. Actual Git revisions, dirty state and tracked differences are recorded in

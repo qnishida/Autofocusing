@@ -8,6 +8,7 @@
 #include <boost/foreach.hpp>
 #include <boost/math/statistics/univariate_statistics.hpp>
 #include <chrono>
+#include <array>
 #include <cstdlib>
 #include <complex>
 #include <fstream>
@@ -154,6 +155,44 @@ static double positive_setting(const char *name, double fallback) {
   return result;
 }
 
+struct EventSelection {
+  bool selected_only = false;
+  std::array<double, 3> minimum_max_mad{{7., 7., 35.}};
+
+  bool accepts(double peak, double mad, int component) const {
+    return !selected_only ||
+        (std::isfinite(peak) && std::isfinite(mad) && mad > 0 &&
+         peak / mad > minimum_max_mad[component]);
+  }
+};
+
+static EventSelection event_selection;
+
+static EventSelection event_selection_from_environment() {
+  EventSelection result;
+  const char *value = std::getenv("AUTOFOCUSING_EVENT_SELECTION");
+  const std::string mode = value ? value : "all";
+  if (mode != "all" && mode != "selected")
+    throw std::invalid_argument("AUTOFOCUSING_EVENT_SELECTION must be all or selected");
+  result.selected_only = mode == "selected";
+  const char *names[] = {"AUTOFOCUSING_MIN_MAX_MAD_R", "AUTOFOCUSING_MIN_MAX_MAD_T",
+                         "AUTOFOCUSING_MIN_MAX_MAD_U"};
+  for (int i = 0; i < 3; ++i)
+    result.minimum_max_mad[i] = positive_setting(names[i], result.minimum_max_mad[i]);
+  return result;
+}
+
+static std::string event_selection_json(const EventSelection &selection) {
+  std::ostringstream out;
+  out << std::setprecision(17)
+      << "{\"mode\":\"" << (selection.selected_only ? "selected" : "all")
+      << "\",\"score\":\"initial_grid_max_over_mad\",\"comparison\":\">\","
+      << "\"minimum_max_mad\":{\"R\":" << selection.minimum_max_mad[0]
+      << ",\"T\":" << selection.minimum_max_mad[1]
+      << ",\"U\":" << selection.minimum_max_mad[2] << "}}";
+  return out.str();
+}
+
 struct FrequencyBand {
   static constexpr int fft_length = 2048;
   static constexpr int dt_msec = 500;
@@ -197,6 +236,11 @@ static std::string frequency_band_json(const FrequencyBand &band) {
 }
 
 int main(int argc, char *argv[]) try {
+  event_selection = event_selection_from_environment();
+  if (argc == 2 && std::string(argv[1]) == "--event-selection-info") {
+    std::cout << event_selection_json(event_selection) << '\n';
+    return 0;
+  }
   const auto frequency_band = frequency_band_from_environment();
   if (argc == 2 && std::string(argv[1]) == "--frequency-info") {
     std::cout << frequency_band_json(frequency_band) << '\n';
@@ -204,6 +248,7 @@ int main(int argc, char *argv[]) try {
   }
   std::cerr << "#SlantStack backend=" << slant_stack_backend_name() << '\n';
   std::cerr << "#Power mode=" << gpu_power_mode() << '\n';
+  std::cerr << "#EventSelection " << event_selection_json(event_selection) << '\n';
   // All backends use exactly the same requested grid, in seconds/km.
   dp = positive_setting("AUTOFOCUSING_SLOWNESS_STEP", 5e-3);
   const double slowness_max = positive_setting("AUTOFOCUSING_SLOWNESS_MAX", 1.65e-1);
@@ -634,9 +679,15 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
   // components. icmp = 2
   int l2V = STATION::horizontal_only ? 0 :
       search_max(ssRTU, pxV, pyV, event_number, mad, quartile, 2);
+  std::array<int, 3> candidates{{0, 0, l2V}}, skipped{{0, 0, 0}}, emitted{{0, 0, 0}};
   for (int i = 0; i < l2V; i++) {
     double max =
         ssRTU[2][round(pxV[i] / dp + 1E-10)][round(pyV[i] / dp + 1E-10)];
+    // Skip fitting only: retain every U seed for horizontal seed generation.
+    if (!event_selection.accepts(max, mad, 2)) {
+      ++skipped[2];
+      continue;
+    }
 
     prm.p = sqrt(pxV[i] * pxV[i] + pyV[i] * pyV[i]);
     prm.θ = atan2(pyV[i], pxV[i]);
@@ -654,6 +705,7 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
       cmatrix S_matrix =
           cal_S_matrix(prm, buf_specENURT, w_specENURT, dx, dy, num_ss);
       output_result(ofs, prm, 2, max, mad, num_ss, t_s, t_e, S_matrix, flag2);
+      ++emitted[2];
     }
   }
 
@@ -687,9 +739,15 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
     }
     // Search for maximum events based on the slant stack results in horizontal
     // components.
+    candidates[icmp] = l2;
     for (int i = 0; i < l2; i++) {
       double max =
           ssRTU[icmp][round(px[i] / dp + 1E-10)][round(py[i] / dp + 1E-10)];
+      // Candidate lists and their duplicate exclusions are already complete.
+      if (!event_selection.accepts(max, mad, icmp)) {
+        ++skipped[icmp];
+        continue;
+      }
 
       PARAM prm;
       prm.p = sqrt(px[i] * px[i] + py[i] * py[i]);
@@ -710,8 +768,17 @@ static int search_events(std::vector<STATION> &sta0, array3d &ssRTU,
             cal_S_matrix(prm, buf_specENURT, w_specENURT, dx, dy, num_ss);
         output_result(ofs, prm, icmp, max, mad, num_ss, t_s, t_e, S_matrix,
                       flag2);
+        ++emitted[icmp];
       }
     }
+  }
+  if (event_selection.selected_only || std::getenv("AUTOFOCUSING_PROFILE")) {
+    for (int component = 0; component < 3; ++component)
+      std::cerr << "#EventSelectionCounts start=" << to_iso_string(t_s)
+                << " component=" << component << " candidates=" << candidates[component]
+                << " skipped=" << skipped[component]
+                << " fitted=" << candidates[component] - skipped[component]
+                << " emitted=" << emitted[component] << '\n';
   }
   report_profile();
   return (num_ss);

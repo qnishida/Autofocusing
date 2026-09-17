@@ -11,3 +11,12 @@ export AUTOFOCUSING_FREQ_MIN=0.1
 export AUTOFOCUSING_FREQ_MAX=0.25
 # Hz; for primary microseisms set MIN=0.05 and MAX=0.1 explicitly.
 # Both endpoints round down to FFT bins; requested/effective bands are recorded.
+
+# "all" preserves the full catalog. "selected" skips expensive fitting and
+# Bootstrap for candidates that fail the initial-grid max/MAD thresholds.
+export AUTOFOCUSING_EVENT_SELECTION=all
+export AUTOFOCUSING_MIN_MAX_MAD_R=7
+export AUTOFOCUSING_MIN_MAX_MAD_T=7
+export AUTOFOCUSING_MIN_MAX_MAD_U=35
+# Strictly greater than these positive thresholds is required in selected mode.
+# These are experiment choices, not calibrated false-alarm probabilities.
