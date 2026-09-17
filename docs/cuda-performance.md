@@ -16,7 +16,7 @@ per slowness cell. Station sums remain ordered; frequency contributions use a
 shared-memory tree reduction. Horizontal mode leaves U untouched. GPU powers
 are checked for finiteness, promoted to double and added to the existing output.
 
-The optional horizontal power objectives use separate phase, weighted-power
+The optional power objectives use separate phase, weighted-power
 and reduction kernels. At most 32 candidates are processed at once; spectra
 and coordinates transfer once per batch API call. Shared geometry/weights use
 the existing interpretation, including Bootstrap's common phase. Potential
@@ -29,10 +29,14 @@ state; RAII releases resources and drains work on exceptions. Allocation,
 copy, launch and synchronization failures are reported. Dimensions and FP32
 conversion are checked before use. CUDA compilation disables fast math, FMA
 fusion and flush-to-zero and requests precise division/square root. This is
-still FP32 computation, with the existing `5e-4` validation bounds.
+FP32 computation for horizontal objectives, with the existing `5e-4` validation
+bounds. Three-component Bootstrap uses the same kernels instantiated for FP64;
+its synthetic checks use `1e-12` scaled by uncorrected CPU double power plus
+the existing `1e-30` absolute floor.
 
 FFTW, HDF5 I/O, production seeds, sampling, final fitting/derivatives and CPU
-objectives are unchanged. GPU fitting objectives remain disabled for 3c data.
+objectives are unchanged. GPU Bootstrap supports horizontal and 3c input;
+GPU initial-grid objectives remain restricted to horizontal input.
 Metal's existing source and math settings are retained; its legacy power
 environment variable remains available as described in the manual.
 
@@ -180,3 +184,91 @@ GPU kernel-only timing is available separately with
 used for adoption timing. Real-event acceptance requires unchanged event
 outputs under the documented comparison and a target-stage reduction of at
 least 10%, with total runtime no more than 5% worse than its baseline.
+
+## Three-component Bootstrap, 2026-09-17
+
+CUDA `bootstrap` and `all` now evaluate three-component Bootstrap on the GPU.
+The event already supplies one selected R, T or U spectrum, so the batched
+objective layout is unchanged. Initial-grid fitting remains on CPU in 3c mode;
+`off` and `grid` retain the CPU OpenMP Bootstrap implementation. Peak search,
+sampling order, seeds, sample count, Hessians and final statistical reductions
+are unchanged. This is opt-in; the default power mode remains `off`.
+
+Simply enabling the existing FP32 path failed the established real-event bound:
+one T event on 2005-03-15 had Bootstrap mean power `8.05874e-21` instead of
+`8.03698e-21`, exceeding `rtol=1e-3`. No tolerance was relaxed. Three-component
+CUDA power now uses FP64 spectra, coordinates, weights, phase evaluation,
+partial sums, bias subtraction and output. Horizontal CUDA objectives retain
+FP32. Metal three-component Bootstrap retains CPU OpenMP evaluation.
+
+The following qualification and timing results precede the peak-search and
+double-precision fitting fixes in `6adca43`; their event counts and timings
+should not be used as expectations for the integrated version.
+
+On Threadripper 3990X / RTX PRO 2000 Blackwell, both CPU-only and CUDA builds
+pass all 12 CTest cases. The CUDA objective test passes 432 FP32/FP64 cases,
+with maximum errors scaled by uncorrected CPU power of `1.819e-4` and
+`3.088e-14`, respectively. An additional 1,212 FP64 values cover three selected
+component spectra, 1/3/17/48 windows and 101-entry Bootstrap batches spanning
+32-entry chunks; maximum scaled error is `1.263e-14`. The FP64 bound is
+`1e-12 * uncorrected_power + 1e-30`: the existing CPU relative coefficient is
+applied to the same uncorrected-power scale as the GPU tests, avoiding division
+by a nearly cancelled corrected power.
+Compute Sanitizer memcheck reports zero errors.
+
+The fixed-seed Denoise 2005-03-15–17 comparison uses CUDA slant stacking in both
+runs and compares CPU OpenMP Bootstrap (`off`) with GPU FP64 Bootstrap
+(`bootstrap`). All 59 event records (28 R, 16 T, 15 U), including covariance,
+Bootstrap and spectral matrices, are byte-identical. Initial candidates and
+all 520 accepted windows match. These are correctness runs, not adoption
+timings; other correctness checks ran during qualification.
+
+### Repeated one-day timing
+
+The Denoise 2004-04-01 workload (6 events, 137 windows, 0.1–0.25 Hz,
+67×67 slant-stack grid) uses 16 OpenMP threads, dynamic teams disabled, fixed
+seeds/FFTW plans, one excluded warmup per mode and five alternating fresh-process
+measurements. CUDA slant stacking is enabled in both modes. Caches are not
+purged; no other agent-started builds or tests ran alongside these measurements.
+
+| Stage | CPU OpenMP Bootstrap (`off`) | GPU FP64 Bootstrap (`bootstrap`) |
+| --- | ---: | ---: |
+| Whole-run median | 14.240 s | 13.891 s |
+| Bootstrap median | 0.855 s | 0.551 s |
+| Initial-grid median | 0.356 s | 0.362 s |
+| Slant-stack median | 0.811 s | 0.811 s |
+
+Bootstrap is 1.551× faster and whole-run time decreases by 2.45%. Whole-run
+ranges are 14.090–14.292 s and 13.842–13.941 s. The target-stage and whole-run
+gates pass. All 12 event files, including warmups, are byte-identical, with
+matching candidates and windows. This measures the incremental Bootstrap gain
+over OpenMP with GPU slant stacking already enabled, not the combined CPU-to-GPU
+speedup. Larger Bootstrap workloads may give a different whole-run benefit.
+
+Reproduce with the deterministic driver and a fresh output directory:
+
+```bash
+python3 tests/build_io_probe.py build-cuda
+python3 tests/run_metal_power.py \
+  build-cuda/io-fixed-current/cal_ccf_io_probe "$HINET_ROOT" "$CMT_CATALOG" \
+  build-cuda/bootstrap-timing-new --backend cuda --components 3c \
+  --start-date 2004-04-01 --days 1 --threads 16 \
+  --modes off bootstrap --repeats 5 --warmups 1 --expected-events 6
+```
+
+For the independent 59-event qualification use `--start-date 2005-03-15
+--days 3 --repeats 1 --warmups 0 --expected-events 59`. Detailed logs, event
+files and JSON reports remain in the ignored build directory.
+
+### Integration with peak-search and fitting fixes
+
+After integrating `6adca43`, both CPU-only and CUDA builds pass all 15 CTest
+cases, including peak boundaries, Newton roundoff convergence and covariance
+range checks. The CUDA objective tests retain the FP32/FP64 error bounds above.
+The fixed-seed Denoise 2005-03-15–17 comparison on this Linux/CUDA host produces
+144 events and 520 accepted windows in both modes. With CUDA slant stacking
+enabled in both runs, CPU OpenMP Bootstrap (`off`) and CUDA FP64 Bootstrap
+(`bootstrap`) produce byte-identical event files, matching initial candidates
+and finite numeric outputs. This is an integration correctness check with one
+run per mode and no warmup, not a repeated performance qualification. Detailed
+results are in `build-cuda/bootstrap-peak-fp64-merge-qualification-2005`.

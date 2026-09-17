@@ -5,7 +5,47 @@
 #include <iomanip>
 #include <random>
 
+static void bootstrap_components_check() {
+  STATION::horizontal_only=false;
+  STATION::df=1./1024; STATION::if1=102; STATION::if2=132;
+  const int n=31, samples=101;
+  std::mt19937 gen(71837); std::normal_distribution<double> noise;
+  double max_scaled=0;
+  for(int windows:{1,3,17,48}) {
+    array3c spec(boost::extents[windows][n][range3c(STATION::if1,STATION::if2+1)]);
+    array2d weight(boost::extents[windows][n]); dvector x(n),y(n);
+    for(int i=0;i<n;++i) { x[i]=500*noise(gen); y[i]=500*noise(gen); }
+    // The production call packs one selected R, T or U spectrum per event.
+    for(int component=0;component<3;++component) {
+      PARAM prm{}; prm.p=.03+.02*component; prm.θ=.7; prm.Δ=.9; prm.dp_Δ=-1e-6;
+      for(int w=0;w<windows;++w) for(int i=0;i<n;++i)
+        for(int k=STATION::if1;k<=STATION::if2;++k)
+          spec[w][i][k]=std::complex<double>(noise(gen),noise(gen))*double(component+1)*1e-8;
+      std::vector<double> packed,reference,scales;
+      for(int b=0;b<samples;++b) {
+        for(int w=0;w<windows;++w) for(int i=0;i<n;++i)
+          weight[w][i]=(i%7==0)?0:((b==100)?1:((i+3*w+b)%5));
+        append_weights(packed,weight,windows,n);
+        reference.push_back(cal_S(prm,spec,weight,x,y,windows,1));
+        scales.push_back(cal_S(prm,spec,weight,x,y,windows,0));
+      }
+      auto values=gpu_power_batch(power_data(spec,x,y,windows),
+          std::vector<PowerPoint>(samples,power_point(prm)),packed,false,true,true);
+      if(values.size()!=samples) throw std::runtime_error("Bootstrap sample count");
+      for(int b=0;b<samples;++b) {
+        double error=std::abs(values[b]-reference[b]);
+        if(!std::isfinite(values[b]) || error>1e-12*scales[b]+1e-30)
+          throw std::runtime_error("3c Bootstrap 101-sample batch precision/indexing");
+        max_scaled=std::max(max_scaled,error/(scales[b]+1e-30));
+      }
+    }
+  }
+  std::cout<<"3c_bootstrap_values="<<4*3*samples<<" max_scaled="<<max_scaled<<'\n';
+  STATION::horizontal_only=true;
+}
+
 static int grid_benchmark() {
+  STATION::horizontal_only=true; // GPU initial-grid evaluation is horizontal-only.
   STATION::df=1./1024;STATION::if1=102;STATION::if2=256;
   const int n=650,windows=3;
   array3c spec(boost::extents[windows][n][range3c(STATION::if1,STATION::if2+1)]);
@@ -59,18 +99,21 @@ int main(int argc,char **argv) try {
   setenv("AUTOFOCUSING_BACKEND","cpu",1); STATION::horizontal_only=true;
   if(power_enabled("bootstrap")) throw std::runtime_error("CPU must retain CPU objectives");
   setenv("AUTOFOCUSING_BACKEND",AUTOFOCUSING_TEST_BACKEND,1); STATION::horizontal_only=false;
-  if(power_enabled("grid")) throw std::runtime_error("Unqualified 3c must retain CPU objectives");
+  const bool cuda=std::string(AUTOFOCUSING_TEST_BACKEND)=="cuda";
+  if(power_enabled("grid") || power_enabled("bootstrap")!=cuda)
+    throw std::runtime_error("3c requires CUDA FP64 Bootstrap and CPU initial grids");
   STATION::horizontal_only=true;
   if(!power_enabled("bootstrap") || !power_enabled("grid")) throw std::runtime_error("Opt-in dispatch");
   setenv("AUTOFOCUSING_GPU_POWER","off",1);
   if(power_enabled("grid")) throw std::runtime_error("Off dispatch");
+  if(cuda) bootstrap_components_check();
   STATION::df=1./1024;
   STATION::if1=102; STATION::if2=256;
   std::mt19937 generator(1837);
   std::normal_distribution<double> normal;
   std::uniform_real_distribution<double> coordinate(-1500,1500);
   unsigned cases=0;
-  double max_float=0;
+  double max_float=0, max_double=0;
   for(int stations:{2,31,650}) for(int windows:{1,3}) {
     array3c spectra(boost::extents[windows][stations][range3c(STATION::if1,STATION::if2+1)]);
     array2d weights(boost::extents[windows][stations]);
@@ -91,15 +134,19 @@ int main(int argc,char **argv) try {
           }
         }
         double reference_scale=cal_S(prm,spectra,weights,dx,dy,windows,0);
-        for(int bias:{0,1}) {
+        for(int bias:{0,1}) for(bool fp64:{false,true}) {
+          if(fp64 && !cuda) continue;
           double reference=cal_S(prm,spectra,weights,dx,dy,windows,bias);
           auto data=power_data(spectra,dx,dy,windows);
+          data.double_precision=fp64;
           std::vector<double> packed; append_weights(packed,weights,windows,stations);
-          double fp32=gpu_power_batch(data,{power_point(prm)},packed,true,true,bias)[0];
-          double a=std::abs(fp32-reference)/reference_scale;
-          if(!std::isfinite(a)||a>5e-4)
+          double actual=gpu_power_batch(data,{power_point(prm)},packed,true,true,bias)[0];
+          double a=std::abs(actual-reference)/reference_scale;
+          if(!std::isfinite(a)||a>(fp64?1e-12:5e-4))
             throw std::runtime_error("Objective smoke-test tolerance exceeded");
-          max_float=std::max(max_float,a);++cases;
+          if(fp64) max_double=std::max(max_double,a);
+          else max_float=std::max(max_float,a);
+          ++cases;
         }
       }
     }
@@ -160,6 +207,7 @@ int main(int argc,char **argv) try {
     if(!rejected) throw std::runtime_error("CUDA power dimension overflow accepted");
   }
   std::cout<<std::setprecision(17)<<"cases="<<cases<<" max_float_scaled="<<max_float
+           <<" max_double_scaled="<<max_double
            <<" (scaled by uncorrected double power)\n";
   return 0;
 } catch(const std::exception &e) { std::cerr<<e.what()<<'\n';return 1; }

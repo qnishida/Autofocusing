@@ -24,7 +24,11 @@ std::string gpu_power_mode() {
 }
 bool gpu_power_enabled(const char *stage, bool horizontal_only) {
   const auto mode=gpu_power_mode();
-  return horizontal_only && slant_stack_backend()!=SlantStackBackend::Cpu &&
+  // Three-component Bootstrap needs the CUDA FP64 path. Metal's FP32 path
+  // and three-component initial grids retain their existing CPU fallback.
+  const auto backend=slant_stack_backend();
+  return (horizontal_only || (backend==SlantStackBackend::Cuda && std::string(stage)=="bootstrap")) &&
+         backend!=SlantStackBackend::Cpu &&
          (mode==stage || mode=="all");
 }
 std::vector<double> gpu_power_batch(const PowerData &data,
@@ -32,6 +36,8 @@ std::vector<double> gpu_power_batch(const PowerData &data,
     bool shared_weights, bool shared_geometry, bool subtract_bias) {
   switch (slant_stack_backend()) {
   case SlantStackBackend::Metal:
+    if (data.double_precision)
+      throw std::invalid_argument("FP64 power evaluation requires CUDA");
     return metal_power_batch(data,points,weights,shared_weights,shared_geometry,subtract_bias);
   case SlantStackBackend::Cuda:
     return cuda_power_batch(data,points,weights,shared_weights,shared_geometry,subtract_bias);

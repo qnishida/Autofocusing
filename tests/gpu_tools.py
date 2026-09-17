@@ -61,6 +61,49 @@ for stage in ('objective', 'hessian', 'rotation', 'fitting'):
             self.assertEqual([r['mode'] for r in report['runs']],
                              ['reference', 'current', 'current', 'reference'])
 
+    def test_gpu_runner_three_components_warmups(self):
+        with tempfile.TemporaryDirectory(prefix='gpu-bootstrap-') as temp:
+            root = Path(temp)
+            for year, day in ((2004, '1231'), (2005, '0101')):
+                file = root/'input'/str(year)/day/'waveforms.h5'
+                file.parent.mkdir(parents=True)
+                file.touch()
+            (root/'catalog').touch()
+            fake = root/'driver'
+            fake.write_text('#!' + sys.executable + '\n' + '''
+import os, sys
+from pathlib import Path
+assert sys.argv[1] == '2004'
+assert sys.argv[7:] == ['3c', '2004-12-31', '2005-01-01']
+assert os.environ['OMP_DYNAMIC'] == 'FALSE'
+for year, day in ((2004, '1231'), (2005, '0101')):
+    assert (Path(sys.argv[4])/str(year)/day/'waveforms.h5').is_file()
+out = Path(sys.argv[6])/sys.argv[2]/sys.argv[3]
+out.mkdir(parents=True)
+(out/'events.dat').write_text(' '.join(['1']*38)+'\\n')
+warmup = sys.argv[3].endswith('--1')
+print('#deg max=1')
+print('#POWER_PROFILE stage=grid total_s=10')
+power = 50 if warmup else (1 if os.environ['AUTOFOCUSING_GPU_POWER']=='all' else 2)
+print(f'#POWER_PROFILE stage=bootstrap total_s={power}')
+print('#PROFILE segment=0 windows=1 stack_s=1')
+''')
+            fake.chmod(0o755)
+            command = [sys.executable, str(HERE/'run_metal_power.py'), str(fake),
+                       str(root/'input'), str(root/'catalog'), str(root/'output'),
+                       '--backend', 'cuda', '--components', '3c', '--start-date', '2004-12-31',
+                       '--days', '2', '--repeats', '2', '--warmups', '1', '--modes', 'off', 'all']
+            result = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
+            report = json.loads((root/'output/report.json').read_text())
+            self.assertEqual(report['components'], '3c')
+            self.assertEqual(report['end_date'], '2005-01-01')
+            self.assertEqual([(r['mode'], r['repeat']) for r in report['runs']],
+                             [('off', -1), ('all', -1), ('off', 0), ('all', 0), ('all', 1), ('off', 1)])
+            self.assertEqual(report['summary']['all']['stages']['bootstrap'], 1)
+            self.assertEqual(report['summary']['all']['stage_speedup'], 2)
+            self.assertTrue(report['summary']['all']['stage_pass'])
+
     def test_tolerances_and_nonfinite(self):
         ref = [['1']*38]
         row = [ref[0].copy()]
