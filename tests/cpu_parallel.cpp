@@ -69,6 +69,29 @@ void compare(Fixture &f) {
     for (int n = 0; n < 4; ++n) check(dd(m,n), ddr(m,n));
   }
 }
+void bootstrap_check(Fixture &f, bool outer = false) {
+  // Unequal, sparse sample weights and a partial final batch exercise ownership
+  // and output indices independently of the production time-derived sampler.
+  std::vector<std::unique_ptr<array2d>> weights;
+  for (int j = 0; j < 16; ++j) {
+    weights.emplace_back(new array2d(boost::extents[f.windows][f.stations]));
+    for (int w = 0; w < f.windows; ++w) for (int i = 0; i < f.stations; ++i)
+      (*weights.back())[w][i] = f.weights[w][i] * ((i + 3*w + j) % 5);
+  }
+  for (int count : {1, 4, 16}) {
+    dvector expected(count);
+    for (int j = 0; j < count; ++j)
+      expected[j] = cpu_reference::cal_S(f.point, f.spec, *weights[j], f.x, f.y, f.windows, 1);
+    std::vector<dvector> actual(outer ? 4 : 1, dvector(count + 2, -123.));
+#pragma omp parallel for num_threads(4) if(outer)
+    for (int caller = 0; caller < static_cast<int>(actual.size()); ++caller)
+      bootstrap_cpu_batch(f.point, f.spec, weights, f.x, f.y, f.windows, count, actual[caller], 1);
+    for (const auto &values : actual) {
+      check(values[0], -123.); check(values[count + 1], -123.);
+      for (int j = 0; j < count; ++j) check(values[j + 1], expected[j]);
+    }
+  }
+}
 struct Rotation {
   std::vector<STATION> sta;
   array4c spec;
@@ -135,6 +158,13 @@ int main(int argc,char **argv) try {
     return benchmark(argv[2],threads,repeats,windows);
   }
   if(argc!=1) throw std::runtime_error("usage: test_cpu_parallel [--benchmark STAGE THREADS REPEATS WINDOWS]");
+  for (int windows : {1, 3, 17, 48}) for (bool coherent : {false, true}) {
+    Fixture f(windows, 31, 31, coherent);
+    for (int threads : {1, 4, 8, 16}) {
+      omp_set_num_threads(threads); bootstrap_check(f);
+    }
+    bootstrap_check(f, true);
+  }
   for(int w : {0,1,3,16,17,48}) for(int bins : {1,155}) for(bool coherent : {false,true}) {
     Fixture f(w,31,bins,coherent);
     for(int threads : {1,4,8,16}) {
