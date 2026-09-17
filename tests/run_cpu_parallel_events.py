@@ -1,5 +1,6 @@
 """Paired same-backend pre/post CPU-change checks; fixed-seed drivers only."""
 import argparse
+import datetime as dt
 import hashlib
 import json
 import os
@@ -21,29 +22,41 @@ def main():
     p.add_argument('--backend', choices=('cpu', 'cuda', 'metal'), default='cuda')
     p.add_argument('--power', choices=('off', 'bootstrap', 'grid', 'all'), default='bootstrap')
     p.add_argument('--threads', type=int, default=16)
-    p.add_argument('--days', type=int, choices=(3, 5), default=3)
+    p.add_argument('--days', type=int, default=3)
+    p.add_argument('--start-date', type=dt.date.fromisoformat, default=dt.date(2004, 1, 1))
+    p.add_argument('--components', choices=('horizontal', '3c'), default='horizontal')
+    p.add_argument('--expected-events', type=int,
+                   help='optional known event count for other input dates/components')
     p.add_argument('--repeats', type=int, default=5)
     p.add_argument('--warmups', type=int, choices=(0, 1), default=1,
                    help='use 0 for correctness-only qualification, 1 for timing')
-    p.add_argument('--target', choices=('hessian', 'objective', 'rotation'))
+    p.add_argument('--target', choices=('hessian', 'objective', 'rotation', 'bootstrap'))
     a = p.parse_args()
-    if min(a.threads, a.repeats) < 1:
-        p.error('positive threads and repeats required')
+    if min(a.threads, a.repeats, a.days) < 1:
+        p.error('positive threads, repeats and days required')
     for path in (a.reference, a.current, a.catalog):
         if not path.is_file():
             p.error(f'missing file: {path}')
-    sources = [a.hinet.resolve()/'2004'/f'010{day}'/f'200400{day}0000.h5'
-               for day in range(1, a.days+1)]
-    if not all(path.is_file() for path in sources):
-        p.error('missing daily input')
+    dates = [a.start_date + dt.timedelta(days=i) for i in range(a.days)]
+    sources = []
+    for date in dates:
+        directory = a.hinet.resolve()/str(date.year)/date.strftime('%m%d')
+        files = [path for path in directory.iterdir() if path.is_file()] if directory.is_dir() else []
+        if len(files) != 1:
+            p.error(f'expected one daily input in {directory}')
+        sources.append(files[0])
+    expected_events = a.expected_events
+    if expected_events is None and a.components == 'horizontal' and a.start_date == dt.date(2004, 1, 1):
+        expected_events = {3: 20, 5: 29}.get(a.days)
     out = a.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
-    for path in sources:
-        link = out/'input'/'2004'/path.parent.name/path.name
+    for date, path in zip(dates, sources):
+        link = out/'input'/str(date.year)/date.strftime('%m%d')/path.name
         link.parent.mkdir(parents=True)
         link.symlink_to(path)
     report = dict(platform=platform.platform(), backend=a.backend, power=a.power,
                   threads=a.threads, days=a.days, target=a.target,
+                  components=a.components, start_date=str(dates[0]), end_date=str(dates[-1]),
                   adoption_protocol=a.warmups == 1 and a.repeats >= 5,
                   cache=f'{a.warmups} excluded warmup per binary; OS cache not purged; alternating fresh processes',
                   timing='inclusive function time; outer-parallel time is worker-call sum, not wall time',
@@ -66,9 +79,9 @@ def main():
                   else ['/usr/bin/time', '-f', '#RSS_KIB %M'])
         start = time.monotonic()
         with (out/f'{tag}.log').open('w') as log:
-            subprocess.run(timing+[str(exe), '2004', 'cpu-parallel', tag,
+            subprocess.run(timing+[str(exe), str(dates[0].year), 'cpu-parallel', tag,
                                    str(out/'input'), str(a.catalog.resolve()),
-                                   str(out/'results'), 'horizontal'],
+                                   str(out/'results'), a.components, str(dates[0]), str(dates[-1])],
                            env=env, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=900)
         wall = time.monotonic()-start
         files = list((out/'results'/'cpu-parallel'/tag).glob('*.dat'))
@@ -76,7 +89,7 @@ def main():
             raise RuntimeError('Expected one event file')
         contents = files[0].read_bytes()
         rows = [line.split() for line in contents.decode().splitlines()]
-        if len(rows) != (20 if a.days == 3 else 29):
+        if not rows or (expected_events is not None and len(rows) != expected_events):
             raise RuntimeError('Unexpected event count for qualified input')
         lines = (out/f'{tag}.log').read_text().splitlines()
         choices = [line for line in lines if line.startswith(('#deg max=', '#dp_Δ max='))]
@@ -131,7 +144,9 @@ def main():
     if 'grid' in summary['reference']['power']:
         report['grid_regression_pass'] = (summary['current']['power']['grid']
                                           <= 1.05*summary['reference']['power']['grid'])
-    if a.target:
+    if a.target == 'bootstrap':
+        report['target_stage_pass'] = summary['current']['power']['bootstrap'] <= .9*summary['reference']['power']['bootstrap']
+    elif a.target:
         key = a.target+'/serial_caller'
         report['target_stage_pass'] = summary['current']['cpu'][key] <= .9*summary['reference']['cpu'][key]
     report['all_event_bytes_identical'] = len({r['event_sha256'] for r in report['runs']}) == 1

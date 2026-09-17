@@ -238,3 +238,95 @@ all five pairs satisfy the 5% regression bound. These results complete the
 requested horizontal-workload integration checks. Remote fetch failed with
 SSH `Permission denied (publickey)` during local integration, so no remote
 `main` update was performed.
+
+## Three-component Bootstrap
+
+Developed on `perf/3c-bootstrap-openmp` from `485d761`, this change evaluates CPU
+Bootstrap samples concurrently in three-component mode. The existing GPU
+selection policy and horizontal Bootstrap path are retained. A batch contains
+at most `min(16, OMP_NUM_THREADS)` samples; one-thread and already-parallel
+callers use serial evaluation. Weight scratch is bounded by
+`batch_size * windows * stations * sizeof(double)`.
+
+Resampling runs in sample order on the calling thread, with the original
+`time(0) * i` seed expression. Each worker calls the unchanged double-precision
+objective for one sample, including its self-term subtraction. Outputs are
+stored by sample index; mean, sigma, covariance and corrected power retain their
+original evaluation/reduction order. No new floating-point reduction is used.
+Faster evaluation changes when subsequent wall-clock seeds are sampled, so
+production runs remain non-deterministic. Only the validation driver fixes
+seeds and FFTW plans.
+
+`test_cpu_parallel` also checks sample batches of 1/4/16, output offsets,
+sparse/nonuniform weights, coherent/random spectra, 1/3/17/48 windows,
+1/4/8/16 threads and concurrent outer callers against the frozen CPU objective.
+The final four samples of the 100-sample production loop are also exercised by
+fixed-seed real-event comparisons. The existing tolerance remains
+`1e-12 * abs(reference) + 1e-30`; real-event comparisons retain all Bootstrap
+columns and the existing strict same-backend checks.
+
+The event comparison tool accepts `--components 3c`, `--start-date YYYY-MM-DD`,
+`--days N` and `--target bootstrap`. For example, after configuring the build
+with `CMAKE_EXPORT_COMPILE_COMMANDS=ON` and compiling:
+
+```bash
+python3 tests/build_io_probe.py build-bootstrap-openmp --reference 485d761
+python3 tests/build_io_probe.py build-bootstrap-openmp
+python3 tests/run_cpu_parallel_events.py \
+  build-bootstrap-openmp/io-fixed-reference/cal_ccf_io_probe \
+  build-bootstrap-openmp/io-fixed-current/cal_ccf_io_probe \
+  "$HINET_ROOT" "$CMT_CATALOG" NEW_OUTPUT_DIRECTORY \
+  --backend cpu --power off --components 3c --start-date 2004-04-01 \
+  --days 1 --threads 16 --repeats 5 --warmups 1 --target bootstrap
+```
+
+Detailed logs, fixed drivers and event outputs stay in the ignored build
+directory. The development executable is
+`build-bootstrap-openmp/src/cal_ccf_gcc`; building it does not install it.
+
+### CPU measurements, 2026-09-17
+
+AMD EPYC 9124, GCC 13.3 Release, native architecture disabled, CPU-only build,
+16 OpenMP threads with dynamic teams disabled. The timing input is Denoise
+three-component data for 2004-04-01, 6 events, at 0.1–0.25 Hz and the standard
+67×67 grid. Each binary has one excluded warmup followed by five alternating
+fresh-process runs, with fixed seeds/FFTW plans and profiling enabled in both.
+Caches are not purged; no other agent-started builds/tests run concurrently.
+
+| Stage | Reference median | Parallel median | Speedup |
+| --- | ---: | ---: | ---: |
+| Whole run | 30.576 s | 25.768 s | 1.187× |
+| Bootstrap | 5.427 s | 0.700 s | 7.752× |
+| Initial grid | 0.390 s | 0.377 s | 1.033× |
+
+Whole-run elapsed time decreases by 15.73%. Measured ranges are
+30.529–30.580 s before and 25.766–25.818 s after. Peak process RSS across
+measured runs is 1901.75 MiB before and 1902.34 MiB after. Bootstrap's 10%
+stage-reduction gate, whole-run 5% regression gate and initial-grid gate pass.
+All event bytes, accepted windows and initial candidates agree across all
+12 runs including warmups. This one-day workload is not a full-archive speed
+estimate; event activity and I/O can change the gain.
+
+Baseline and changed CPU-only builds both pass all 12 CTest cases. The expanded
+frozen-kernel test checks 205,620,352 scalar values with `max_abs=0` and
+`max_relative=0`; this includes the pre-existing Hessian/rotation tests.
+GPU execution is not part of this development qualification.
+
+Separate fixed-seed qualification on 2005-03-15–17 three-component Denoise
+input passes with 59 events and 520 accepted windows. All 38 output columns,
+including Bootstrap/covariance and spectral matrices, are byte-identical to
+`485d761`; initial candidates and accepted windows also match. The horizontal
+CPU path passes a 2004-01-01 tilt-data comparison with 2 events and 134 windows,
+again byte-identical. These additional correctness runs overlap other
+qualification runs; their timings are not adoption measurements.
+The one-thread serial fallback also passes a fixed-seed 2004-04-01
+three-component comparison with 6 events and 137 windows, with byte-identical
+outputs and matching initial candidates. The 59-event three-day check covers
+all detection components: 28 R, 16 T and 15 U events.
+
+A same-protocol repeat on Threadripper 3990X, with the same one-day input and
+16 threads, gives whole-run medians of 34.329 s before and 29.118 s after
+(15.18% less elapsed time). Bootstrap decreases from 6.191 s to 0.853 s
+(7.255×); initial grid time decreases from 0.371 s to 0.365 s. All 12 event
+files, accepted windows and initial candidates agree. The CPU parallel
+regression again reports `max_abs=0` and `max_relative=0`.

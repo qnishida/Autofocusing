@@ -1038,6 +1038,18 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
  * @param num_ss Number of slant stacks.
  * @return int Number of iterations performed during the estimation process.
  */
+// Each worker evaluates one complete sample with the original serial objective.
+// Results keep their sample indices; the Bootstrap statistics are summed later
+// in the original order. Do not create nested teams for outer-parallel callers.
+static void bootstrap_cpu_batch(const PARAM &prm, const array3c &buf_spec,
+    const std::vector<std::unique_ptr<array2d>> &weights,
+    const dvector &dx, const dvector &dy, int num_ss, int count,
+    dvector &powers, int first) {
+#pragma omp parallel for schedule(static) num_threads(std::min(count, omp_get_max_threads())) if(count > 1 && !omp_in_parallel())
+  for (int j = 0; j < count; ++j)
+    powers[first + j] = cal_S(prm, buf_spec, *weights[j], dx, dy, num_ss, 1);
+}
+
 static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
                          const array2d &w_spec, const dvector &dx,
                          const dvector &dy, const int num_ss,
@@ -1060,14 +1072,21 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
 
   cal_HessianS(prm, buf_spec, w_spec, dx, dy, dS, ddS, num_ss);
 
-  // #pragma omp parallel for
+  // Retain CPU resampling order and the time-derived seed expression. Only
+  // three-component CPU power evaluations run in parallel; horizontal/GPU
+  // dispatch is unchanged. Bound scratch storage independently of sample count.
+  const int batch_size = !gpu && !STATION::horizontal_only && !omp_in_parallel()
+      ? std::min(16, omp_get_max_threads()) : 1;
+  std::vector<std::unique_ptr<array2d>> sample_weights;
+  for (int j = 0; j < batch_size; ++j)
+    sample_weights.emplace_back(new array2d(boost::extents[num_ss][num_sta]));
   for (int i = 0; i < loop_num; i++) {
     boost::mt19937 gen(static_cast<unsigned long>(time(0) * i));
     boost::uniform_smallint<> dst(0, num_sta - 1);
     boost::variate_generator<boost::mt19937 &, boost::uniform_smallint<>> rand(
         gen, dst);
     dvector bootstrap(num_sta);
-    array2d w_bootstrap(boost::extents[num_ss][num_sta]);
+    array2d &w_bootstrap = *sample_weights[i % batch_size];
 
     for (int isg = 0; isg < num_ss; isg++) {
       // Bootstrap resampling
@@ -1092,7 +1111,13 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
     }
 
     if(gpu) append_weights(packed_weights,w_bootstrap,num_ss,num_sta);
-    else S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+    else if (batch_size == 1)
+      S[i] = cal_S(prm, buf_spec, w_bootstrap, dx, dy, num_ss, 1);
+    else if ((i + 1) % batch_size == 0 || i + 1 == loop_num) {
+      const int count = i % batch_size + 1;
+      bootstrap_cpu_batch(prm, buf_spec, sample_weights, dx, dy, num_ss,
+                          count, S, i + 1 - count);
+    }
   }
   double S_est;
   if(gpu) {

@@ -305,6 +305,13 @@ so an experiment does not launch the full archive or replace previous results.
 The CPU optimization, numerical checks, measurements and Metal follow-up
 boundary are documented in [the performance report](docs/cpu-slant-stack-performance.md).
 
+In three-component mode, CPU Bootstrap power evaluations also use OpenMP,
+with at most 16 samples evaluated concurrently. `OMP_NUM_THREADS=1` retains
+serial evaluation; horizontal-mode Bootstrap dispatch is unchanged. Resampling
+remains serial and the final statistics retain their original summation order.
+Production seeds still depend on wall-clock time, so reproducible comparisons
+require the fixed-seed test driver. See [CPU parallelism](docs/cpu-fitting-parallel.md).
+
 ### Shared I/O processing and validation
 
 After loading each day's HDF5 data, waveform filtering runs in parallel on the CPU.
