@@ -1,5 +1,10 @@
 # Newton termination at objective roundoff (2026-09-17)
 
+Historical validation: subsequent FFT-plan checks exposed a remaining acceptance
+regression. The implementation and predicate-only test described here were
+replaced by the [interim FP32 restoration](newton-fp32-rollback-20260917_en.md).
+Commands and branch status below refer to the earlier implementation.
+
 This follows the [Newton precision comparison](newton-precision-20260917_en.md).
 Double Newton arithmetic exposed a pre-existing termination failure: a selected
 R candidate reached the previous solution, but all trial powers were no larger

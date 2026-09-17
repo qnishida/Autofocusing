@@ -985,26 +985,12 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
   return 0;
 }
 
-// Fallback only after strict line search fails. Require a local maximum and a
-// tiny FULL Newton step, not merely a tiny backtracked step on a flat region.
-static bool newton_roundoff_converged(double value, double best_trial,
-                                      const Eigen::Vector4d &eigenvalues,
-                                      const Eigen::Vector4d &scaled_step,
-                                      double predicted_gain) {
-  const double machine_epsilon = std::numeric_limits<double>::epsilon();
-  const double power_tolerance = 8 * machine_epsilon;
-  if (!std::isfinite(value) || value <= 0 || !std::isfinite(best_trial) ||
-      !eigenvalues.allFinite() || !(eigenvalues.array() < 0).all() ||
-      !scaled_step.allFinite() || !std::isfinite(predicted_gain) ||
-      predicted_gain < 0)
-    return false;
-  return scaled_step.lpNorm<Eigen::Infinity>() <= std::sqrt(machine_epsilon) &&
-         predicted_gain / value <= power_tolerance &&
-         std::abs(best_trial - value) / value <= power_tolerance;
-}
-
 /**
  * @brief Estimates the distance and updates the parameters by Newton's method.
+ *
+ * @note Retain the established FP32 Newton path pending further FP64 stopping
+ * validation. Objective/Hessian accumulation and covariance inversion use
+ * double precision. See docs/newton-fp32-rollback-20260917_en.md.
  *
  * @param prm The parameters to be updated.
  * @param buf_spec 3D array of complex numbers representing the spectral data.
@@ -1028,8 +1014,8 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
   if (prm.Δ > 0) {
     double Sinit = S0;
     double ε = 0;
-    Eigen::Matrix4d S_tmp;
-    Eigen::Vector4d d, iΛ, dprm, W;
+    Eigen::Matrix4f S_tmp;
+    Eigen::Vector4f d, iΛ, dprm, W;
     W << 0.06, M_PI / 2, M_PI / 2, .04 / (30. * 111);
 
     prm0 = prm;
@@ -1046,10 +1032,10 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
         dS(k) *= W(k);
         d(k) = dS(k);
       }
-      Eigen::SelfAdjointEigenSolver<Eigen::Matrix4d> eigensolver(S_tmp);
-      Eigen::Vector4d Λ = eigensolver.eigenvalues();
-      Eigen::Matrix4d Q = eigensolver.eigenvectors();
-      Eigen::Vector4d dd = Q.transpose() * d;
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> eigensolver(S_tmp);
+      Eigen::Vector4f Λ = eigensolver.eigenvalues();
+      Eigen::Matrix4f Q = eigensolver.eigenvectors();
+      Eigen::Vector4f dd = Q.transpose() * d;
 
       num_eig = 0;
       for (int k = 0; k < 4; k++) {
@@ -1064,8 +1050,6 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
       dprm = W.asDiagonal() * Q * iΛ;
 
       bool flag_loop = 0;
-      double best_trial = -std::numeric_limits<double>::infinity();
-      bool trials_finite = true;
       for (double r = 1.0; r > 1E-2; r *= 0.8) {
         prm_tmp = prm0;
         prm_tmp.p -= r * dprm(0);    // dS(0);
@@ -1074,8 +1058,6 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
         prm_tmp.dp_Δ -= r * dprm(3); // dS(3);
 
         S1 = cal_S(prm_tmp, buf_spec, w_spec, dx, dy, num_ss, 0);
-        trials_finite = trials_finite && std::isfinite(S1);
-        if (std::isfinite(S1)) best_trial = std::max(best_trial, S1);
         ε = ((S1 - S0) / S0);
         if (S1 > S0) {
           flag_loop = 1;
@@ -1085,14 +1067,6 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
       if (flag_loop == 1) {
         S0 = S1;
         prm0 = prm_tmp;
-      } else if (trials_finite &&
-                 newton_roundoff_converged(S0, best_trial, Λ, Q * iΛ,
-                                           -0.5 * d.dot(Q * iΛ))) {
-        // Keep the current point and power; do not accept a worsening trial.
-        ε = 0;
-        num_loop = i + 1;
-        std::cerr << "#NewtonStop reason=roundoff iteration=" << num_loop << '\n';
-        break;
       } else
         return (-1);
 
