@@ -917,6 +917,24 @@ static int est_dist_grid(PARAM &prm, const array3c &buf_spec,
   return 0;
 }
 
+// Fallback only after strict line search fails. Require a local maximum and a
+// tiny FULL Newton step, not merely a tiny backtracked step on a flat region.
+static bool newton_roundoff_converged(double value, double best_trial,
+                                      const Eigen::Vector4d &eigenvalues,
+                                      const Eigen::Vector4d &scaled_step,
+                                      double predicted_gain) {
+  const double machine_epsilon = std::numeric_limits<double>::epsilon();
+  const double power_tolerance = 8 * machine_epsilon;
+  if (!std::isfinite(value) || value <= 0 || !std::isfinite(best_trial) ||
+      !eigenvalues.allFinite() || !(eigenvalues.array() < 0).all() ||
+      !scaled_step.allFinite() || !std::isfinite(predicted_gain) ||
+      predicted_gain < 0)
+    return false;
+  return scaled_step.lpNorm<Eigen::Infinity>() <= std::sqrt(machine_epsilon) &&
+         predicted_gain / value <= power_tolerance &&
+         std::abs(best_trial - value) / value <= power_tolerance;
+}
+
 /**
  * @brief Estimates the distance and updates the parameters by Newton's method.
  *
@@ -942,8 +960,8 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
   if (prm.Δ > 0) {
     double Sinit = S0;
     double ε = 0;
-    Eigen::Matrix4f S_tmp;
-    Eigen::Vector4f d, iΛ, dprm, W;
+    Eigen::Matrix4d S_tmp;
+    Eigen::Vector4d d, iΛ, dprm, W;
     W << 0.06, M_PI / 2, M_PI / 2, .04 / (30. * 111);
 
     prm0 = prm;
@@ -960,10 +978,10 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
         dS(k) *= W(k);
         d(k) = dS(k);
       }
-      Eigen::SelfAdjointEigenSolver<Eigen::Matrix4f> eigensolver(S_tmp);
-      Eigen::Vector4f Λ = eigensolver.eigenvalues();
-      Eigen::Matrix4f Q = eigensolver.eigenvectors();
-      Eigen::Vector4f dd = Q.transpose() * d;
+      Eigen::SelfAdjointEigenSolver<Eigen::Matrix4d> eigensolver(S_tmp);
+      Eigen::Vector4d Λ = eigensolver.eigenvalues();
+      Eigen::Matrix4d Q = eigensolver.eigenvectors();
+      Eigen::Vector4d dd = Q.transpose() * d;
 
       num_eig = 0;
       for (int k = 0; k < 4; k++) {
@@ -978,6 +996,8 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
       dprm = W.asDiagonal() * Q * iΛ;
 
       bool flag_loop = 0;
+      double best_trial = -std::numeric_limits<double>::infinity();
+      bool trials_finite = true;
       for (double r = 1.0; r > 1E-2; r *= 0.8) {
         prm_tmp = prm0;
         prm_tmp.p -= r * dprm(0);    // dS(0);
@@ -986,6 +1006,8 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
         prm_tmp.dp_Δ -= r * dprm(3); // dS(3);
 
         S1 = cal_S(prm_tmp, buf_spec, w_spec, dx, dy, num_ss, 0);
+        trials_finite = trials_finite && std::isfinite(S1);
+        if (std::isfinite(S1)) best_trial = std::max(best_trial, S1);
         ε = ((S1 - S0) / S0);
         if (S1 > S0) {
           flag_loop = 1;
@@ -995,6 +1017,14 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
       if (flag_loop == 1) {
         S0 = S1;
         prm0 = prm_tmp;
+      } else if (trials_finite &&
+                 newton_roundoff_converged(S0, best_trial, Λ, Q * iΛ,
+                                           -0.5 * d.dot(Q * iΛ))) {
+        // Keep the current point and power; do not accept a worsening trial.
+        ε = 0;
+        num_loop = i + 1;
+        std::cerr << "#NewtonStop reason=roundoff iteration=" << num_loop << '\n';
+        break;
       } else
         return (-1);
 
@@ -1026,6 +1056,23 @@ static int est_dist_grad(PARAM &prm, const array3c &buf_spec,
     return (-1);
 }
 
+// Keep the established output normalization, including its stored float weights.
+// H/sigma can have a determinant beyond float range even when its entries are
+// finite. Invert in double precision to avoid overflow in the 4x4 inverse.
+static void set_parameter_covariance(PARAM &prm, const dmatrix &hessian,
+                                     double sigma) {
+  Eigen::Matrix4d scaled_hessian;
+  Eigen::Vector4f W;
+  W << 0.06, M_PI / 2, M_PI / 2, .04 / (30. * 111);
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
+      scaled_hessian(i, j) = hessian(i, j) / sigma;
+  const Eigen::Matrix4d covariance = scaled_hessian.inverse();
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
+      prm.cov[i][j] = -covariance(i, j) * W(i) * W(j);
+}
+
 /**
  * @brief Estimates the cov matrix of parameters using bootstrap method.
  *
@@ -1052,11 +1099,8 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
   (void)bias;
   if(gpu) packed_weights.reserve(size_t(loop_num+1)*num_ss*num_sta);
 
-  Eigen::Matrix4f S_tmp;
   dvector dS(4, 0.);
   dmatrix ddS(4, 4, 0.);
-  Eigen::Vector4f W;
-  W << 0.06, M_PI / 2, M_PI / 2, .04 / (30. * 111);
 
   cal_HessianS(prm, buf_spec, w_spec, dx, dy, dS, ddS, num_ss);
 
@@ -1110,13 +1154,7 @@ static int est_dist_boot(PARAM &prm, const array3c &buf_spec,
     sigma += pow(S[i] - mean, 2);
   sigma = sqrt(sigma / loop_num);
 
-  for (int i = 0; i < 4; i++)
-    for (int j = 0; j < 4; j++)
-      S_tmp(i, j) = ddS(i, j) / sigma;
-  Eigen::Matrix4f Cov = S_tmp.inverse();
-  for (int i = 0; i < 4; i++)
-    for (int j = 0; j < 4; j++)
-      prm.cov[i][j] = -Cov(i, j) * W(i) * W(j);
+  set_parameter_covariance(prm, ddS, sigma);
 
   /// Estimation of max beam power without the bias
   if(!gpu) S_est = cal_S(prm, buf_spec, w_spec, dx, dy, num_ss, 1);
@@ -1756,12 +1794,6 @@ int search_max(const array3d &ssRTU, dvector &px, dvector &py,
   for (int dpx = 0; dpx <= imask; dpx++) {
     dpy_ary[dpx] = round(sqrt(imask * imask - dpx * dpx));
   }
-  int num_mask = 0;
-  for (int dpx = -imask; dpx <= imask; dpx++) {
-    for (int dpy = -dpy_ary[abs(dpx)]; dpy <= dpy_ary[abs(dpx)]; dpy++) {
-      num_mask++;
-    }
-  }
   array2b mask(boost::extents[range2d(-ipmax - imask, ipmax + imask + 1)]
                              [range2d(-ipmax - imask, ipmax + imask + 1)]);
   std::fill_n(mask.data(), mask.num_elements(), true);
@@ -1812,37 +1844,45 @@ int search_max(const array3d &ssRTU, dvector &px, dvector &py,
     if (ss1[i].val - ss1.back().val < mad * 7)
       break;
     if (mask[ss1[i].ipx][ss1[i].ipy] == true) {
-      // Estimate the base value by the average of the surrounding values
+      // Use the computed square grid for neighbors, while candidate centers
+      // remain restricted to the search circle. Preserve interior ring weights.
       double base = 0.;
       int num_base = 0;
+      auto add_background = [&](int x, int y) {
+        if (x < -ipmax || x > ipmax || y < -ipmax || y > ipmax)
+          return;
+        base += ssRTU[icmp][x][y];
+        ++num_base;
+      };
       for (int dpx = -imask; dpx <= imask; dpx++) {
-        int k = ss1[i].ipx + dpx; // clang-format off
-				base += ssRTU[icmp][k][ss1[i].ipy - dpy_ary[abs(dpx)]];
-				base += ssRTU[icmp][k][ss1[i].ipy + dpy_ary[abs(dpx)]];
-				num_base += 2;
-			}	
-			for (int dpy = -dpy_ary[imask]+1; dpy <= dpy_ary[imask]-1; dpy++) {
-				base += ssRTU[icmp][ss1[i].ipx - imask][dpy];
-				base += ssRTU[icmp][ss1[i].ipx + imask][dpy];
-				num_base += 2;
-			}
-			base /= (double)(num_base);
-			//Here, we roughly select the peaks by the difference from the minumum
+        const int x = ss1[i].ipx + dpx;
+        const int dy = dpy_ary[abs(dpx)];
+        add_background(x, ss1[i].ipy - dy);
+        add_background(x, ss1[i].ipy + dy);
+      }
+      if (num_base == 0)
+        continue;
+      base /= static_cast<double>(num_base);
       if (ss1[i].val - base < mad * 7)
-          continue;
+        continue;
 
       int num_peak = 0;
+      int num_neighbors = 0;
       for (int dpx = -imask; dpx <= imask; dpx++) {
-        int k = ss1[i].ipx + dpx; // clang-format off
-				if (k < -ipmax || k > ipmax) continue;
-        for (int l = std::max(ss1[i].ipy - dpy_ary[abs(dpx)],-ipmax); 
-                l <= std::min(ss1[i].ipy + dpy_ary[abs(dpx)], ipmax); l++) {                             // clang-format on
-          if (ss1[i].val > ssRTU[icmp][k][l]) // quartile[0])
-            num_peak++;
+        const int x = ss1[i].ipx + dpx;
+        if (x < -ipmax || x > ipmax)
+          continue;
+        for (int y = std::max(ss1[i].ipy - dpy_ary[abs(dpx)], -ipmax);
+             y <= std::min(ss1[i].ipy + dpy_ary[abs(dpx)], ipmax); y++) {
+          if (x == ss1[i].ipx && y == ss1[i].ipy)
+            continue;
+          ++num_neighbors;
+          if (ss1[i].val > ssRTU[icmp][x][y])
+            ++num_peak;
         }
       }
-      if (num_peak != num_mask - 1)
-        break;
+      if (num_peak != num_neighbors)
+        continue;
       px[idx] = ss1[i].ipx * dp;
       py[idx] = ss1[i].ipy * dp;
       for (int dpx = -imask; dpx <= imask; dpx++) {
