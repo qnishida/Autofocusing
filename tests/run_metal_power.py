@@ -4,6 +4,7 @@ The historical filename and default Metal backend are retained for compatibility
 Use a deterministic driver from build_io_probe.py, never a production binary.
 """
 import argparse
+import datetime as dt
 import hashlib
 import json
 import math
@@ -47,34 +48,43 @@ def main():
     p.add_argument('--threads', type=int, default=16)
     p.add_argument('--modes', nargs='+', choices=('off', 'bootstrap', 'grid', 'all'),
                    default=['off', 'bootstrap', 'grid', 'all'])
-    p.add_argument('--days', type=int, default=3, choices=(3, 5))
+    p.add_argument('--days', type=int, default=3)
+    p.add_argument('--start-date', type=dt.date.fromisoformat, default=dt.date(2004, 1, 1))
+    p.add_argument('--components', choices=('horizontal', '3c'), default='horizontal')
     p.add_argument('--repeats', type=int, default=5)
+    p.add_argument('--warmups', type=int, choices=(0, 1), default=0,
+                   help='exclude one fresh-process warmup per mode for timing runs')
     p.add_argument('--compare-cpu', action='store_true', help='also pair CPU/off with GPU/off each repeat')
     p.add_argument('--expected-events', type=int, help='optional independently known count; never assumes Metal counts on CUDA')
     p.add_argument('--legacy-run', type=Path, help='reuse a completed legacy-0 run from this script')
     p.add_argument('--legacy', type=Path, help='optional frozen driver with this GPU backend')
     a = p.parse_args()
-    if a.threads < 1 or a.repeats < 1 or len(set(a.modes)) != len(a.modes):
-        p.error('positive threads/repeats and distinct modes required')
+    if min(a.threads, a.repeats, a.days) < 1 or len(set(a.modes)) != len(a.modes):
+        p.error('positive threads/repeats/days and distinct modes required')
     if 'off' not in a.modes and not (a.legacy or a.legacy_run):
         p.error('include off as the power baseline, or supply a legacy baseline')
     if a.compare_cpu and 'off' not in a.modes:
         p.error('--compare-cpu requires off')
     if not a.binary.is_file() or not a.catalog.is_file():
         p.error('binary and catalog must exist')
-    sources = [a.hinet.resolve()/'2004'/f'010{day}'/f'200400{day}0000.h5'
-               for day in range(1, a.days+1)]
-    for source in sources:
-        if not source.is_file():
-            raise RuntimeError(f'Missing {source}')
+    dates = [a.start_date + dt.timedelta(days=i) for i in range(a.days)]
+    sources = []
+    for date in dates:
+        directory = a.hinet.resolve()/str(date.year)/date.strftime('%m%d')
+        files = [path for path in directory.iterdir() if path.is_file()] if directory.is_dir() else []
+        if len(files) != 1:
+            p.error(f'expected one daily input in {directory}')
+        sources.append(files[0])
     out = a.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
-    for source in sources:
-        target = out/'input/2004'/source.parent.name
+    for date, source in zip(dates, sources):
+        target = out/'input'/str(date.year)/date.strftime('%m%d')
         target.mkdir(parents=True)
         (target/source.name).symlink_to(source)
     report = {'platform': platform.platform(), 'backend': a.backend, 'threads': a.threads,
               'days': a.days, 'fftw': 'ESTIMATE | UNALIGNED',
+              'components': a.components, 'start_date': str(dates[0]), 'end_date': str(dates[-1]),
+              'warmups': a.warmups, 'adoption_protocol': a.warmups == 1 and a.repeats >= 5,
               'seed': '1837 + 104729 * replicate',
               'baseline': 'legacy' if a.legacy or a.legacy_run else f'{a.backend}/off',
               'cache': 'not purged; alternate process order; includes initialization/packing/transfers/sync',
@@ -91,7 +101,7 @@ def main():
     # off must establish a baseline even when the CLI lists it last.
     modes = (['off'] if 'off' in a.modes else []) + [m for m in a.modes if m != 'off']
     paired = (['cpu'] if a.compare_cpu else []) + modes
-    jobs = ([('legacy', 0)] if a.legacy else []) + [
+    jobs = ([('legacy', 0)] if a.legacy else []) + ([(mode, -1) for mode in paired] if a.warmups else []) + [
         (mode, r) for r in range(a.repeats) for mode in (paired if r % 2 == 0 else paired[::-1])]
     event_files = {}
     for mode, repeat in jobs:
@@ -99,7 +109,7 @@ def main():
         exe = (a.legacy if mode == 'legacy' else a.binary).resolve()
         backend = 'cpu' if mode == 'cpu' else a.backend
         power = 'off' if mode in ('legacy', 'cpu') else mode
-        env = dict(os.environ, OMP_NUM_THREADS=str(a.threads), AUTOFOCUSING_BACKEND=backend,
+        env = dict(os.environ, OMP_NUM_THREADS=str(a.threads), OMP_DYNAMIC='FALSE', AUTOFOCUSING_BACKEND=backend,
                    AUTOFOCUSING_GPU_POWER=power, AUTOFOCUSING_METAL_POWER=power, AUTOFOCUSING_PROFILE='1')
         for key in ('AUTOFOCUSING_VERIFY_METAL', 'AUTOFOCUSING_VERIFY_CUDA', 'AUTOFOCUSING_CUDA_PROFILE',
                     'AUTOFOCUSING_SLOWNESS_STEP', 'AUTOFOCUSING_SLOWNESS_MAX'):
@@ -110,8 +120,8 @@ def main():
         with log.open('w') as stream:
             timing = (['/usr/bin/time', '-l'] if platform.system() == 'Darwin' else
                       ['/usr/bin/time', '-f', '#RSS_KIB %M'])
-            subprocess.run(timing+[str(exe), '2004', 'power', tag, str(out/'input'), str(a.catalog.resolve()),
-                                   str(out/'results'), 'horizontal'], env=env, stdout=stream,
+            subprocess.run(timing+[str(exe), str(dates[0].year), 'power', tag, str(out/'input'), str(a.catalog.resolve()),
+                                   str(out/'results'), a.components, str(dates[0]), str(dates[-1])], env=env, stdout=stream,
                            stderr=subprocess.STDOUT, check=True, timeout=900)
         wall = time.monotonic()-start
         files = list((out/'results/power'/tag).glob('*.dat'))
@@ -160,13 +170,13 @@ def main():
         print(f'PASS {tag}: {len(rows)} events, max_boot_rel={max_rel:.3g}, wall={wall:.3f}s', flush=True)
     summary = {}
     for mode in paired:
-        runs = [r for r in report['runs'] if r['mode'] == mode]
+        runs = [r for r in report['runs'] if r['mode'] == mode and r['repeat'] >= 0]
         summary[mode] = {'median_s': statistics.median(r['wall_s'] for r in runs),
                          'min_s': min(r['wall_s'] for r in runs), 'max_s': max(r['wall_s'] for r in runs),
                          'stack_s': statistics.median(r['stack_s'] for r in runs),
                          'stages': {s: statistics.median(r['stages'][s] for r in runs) for s in ('grid', 'bootstrap')}}
     for mode in (m for m in modes if m != 'off' and 'off' in summary):
-        stages = ('grid', 'bootstrap') if mode == 'all' else (mode,)
+        stages = (('bootstrap',) if a.components == '3c' else ('grid', 'bootstrap')) if mode == 'all' else (mode,)
         before = sum(summary['off']['stages'][s] for s in stages)
         after = sum(summary[mode]['stages'][s] for s in stages)
         summary[mode].update(stage_speedup=before/after, stage_pass=after <= .9*before,

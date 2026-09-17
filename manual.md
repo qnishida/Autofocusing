@@ -305,8 +305,9 @@ so an experiment does not launch the full archive or replace previous results.
 The CPU optimization, numerical checks, measurements and Metal follow-up
 boundary are documented in [the performance report](docs/cpu-slant-stack-performance.md).
 
-In three-component mode, CPU Bootstrap power evaluations also use OpenMP,
-with at most 16 samples evaluated concurrently. `OMP_NUM_THREADS=1` retains
+In three-component mode, CPU Bootstrap power evaluations also use OpenMP
+when GPU Bootstrap is disabled, with at most 16 samples evaluated concurrently.
+`OMP_NUM_THREADS=1` retains
 serial evaluation; horizontal-mode Bootstrap dispatch is unchanged. Resampling
 remains serial and the final statistics retain their original summation order.
 Production seeds still depend on wall-clock time, so reproducible comparisons
@@ -337,9 +338,10 @@ export AUTOFOCUSING_BACKEND=metal
 export OMP_NUM_THREADS=16
 ```
 
-Both `horizontal` and `3c` are supported. Only slant stacking and its power
-reduction use float on the GPU. Input loading, rotation, FFT, QC and subsequent
-estimation retain the existing double CPU path. GPU powers are promoted and
+Both `horizontal` and `3c` are supported. By default, only slant stacking and its
+power reduction use float on the GPU; additional GPU objectives are opt-in below.
+Input loading, rotation, FFT, QC and gradient/Hessian evaluation retain the
+existing double CPU path. GPU powers are promoted and
 accumulated into the existing double result array. Startup logs identify the
 backend/device; an explicit Metal request fails if no GPU is accessible or the
 backend was not built. It does not silently switch to CPU. Sandboxed execution
@@ -376,10 +378,12 @@ Validation commands, measured speedups and numerical limits are recorded in
 
 ### Optional Metal fitting objectives
 
-For validated horizontal inputs, `AUTOFOCUSING_METAL_POWER` selects additional
+`AUTOFOCUSING_METAL_POWER` selects additional
 GPU power evaluations: `off` (default), `bootstrap`, `grid`, or `all`.
-Set `AUTOFOCUSING_BACKEND=metal` as well. CPU and three-component runs retain
-the existing CPU objectives. Final gradient fitting and Hessians are unchanged.
+Set `AUTOFOCUSING_BACKEND=metal` as well. Metal power objectives remain
+horizontal-only. Three-component Bootstrap requires the CUDA FP64 path after
+FP32 failed a real-data precision check; Metal retains CPU OpenMP Bootstrap.
+Final gradient fitting and Hessians are unchanged.
 See [Metal power evaluation](docs/metal-power-optimization_en.md) for numerical
 limits, measurements and reproduction commands. Record these settings in the
 experiment configuration when comparing runs. Launcher runs are preserved
@@ -388,10 +392,13 @@ separately; direct executable calls still require distinct destinations.
 
 ## 12. NVIDIA CUDA GPU backend
 
-CUDA supports the same `cal_ccf` stages as Metal: horizontal/3c slant stacking,
-and optional horizontal Bootstrap/initial-grid objectives. CPU remains the
-runtime default. FFT, I/O, final fitting and 3c fitting objectives remain on CPU.
-GPU arithmetic is FP32; returned doubles do not restore the lost precision.
+CUDA supports horizontal/3c slant stacking and optional Bootstrap objectives,
+plus horizontal-only initial-grid objectives.
+CPU remains the runtime default. FFT, I/O, final gradient fitting, Hessians and
+three-component initial grids remain on CPU.
+Three-component CUDA Bootstrap uses FP64 to preserve cancellation-sensitive
+corrected powers. Slant stacking and horizontal GPU objectives use FP32;
+returned doubles do not restore precision lost in those FP32 stages.
 
 The CUDA build requires CMake 3.18 or newer, a CUDA Toolkit compatible with the
 host compiler/GPU, and the NVIDIA driver. For RTX PRO 2000 Blackwell, use the
@@ -428,12 +435,14 @@ back to CPU. CUDA uses the current runtime device (normally device 0);
 the host GPU device nodes, including when running inside a container/sandbox.
 
 `AUTOFOCUSING_GPU_POWER` accepts `off` (default), `bootstrap`, `grid`, or `all`.
-For the measured RTX PRO 2000 workload, `bootstrap` is recommended: CUDA grid
+For the measured horizontal RTX PRO 2000 workload, `bootstrap` is recommended: CUDA grid
 evaluation passes accuracy checks but is slower than CPU grid evaluation.
-The setting applies to the selected GPU only in horizontal mode. The legacy
+CUDA Bootstrap applies to both component modes; GPU initial-grid evaluation applies
+only to horizontal mode. With three-component input, `off` and `grid` retain
+OpenMP Bootstrap, while `bootstrap` and `all` use GPU Bootstrap. The legacy
 `AUTOFOCUSING_METAL_POWER` is still accepted for Metal when the new setting is
 absent; the new setting takes precedence, including `off`. The legacy setting
-has no effect on CUDA. CPU and 3c fitting always retain CPU objectives.
+has no effect on CUDA. The CPU backend always retains CPU objectives.
 
 For accuracy checks, `AUTOFOCUSING_VERIFY_CUDA=1` evaluates each slant-stack
 window on both CPU and CUDA, reporting scaled maximum error, relative L2 error

@@ -808,7 +808,7 @@ static int rotate_EN_RT(const std::vector<STATION> &sta0,
  * @param num_ss Number of slant stacks.
  * @return int Number of iterations performed during the estimation process.
  */
-// New objectives remain opt-in, and real-data qualification currently covers horizontal input.
+// GPU objectives remain opt-in; three-component initial grids stay on CPU.
 static bool power_enabled(const char *stage) {
   return gpu_power_enabled(stage, STATION::horizontal_only);
 }
@@ -825,6 +825,7 @@ struct PowerTimer {
 static PowerPoint power_point(const PARAM &p) { return {p.p,p.θ,p.Δ,p.dp_Δ}; }
 static PowerData power_data(const array3c &spec,const dvector &dx,const dvector &dy,int windows) {
   PowerData d{unsigned(windows),unsigned(spec.shape()[1]),unsigned(STATION::if2-STATION::if1+1),unsigned(STATION::if1),STATION::df,{}, {}};
+  d.double_precision = !STATION::horizontal_only;
   d.spectra.reserve(size_t(d.windows)*d.stations*d.bins); d.xy.reserve(2*d.stations);
   for(unsigned i=0;i<d.stations;++i) { d.xy.push_back(dx[i]);d.xy.push_back(dy[i]); }
   for(unsigned w=0;w<d.windows;++w) for(unsigned i=0;i<d.stations;++i)

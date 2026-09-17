@@ -17,16 +17,22 @@ int main() try {
   require(slant_stack_backend()==SlantStackBackend::Cpu && gpu_power_mode()=="off");
   setenv("AUTOFOCUSING_GPU_POWER","all",1);
   require(!gpu_power_enabled("bootstrap",true));
+  require(!gpu_power_enabled("bootstrap",false));
   for (const char *name : {"metal","cuda"}) {
+    const bool cuda=std::string(name)=="cuda";
     setenv("AUTOFOCUSING_BACKEND",name,1);
     require(gpu_power_enabled("bootstrap",true) && gpu_power_enabled("grid",true));
+    require(gpu_power_enabled("bootstrap",false)==cuda);
     require(!gpu_power_enabled("grid",false));
     setenv("AUTOFOCUSING_GPU_POWER","bootstrap",1);
     require(gpu_power_enabled("bootstrap",true) && !gpu_power_enabled("grid",true));
+    require(gpu_power_enabled("bootstrap",false)==cuda && !gpu_power_enabled("grid",false));
     setenv("AUTOFOCUSING_GPU_POWER","grid",1);
     require(!gpu_power_enabled("bootstrap",true) && gpu_power_enabled("grid",true));
+    require(!gpu_power_enabled("bootstrap",false) && !gpu_power_enabled("grid",false));
     setenv("AUTOFOCUSING_GPU_POWER","off",1);
     require(!gpu_power_enabled("grid",true));
+    require(!gpu_power_enabled("bootstrap",false));
     setenv("AUTOFOCUSING_GPU_POWER","all",1);
   }
   unsetenv("AUTOFOCUSING_GPU_POWER");
@@ -34,6 +40,8 @@ int main() try {
   require(gpu_power_mode()=="off"); // CUDA ignores the legacy Metal setting.
   setenv("AUTOFOCUSING_BACKEND","metal",1);
   require(gpu_power_mode()=="all");
+  PowerData fp64{}; fp64.double_precision=true;
+  fails([&]{gpu_power_batch(fp64,{}, {},true,true,true);},"FP64 power evaluation requires CUDA");
   setenv("AUTOFOCUSING_GPU_POWER","off",1);
   require(!gpu_power_enabled("grid",true)); // New setting wins, including off.
   setenv("AUTOFOCUSING_METAL_POWER","invalid",1);

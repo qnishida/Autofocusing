@@ -10,6 +10,8 @@ struct PowerData {
   double df;
   std::vector<std::complex<double>> spectra;
   std::vector<double> xy; // interleaved x/y, km
+  // CUDA 3c Bootstrap needs FP64 for cancellation-sensitive corrected powers.
+  bool double_precision = false;
 };
 // weights: [batch][window][station], or one shared weight array.
 std::vector<double> metal_power_batch(const PowerData &data,
