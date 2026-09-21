@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 合成入力によるピーク探索の回帰テストは公開ソースを使用します。当時の実データ比較には、
 本文に記載した保存済みの乱数・FFT条件を固定した検証環境、ピーク探索のみを修正したソースと、

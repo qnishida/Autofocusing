@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 共分散の単独回帰テストは公開ソースを使用します。当時の実データ比較には、保存済みの
 ピーク探索プローブと検証入力に加え、後続のbootstrap変更前の共分散のみを修正した版が必要です。

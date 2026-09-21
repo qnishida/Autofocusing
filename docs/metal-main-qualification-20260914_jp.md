@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 検証した実装は `9d7091a` でmainに統合しました。以下は当時の比較結果であり、
 その後の版を再検証した結果ではありません。

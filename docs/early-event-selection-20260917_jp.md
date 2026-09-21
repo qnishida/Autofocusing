@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 > この記録では、検証対象の正確なコミットは特定されていません。
 
 現状の注記：以下はNewton法が倍精度だった時点の測定です。

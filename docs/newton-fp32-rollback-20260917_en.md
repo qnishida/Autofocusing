@@ -2,7 +2,7 @@
 
 > Record scope: revisions, branch/install status and results below describe the recorded work.
 > See [current behavior](../README.md#current-behavior-and-limits) and
-> [reproduction requirements](../README.md#reading-the-validation-records).
+> [reproduction requirements](README.md#reading-the-validation-records).
 
 This is the adopted Newton/covariance configuration in `5153085`. The validation
 reported below covers its stated CPU inputs and settings, not all GPU workloads.

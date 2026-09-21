@@ -2,7 +2,7 @@
 
 > Record scope: revisions, branch/install status and results below describe the recorded work.
 > See [current behavior](../README.md#current-behavior-and-limits) and
-> [reproduction requirements](../README.md#reading-the-validation-records).
+> [reproduction requirements](README.md#reading-the-validation-records).
 > The exact tested commit is not identified in this record.
 
 The fallback test target below was removed by `5153085`. Its commands require

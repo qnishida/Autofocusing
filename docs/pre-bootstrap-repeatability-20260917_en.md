@@ -2,7 +2,7 @@
 
 > Record scope: revisions, branch/install status and results below describe the recorded work.
 > See [current behavior](../README.md#current-behavior-and-limits) and
-> [reproduction requirements](../README.md#reading-the-validation-records).
+> [reproduction requirements](README.md#reading-the-validation-records).
 
 Follow-up: [FP32 Newton fitting has been restored and verified](newton-fp32-rollback-20260917_en.md).
 The unchanged-source statements below refer to the investigation before that restoration.

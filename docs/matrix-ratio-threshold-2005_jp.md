@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
 `${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで

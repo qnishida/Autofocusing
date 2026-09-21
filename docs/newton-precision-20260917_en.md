@@ -2,7 +2,7 @@
 
 > Record scope: revisions, branch/install status and results below describe the recorded work.
 > See [current behavior](../README.md#current-behavior-and-limits) and
-> [reproduction requirements](../README.md#reading-the-validation-records).
+> [reproduction requirements](README.md#reading-the-validation-records).
 
 Historical reproduction requires the saved deterministic audit setup and the
 local `build_probe.py` and `compare_runs.py` under `docs/benchmarks/`. Those scripts

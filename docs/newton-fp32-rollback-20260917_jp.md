@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 本書は `5153085` で採用したNewton・共分散計算の構成を記録しています。
 以下の検証範囲は記載したCPU入力と設定であり、全GPU条件を検証したものではありません。

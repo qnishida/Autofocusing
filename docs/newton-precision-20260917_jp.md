@@ -2,7 +2,7 @@
 
 > 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
 > [現行仕様](../README.md#current-behavior-and-limits)と
-> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+> [再現に必要な条件](README.md#reading-the-validation-records)も参照してください。
 
 当時の再現には、保存済みの乱数・FFT条件を固定した検証環境と、`docs/benchmarks/` 配下の
 ローカルな `build_probe.py`・`compare_runs.py` が必要です。これらのスクリプトは同梱しておらず、

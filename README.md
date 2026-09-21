@@ -9,7 +9,7 @@ for use with Autofocusing are not distributed under the Autofocusing
 software license.
 
 For detailed usage, input layout, and troubleshooting notes, see [the manual](manual.md).
-The [documentation guide](#documentation-guide) links current usage and the validation history.
+The [documentation guide](docs/README.md) links current usage and the validation history.
 
 ## Method Background
 
@@ -262,75 +262,6 @@ This summary describes source commit `5153085`; it is not a new release designat
   in each record. Historical speedups and agreement checks are not measurements of
   every later revision or GPU configuration.
 
-The calculation records linked below provide the evidence and limitations for
-these statements. Runtime options and input/output contracts are maintained in
-the manual and script guide.
-
-## Documentation guide
-
-### Usage
-
-- [Manual](manual.md): build, input layout, outputs and CPU/GPU configuration.
-- [Workspace and script guide](Scripts/README.md): experiment setup, dates, frequency
-  bands, early selection and run records.
-- [Global CMT conversion](Scripts/GlobalCMT/README.md): external catalog preparation.
-
-### Current calculation behavior and limitations
-
-| Topic | Validation record |
-| --- | --- |
-| Complex spectral-matrix correction | [English](docs/spectral-matrix-3c-2005-verification_en.md) / [日本語](docs/spectral-matrix-3c-2005-verification_jp.md) |
-| Peak-search corrections | [English](docs/peak-search-validation-20260917_en.md) / [日本語](docs/peak-search-validation-20260917_jp.md) |
-| FP64 parameter covariance | [English](docs/parameter-covariance-precision-20260917_en.md) / [日本語](docs/parameter-covariance-precision-20260917_jp.md) |
-| Adopted FP32 Newton restoration | [English](docs/newton-fp32-rollback-20260917_en.md) / [日本語](docs/newton-fp32-rollback-20260917_jp.md) |
-| Optional early event selection | [English](docs/early-event-selection-20260917_en.md) / [日本語](docs/early-event-selection-20260917_jp.md) |
-
-### Performance and validation history
-
-| Topic | Record |
-| --- | --- |
-| Horizontal components | [Verification](docs/horizontal-verification.md) |
-| Analysis frequency band | [Verification](docs/frequency-band-verification.md) |
-| Workspace and dates | [Recorded verification](Scripts/README.md#workspace-verification-recorded-on-2026-09-16) |
-| Slowness range and initial seeds | [Current behavior](Scripts/README.md#slowness-range-and-initial-seeds); [earlier inspection](docs/peak-search-validation-20260917_en.md#earlier-inspection-2026-09-16) |
-| CPU slant stacking | [Performance](docs/cpu-slant-stack-performance.md) |
-| CPU fitting and bootstrap parallelism | [Performance and validation](docs/cpu-fitting-parallel.md) |
-| Shared CPU I/O | [English](docs/cpu-io-optimization_en.md) / [日本語](docs/cpu-io-optimization_jp.md) |
-| Metal slant stacking | [Performance](docs/metal-slant-stack-performance.md) |
-| Metal objective evaluation | [English](docs/metal-power-optimization_en.md) / [日本語](docs/metal-power-optimization_jp.md) |
-| CUDA | [Implementation and validation](docs/cuda-performance.md) |
-| Metal integration-branch check | [Recorded check](docs/metal-main-qualification-20260914_en.md#earlier-integration-branch-check-2026-09-14) |
-| CPU parallelism with Metal | [English](docs/metal-cpu-parallel-performance-20260914_en.md) / [日本語](docs/metal-cpu-parallel-performance-20260914_jp.md) |
-| Metal five-day and single-thread checks | [English](docs/metal-main-qualification-20260914_en.md) / [日本語](docs/metal-main-qualification-20260914_jp.md) |
-| Three-component CPU/Metal comparison | [English](docs/cpu-gpu-3c-2005-verification_en.md) / [日本語](docs/cpu-gpu-3c-2005-verification_jp.md) |
-| Matrix ratios after threshold selection | [English](docs/matrix-ratio-threshold-2005_en.md) / [日本語](docs/matrix-ratio-threshold-2005_jp.md) |
-| Matrix-estimate distributions | [English](docs/matrix-estimate-distributions_en.md) / [日本語](docs/matrix-estimate-distributions_jp.md) |
-| Historical catalog agreement | [English](docs/historical-catalog-agreement_en.md) / [日本語](docs/historical-catalog-agreement_jp.md) |
-| Catalog consistency investigation | [English](docs/catalog-consistency-investigation_en.md) / [日本語](docs/catalog-consistency-investigation_jp.md) |
-| FP64 Newton experiment, subsequently superseded | [English](docs/newton-precision-20260917_en.md) / [日本語](docs/newton-precision-20260917_jp.md) |
-| Roundoff fallback, subsequently removed | [English](docs/newton-roundoff-20260917_en.md) / [日本語](docs/newton-roundoff-20260917_jp.md) |
-| FFT-plan repeatability investigation | [English](docs/pre-bootstrap-repeatability-20260917_en.md) / [日本語](docs/pre-bootstrap-repeatability-20260917_jp.md) |
-| Bootstrap/peak-search integration before the FP32 restoration | [English / 日本語](docs/cpu-fitting-parallel.md#peak-search-integration-validation-2026-09-17) |
-
-### Reading the validation records
-
-Records preserve the observations, failures and branch/install status at the time
-of each experiment. Use their stated revisions, dates and conditions; a branch
-name alone does not identify an exact tested commit. Later adoption notes do not
-extend the scope of the original measurements.
-
-- **Public-source checks:** the CMake/CTest suite provides synthetic and script
-  checks after building with the required dependencies. GPU executable checks
-  additionally require the corresponding hardware. See the manual for commands.
-- **External-data checks:** real-waveform comparisons require separately obtained
-  waveform and catalog inputs matching the recorded component mode and period.
-- **Historical/local reproductions:** commands using old commits require a Git
-  clone containing those commits, rather than a source ZIP alone. Saved probe
-  sources, deterministic audit setups, catalogs and scripts under
-  `docs/benchmarks/` are not part of the current source distribution. A command
-  depending on those artifacts cannot be reproduced from public source alone;
-  its record identifies the necessary local prerequisites. Historical commands
-  may also require the original source revision rather than the latest checkout.
-
-For the contents of generated run directories and what to review before sharing,
-see [run records](Scripts/README.md#what-each-run-records).
+The calculation records in the [documentation guide](docs/README.md) provide
+the evidence and limitations for these statements. Runtime options and
+input/output contracts are maintained in the manual and script guide.
