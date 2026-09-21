@@ -1,5 +1,12 @@
 # Metal: CPU parallelization and cumulative speedup from before CPU optimization
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+The CPU/Metal integration reached main in `9d7091a`. The timings below apply to
+the compared revisions and settings, not automatically to later versions.
+
 Detailed benchmark logs and run results are retained locally and are not
 distributed in this repository. References to detailed records below describe
 those local artifacts.
@@ -96,7 +103,7 @@ are saved alongside the logs and event files for each trial.
 ## Build and reproduction
 
 Prepare each commit in a separate complete checkout. Use the same build configuration
-as the [earlier Metal verification](gpu-metal-verification-20260914.md).
+as the [macOS build guide](../manual.md#9-macos-with-homebrew-libraries).
 Select Apple Clang for Objective-C++. The old CPU version does not need Metal build options.
 The current `build_io_probe.py` can also be copied into the old version's `tests/` directory.
 Do not replace other reference-version sources or numerical kernels with current versions.

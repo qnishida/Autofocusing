@@ -1,5 +1,12 @@
 # Metal: CPU 並列化と CPU 最適化前からの累積高速化
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+CPU/Metalの統合版は `9d7091a` でmainに入りました。以下の測定時間は比較した版と
+条件に対応し、その後の版にも同じ性能が成立するとしたものではありません。
+
 詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
 含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
 
@@ -88,7 +95,7 @@ CPU/GPU 間は既存の許容誤差を適用し、全38列を検証した。
 ## ビルド・再現手順
 
 各コミットを別の完全なチェックアウトに用意する。ビルド設定は
-[先行する Metal 動作検証](gpu-metal-verification-20260914.md)と同じ。
+[macOSビルド手順](../manual.md#9-macos-with-homebrew-libraries)と同じ。
 Objective-C++ を Apple Clang に指定する。旧 CPU 版には Metal のビルド設定は不要。
 `build_io_probe.py` は現在版のスクリプトを旧版の `tests/` にもコピーして使用できる。
 基準版の他のソースや数値カーネルを現在版に置き換えない。

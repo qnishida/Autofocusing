@@ -70,6 +70,23 @@ points with radial slowness greater than 0.4 s/km. More generally, the effective
 limit is MAX rounded down to a STEP multiple. This is the initial peak-search
 limit, not a bound imposed on all subsequent fitted parameters.
 
+### Slowness range and initial seeds
+
+`AUTOFOCUSING_SLOWNESS_MAX` expands both the square slant-stack grid and the
+radial candidate mask; there is no separate fixed 0.165 s/km seed limit.
+In horizontal mode, R and T peaks are selected independently, with at most 30
+seeds per component. Each seed supplies `p = sqrt(px*px + py*py)` and
+`θ = atan2(py, px)` to distance-grid search, which retains the seed slowness
+while searching distance and slowness gradient. Subsequent fitting can change it.
+
+Candidates are visited in descending stack power, not slowness magnitude.
+Selection also depends on MAD contrast, a strict local maximum in a neighborhood
+of approximately 0.01 s/km, and separation from previous peaks. Expanding the
+domain changes MAD and candidate competition, so it does not guarantee selecting
+every large-slowness peak. The historical boundary-read and premature-termination
+bugs were corrected; see the [peak-search validation](../docs/peak-search-validation-20260917_en.md)
+([日本語](../docs/peak-search-validation-20260917_jp.md)).
+
 ## Run and settings
 
 ```bash
@@ -264,8 +281,16 @@ allowlisted effective settings, exit code and status (`running`, `succeeded`,
 - SHA-256 hashes and paths of the binary, catalog and available velocity model.
   Waveforms are identified by their archive root, not by hashing the archive.
 - Copies of configuration files used, and `effective_config.json` containing the
-  settings passed by the launcher. These files contain local paths; review them
-  before sharing results. Unrelated environment variables are not recorded.
+  allowlisted settings passed by the launcher. Configuration files are copied
+  verbatim, including any additional values written in those files; the runner
+  does not dump the full inherited environment.
+
+Before sharing a run directory, review `manifest.json`, `effective_config.json`,
+configuration snapshots, logs, patches and status/untracked-file lists. They can
+contain absolute paths, local settings and unpublished source or analysis changes.
+Git-ignoring the original `local_config.sh` does not remove its saved copy from
+the results. Prepare a reviewed copy for sharing while retaining the original
+provenance privately; a run directory is not the software source archive.
 
 The combined stdout/stderr stream is saved to `run.log` and shown on the terminal.
 The runner forwards SIGINT/SIGTERM to the child process group, saves its final
@@ -330,3 +355,60 @@ boundaries. These checks do not perform a scientific waveform analysis.
 
 `compare_profiles.py` compares profiling logs. Global CMT conversion tools and
 catalog provenance are documented in [GlobalCMT/README.md](GlobalCMT/README.md).
+
+### Workspace verification recorded on 2026-09-16
+
+The following is the historical workspace/date validation, not a test rerun of
+the latest checkout. The exact tested commit was not identified in the original
+record. It covered the separation of analysis definitions and generated runs,
+source/analysis provenance and inclusive dates while retaining year-only CLI compatibility.
+
+- `bash -n Scripts/run.sh Scripts/setup_workspace.sh`: passed.
+- The `tests/workspace.py` suite (also run through CTest): all 9 integration tests passed. Coverage includes
+  non-overwriting setup, independent Git initialization, refusal to initialize
+  inside another checkout, settings precedence, paths with spaces, source and
+  analysis revisions/diffs, uninitialized and unborn repositories, timestamp
+  collisions, concurrent runs, missing inputs, child
+  failure, Metal power alias precedence, and SIGINT/SIGTERM handling.
+  Omitting `--experiment` returned status 2 with usage and an example before
+  sourcing configuration or creating results, even when `PARAM_ID` is set.
+  Both generated and direct launchers are covered, along with `--workspace`
+  alone, missing/empty experiment values, `--help` (status 0), and the Python
+  helper's required argument check.
+  Date settings are required, validated before run allocation, passed to the
+  executable and saved in metadata; the start year is derived from START_DATE.
+- Configured a fresh CPU build in `build-workspace-validation/` using the manual's
+  Homebrew LLVM compiler discovery, with Metal/CUDA disabled. Built the
+  `cal_ccf_clang` target successfully.
+- `ctest --test-dir build-workspace-validation -R 'workspace_scripts|parent_launcher|analysis_date_range' --output-on-failure`:
+  all three tests passed. The parent-launcher test used the freshly built executable
+  with an empty waveform archive, checked run metadata and relative paths, and
+  retained checks of direct CLI compatibility and invalid backend/grid settings.
+- The `tests/date_range.py` suite passed all 6 checks against the real executable:
+  leap days, year boundaries, a single-day interval, removal of historical caps
+  for explicit dates, invalid/reversed dates, skipping missing/empty/multiple-file
+  days, inclusive endpoints and exclusion of files outside the selected interval.
+  Malformed singleton files intentionally verify that later existing inputs are
+  reached and that corrupt data still fails instead of being silently skipped.
+- Called the actual parent launcher without arguments from
+  `analysis/primary-microseisms/`: usage and an example were displayed and the
+  process exited with status 2; no analysis was started.
+- `git diff --check`: passed.
+- Rebuilt the Metal-enabled Release target in `build-clang/` and installed
+  `bin/cal_ccf_clang`. The installed binary passed both
+  `python3 -B tests/launcher.py . bin/cal_ccf_clang build-clang` and
+  `python3 -B tests/date_range.py bin/cal_ccf_clang build-clang` (6 date tests).
+  Tests explicitly selected CPU; Metal was compiled but no GPU analysis was run.
+
+The stale OpenMP cache and Objective-C++ linker failures encountered during this
+validation, and their compiler/configuration remedies, are recorded in the
+[macOS build notes](../manual.md#9-macos-with-homebrew-libraries).
+
+#### Scope of that verification
+
+No real waveform analysis, GPU calculation, frequency-band change, existing
+workspace migration, commit, or publication was performed. Existing parent
+launchers/configs/results were preserved. Test workspaces were temporary and
+removed automatically. Formal analyses still need an explicitly rebuilt binary
+and versioned input data; the recorded checkout SHA does not prove binary build
+origin, and waveform contents are not hashed by the launcher.

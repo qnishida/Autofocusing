@@ -1,5 +1,9 @@
 # Historical catalog agreement — 48-day 2005 audit
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
 Detailed run logs, output catalogs and per-event comparison records are retained
 locally and are not distributed in this repository. References to these records
 below describe local artifacts.

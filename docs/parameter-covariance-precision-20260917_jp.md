@@ -1,5 +1,21 @@
 # パラメータ共分散の計算精度（2026-09-17）
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+共分散の単独回帰テストは公開ソースを使用します。当時の実データ比較には、保存済みの
+ピーク探索プローブと検証入力に加え、後続のbootstrap変更前の共分散のみを修正した版が必要です。
+その比較のプローブ生成コマンドに、最新版のソースをそのまま使用することは想定していません。
+
+`5153085` でも共分散計算の倍精度化を維持しています。Newton推定には
+[復元した単精度版](newton-fp32-rollback-20260917_jp.md)を使用しています。
+
+入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
+`${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで
+`export HINET_ROOT="/path/to/hdf5"` と
+`export CMT_CATALOG="/path/to/catalog"` を設定してください。入力データは同梱していません。
+
 [ピーク探索の検証](peak-search-validation-20260917_jp.md)で見つかったNaNへの対応。
 変更は `485d761` を基点とする `test/peak-search-boundaries` の変更に含める。
 main、リモート、インストール済みバイナリは更新していない。
@@ -90,7 +106,7 @@ bootstrap関数と共分散変換関数を現在の本番コードに置き換�
 python3 -B tests/build_covariance_probe.py build-clang
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/covariance-double-probe/cal_ccf_covariance \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/covariance-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
 python3 -B tests/compare_covariance_runs.py \
   build-clang/peak-search-mar15-17-fixed build-clang/covariance-double-mar15-17 \

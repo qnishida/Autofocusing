@@ -1,5 +1,12 @@
 # Newton法の単精度版への暫定復元（2026-09-17）
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+本書は `5153085` で採用したNewton・共分散計算の構成を記録しています。
+以下の検証範囲は記載したCPU入力と設定であり、全GPU条件を検証したものではありません。
+
 [FFT計画による採否の変化の調査](pre-bootstrap-repeatability-20260917_jp.md)を受け、
 Newton法の4×4演算と終了判定だけを
 `485d761800ad6981d505fea4870cc2e85fa3f7d7` の実装に戻しました。

@@ -1,5 +1,14 @@
 # Shared CPU I/O optimization
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 Detailed benchmark logs and run results are retained locally and are not
 distributed in this repository. References to detailed records below describe
 those local artifacts.
@@ -104,7 +113,7 @@ Example measurement after connecting the SSD (`test_io` exists in both branches)
 
 ```bash
 python3 tests/benchmark_io.py build-io/test_io \
-  /Volumes/Seismic_Data/hdf5/Hi-net_tilt/2004/0101/20040010000.h5 \
+  "${HINET_ROOT}/2004/0101/20040010000.h5" \
   docs/benchmarks/cpu-io-2004001.json
 ```
 
@@ -128,8 +137,8 @@ python3 tests/build_io_probe.py build-io
 python3 tests/run_io_events.py \
   build-io/io-fixed-reference/cal_ccf_io_probe \
   build-io/io-fixed-current/cal_ccf_io_probe \
-  /Volumes/Seismic_Data/hdf5/Hi-net_tilt \
-  ../moment_loc_76_24 build-io/io-events-cpu
+  "${HINET_ROOT}" \
+  "${CMT_CATALOG}" build-io/io-events-cpu
 ```
 
 For Metal, replace the build paths and add `--backend metal` to the run command.

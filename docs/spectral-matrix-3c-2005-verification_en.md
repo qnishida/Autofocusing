@@ -1,5 +1,17 @@
 # Three-component spectral-matrix validation, 2005 data — 2026-09-16
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+The complex self-term correction was adopted in `6ddbd21` and is retained in
+`5153085`. The measurements below describe the original correction comparison.
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 Detailed run logs, output catalogs and per-event comparison records are retained
 locally and are not distributed in this repository. References to these records
 below describe local artifacts.
@@ -19,7 +31,7 @@ all non-matrix results in the three-day comparison.
 - Reference source: `9ca6a93`; corrected source differs only in `cal_S_matrix`
   numerical operations. Each complex same-station term is subtracted from its
   matching matrix entry, retaining its imaginary part.
-- Input: `/Volumes/Seismic_Data/hdf5/Hi-net/2005`, January 1–3, 2005, three
+- Input: `${HINET_ROOT}/2005`, January 1–3, 2005, three
   components. The daily loader reports 687, 685, and 684 stations. Per-window
   QC can reduce these counts. Selected files were available while the larger
   archive was still being copied; their SHA-256 hashes matched before and
@@ -152,7 +164,7 @@ OMP_NUM_THREADS=4 ctest --test-dir build-clang -R spectral_matrix_station_pairs 
 python3 -B tests/run_spectral_matrix_events.py \
   build-clang/io-fixed-reference/cal_ccf_io_probe \
   build-clang/io-fixed-current/cal_ccf_io_probe \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/spectral-matrix-3c-2005-new --threads 4 --start 2005-01-01 --days 3
 ```
 

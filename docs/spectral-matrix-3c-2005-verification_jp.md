@@ -1,5 +1,17 @@
 # 2005年3成分データによるスペクトル行列の検証 — 2026-09-16
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+複素自己項の修正は `6ddbd21` で採用され、`5153085` でも維持しています。
+以下の測定値は、この修正を比較した当時の結果です。
+
+入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
+`${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで
+`export HINET_ROOT="/path/to/hdf5"` と
+`export CMT_CATALOG="/path/to/catalog"` を設定してください。入力データは同梱していません。
+
 詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
 公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
 
@@ -17,7 +29,7 @@ max/MADがR・Tで7超、Uで35超の条件による1月の期間拡張と、
 
 - 基準ソースは `9ca6a93`。修正版の数値処理の変更は `cal_S_matrix` のみ。
   同一観測点の複素自己項を、虚部も含めて対応する行列成分から引く。
-- 入力は `/Volumes/Seismic_Data/hdf5/Hi-net/2005` の2005年1月1–3日、3成分。
+- 入力は `${HINET_ROOT}/2005` の2005年1月1–3日、3成分。
   日別読み込み点数は687・685・684。窓ごとのQCではさらに減り得る。
   アーカイブ全体のコピー中に、利用可能な3ファイルを選択した。
   両版の実行前後で入力のSHA-256ハッシュが一致した。
@@ -135,7 +147,7 @@ OMP_NUM_THREADS=4 ctest --test-dir build-clang -R spectral_matrix_station_pairs 
 python3 -B tests/run_spectral_matrix_events.py \
   build-clang/io-fixed-reference/cal_ccf_io_probe \
   build-clang/io-fixed-current/cal_ccf_io_probe \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/spectral-matrix-3c-2005-new --threads 4 --start 2005-01-01 --days 3
 ```
 

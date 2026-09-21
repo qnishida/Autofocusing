@@ -1,5 +1,17 @@
 # Peak-search handoff and validation (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+The synthetic peak-search regression uses public source. Replaying the historical
+real-data comparison also needs the saved deterministic audit setup and the peak-only
+source snapshot described below, plus a Git clone containing the reference commit.
+
+The peak-search fixes are retained in `5153085`. The failed covariance case below
+was addressed by the [FP64 covariance correction](parameter-covariance-precision-20260917_en.md);
+the original failed comparison remains part of this record.
+
 The agreed initial-seed selection changes are implemented on
 `test/peak-search-boundaries`, based on main `485d761`. The implementation,
 regression tests and these validation notes are included in the test-branch
@@ -9,6 +21,18 @@ is already on main. No covariance or convergence change is included here.
 This report records the peak-only comparison. The subsequent
 [covariance precision correction](parameter-covariance-precision-20260917_en.md)
 addresses the NaN found below; the original failed-run records are retained.
+
+## Earlier inspection, 2026-09-16
+
+The preceding static inspection (exact commit unspecified) found that the
+background ring could read up to `imask` beyond the square-grid bounds
+`[-ipmax, ipmax]`. The circular center mask did not prevent edge crossings,
+particularly near the coordinate axes. It also found that a failed strict
+local-maximum check used `break`, terminating the scan instead of skipping
+only that candidate. No code change, synthetic peak test or large-slowness
+waveform validation was performed during that inspection. The corrections and
+synthetic checks below address those findings; current range/seed behavior is
+summarized in the [script guide](../Scripts/README.md#slowness-range-and-initial-seeds).
 
 ## Preserved behavior and correction
 

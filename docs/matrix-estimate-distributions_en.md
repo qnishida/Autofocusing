@@ -1,5 +1,10 @@
 # Estimate distributions and signed shifts — 2005 matrix audit
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+> The exact tested commit is not identified in this record.
+
 Detailed run logs, output catalogs and per-event comparison records are retained
 locally and are not distributed in this repository. References to these records
 below describe local artifacts.

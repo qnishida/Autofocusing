@@ -1,5 +1,9 @@
 # Ordered CPU fitting parallelism
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
 Detailed benchmark logs and run results are retained locally and are not
 distributed in this repository. References to detailed records below describe
 those local artifacts.
@@ -330,3 +334,121 @@ A same-protocol repeat on Threadripper 3990X, with the same one-day input and
 (7.255×); initial grid time decreases from 0.371 s to 0.365 s. All 12 event
 files, accepted windows and initial candidates agree. The CPU parallel
 regression again reports `max_abs=0` and `max_relative=0`.
+
+## Peak-search integration validation, 2026-09-17
+
+This historical comparison combines the peak/precision changes at `dc38340`
+with CPU bootstrap parallelism from `49dbb27`, merged as `b0ce192` and later
+integrated into main through `3c0c564`. The merged peak-search, Newton, roundoff
+and covariance routines were text-identical to `dc38340`; bootstrap batching
+matched the upstream implementation. Samples were evaluated independently and
+reduced in their original order. The reference was the corrected serial version,
+not the earlier pre-fix catalog.
+
+Bootstrap parallelism is retained in `5153085`, but the FP64 Newton and roundoff
+fallback used in this comparison were replaced by the
+[FP32 restoration](newton-fp32-rollback-20260917_en.md). The event counts and timings
+below belong to the historical comparison, not a new test of the restored version.
+
+### English
+
+The production executable and affected tests rebuild successfully. Thirteen
+calculation/workspace tests pass, including the expanded bootstrap batch test.
+The qualification-tools test also passes when rerun outside the sandbox:
+its initial failure came from macOS `/usr/bin/time -l` calling a blocked
+`sysctl kern.clockrate`, reproduced even with `/usr/bin/true`.
+Thus 14 selected CTests have passing results. Raw evidence stays under the
+ignored `docs/benchmarks/bootstrap-peak-integration-20260917/` directory.
+
+#### Real-data equivalence
+
+The merged audit probe replayed Hi-net March 15–17, 2005, using three components,
+0.1–0.25 Hz, slowness limits ±0.165 s/km, step 0.005 s/km, and eight CPU threads.
+Waveform and catalog hashes, QC history, bootstrap seeds
+(`1837 + 104729 * replicate`) and FFTW settings (`ESTIMATE | UNALIGNED`) matched
+the saved final peak/Newton run. The full interval was replayed to preserve QC
+history from the first day.
+
+- All 145 event rows are byte-for-byte identical in all 38 columns, including
+  component energies, covariance and bootstrap outputs; all output values are
+  finite. Energy ratios derived from these outputs also match.
+- All 147 initial candidates and all recorded optimizer steps, results and
+  roundoff-convergence records are identical. Accepted windows also match.
+- Selection is unchanged: 75 events (R31/T10/U34), using max/MAD > 7 for R/T and
+  > 35 for U. The previously recovered R candidate is retained.
+- Both the corrected spectral-matrix catalog and the audit's original-matrix
+  control match their respective independent serial runs exactly.
+
+These results support combining the parallel bootstrap with the validated peak
+and precision changes. They do not establish validity for every possible event
+or qualify a GPU backend.
+
+#### CPU timing
+
+The timing comparison uses clean production sources at `dc38340` and `b0ce192`,
+with only fixed bootstrap seeds and a shared deterministic FFTW object. The
+extra numerical-audit calculations and convergence logging are excluded.
+Both executables use the same Release/O3 Clang build and profiling settings.
+
+On an Apple M4 Max (16 cores), March 15, 2005 was replayed with eight OpenMP
+threads, three components and the same frequency/slowness settings. Each binary
+received one excluded warmup followed by five measured runs in alternating
+order, each in a fresh process. The OS cache was not purged, and no other agent
+builds or tests ran concurrently. All twelve runs, including warmups, produced
+the same 46 events byte for byte. Input hashes also remained unchanged.
+
+| Median elapsed time | Before bootstrap parallelism | Combined version |
+| --- | ---: | ---: |
+| Whole process | 110.92 s | 56.14 s |
+| Bootstrap stage | 64.73 s | 10.05 s |
+| Grid stage | 4.149 s | 4.131 s |
+
+Bootstrap was **6.44× faster**; the whole process took **49.39% less time**
+(1.98× faster). Whole-process ranges were 110.54–117.23 s before and
+55.88–56.17 s after; peak RSS was approximately 2.39 GiB for both.
+All predefined gates passed: whole-process and grid medians within +5% of
+baseline, at least 10% bootstrap improvement, and byte-identical event output.
+These are measurements of this one-day CPU workload on this host. Summed
+per-worker call times are not elapsed times and must not be used as speedups.
+
+#### Reproduction and scope
+
+The merge was subsequently integrated into main. Updating an installed runtime
+executable still requires the normal build/install procedure.
+
+The local evidence directory contains the probe builder, comparison and timing
+drivers, input/source/binary hashes, test logs and run reports. Detailed logs
+and event catalogs remain Git-ignored. Historical probe builders depend on
+specific source snapshots; rebuilding them directly against merged code is
+not a substitute for the recorded integration driver.
+
+Production bootstrap seeds still use `time(0) * i`. Faster execution can change
+the sampled seeds even though the expression and resampling order are unchanged.
+Use fixed seeds for correctness comparisons rather than interpreting ordinary
+run-to-run bootstrap differences as a merge regression.
+
+### 日本語の要約
+
+ピーク探索・精度変更の `dc38340` と、CPU bootstrap並列化の `49dbb27` を
+`b0ce192` で統合し、その後 `3c0c564` を経てmainへ取り込みました。
+比較基準は修正済みの直列版であり、修正前の旧カタログではありません。
+乱数抽出と集計の順序を保ち、独立したbootstrap標本の計算だけを並列化しています。
+
+2005年3月15–17日の3成分入力、0.1–0.25 Hz、slowness範囲±0.165 s/km、
+刻み0.005 s/km、CPU 8スレッドで、入力ハッシュ・QC履歴・固定乱数・FFTW設定を一致させました。
+145イベントの全38列、初期候補147件、最適化記録、受理窓、閾値選別後の75件
+（R31/T10/U34）が一致し、出力は有限でした。修正済み行列と旧行列の対照カタログは、
+それぞれの直列版と一致しました。選択したCTestは14件合格し、うち計測ツールの確認は
+macOSのサンドボックス制限を切り分けた後に合格しています。
+
+Apple M4 Maxで3月15日を計測し、各版の慣らし1回を除いた5回を交互に実行しました。
+慣らしを含む12実行で同じ46イベントが完全一致しました。中央値は全体110.92秒→56.14秒、
+bootstrap 64.73秒→10.05秒、グリッド4.149秒→4.131秒です。全体49.39%短縮
+（1.98倍）、bootstrap 6.44倍で、事前の性能・出力一致条件を満たしました。
+詳細な範囲・メモリ使用量・条件は本節の英文と表を参照してください。
+
+この測定は当時のCPU実装・入力に限り、GPUや任意のイベントを検証したものではありません。
+`5153085` ではbootstrap並列化を維持し、Newton計算を
+[単精度版へ復元](newton-fp32-rollback-20260917_jp.md)しています。
+過去の比較の再現には保存済みのドライバと入力が必要です。通常実行の乱数は
+`time(0) * i` に依存し、実行速度によって標本が変わり得るため、正しさの比較では乱数を固定します。

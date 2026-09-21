@@ -1,5 +1,12 @@
 # Interim restoration of FP32 Newton fitting (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+This is the adopted Newton/covariance configuration in `5153085`. The validation
+reported below covers its stated CPU inputs and settings, not all GPU workloads.
+
 After [investigating the FFT-dependent acceptance regression](pre-bootstrap-repeatability-20260917_en.md),
 restore only the Newton 4×4 arithmetic and stopping behavior from
 `485d761800ad6981d505fea4870cc2e85fa3f7d7`. The production `est_dist_grad()`

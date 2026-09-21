@@ -1,5 +1,14 @@
 # Newton termination at objective roundoff (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+> The exact tested commit is not identified in this record.
+
+The fallback test target below was removed by `5153085`. Its commands require
+the earlier fallback implementation; the real-data replay also requires the local
+probe builder and saved audit inputs described below.
+
 Historical validation: subsequent FFT-plan checks exposed a remaining acceptance
 regression. The implementation and predicate-only test described here were
 replaced by the [interim FP32 restoration](newton-fp32-rollback-20260917_en.md).

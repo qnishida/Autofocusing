@@ -1,5 +1,9 @@
 # bootstrap前の再現性調査（2026-09-17）
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
 後続作業として[Newton法の単精度版への復元と検証](newton-fp32-rollback-20260917_jp.md)を完了しました。
 以下の「本番ソースなどは未変更」という記述は、その復元前の調査時点を示します。
 

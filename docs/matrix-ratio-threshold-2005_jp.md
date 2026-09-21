@@ -1,5 +1,14 @@
 # イベント選別後のスペクトル行列比の検証 — 2026-09-16
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
+`${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで
+`export HINET_ROOT="/path/to/hdf5"` と
+`export CMT_CATALOG="/path/to/catalog"` を設定してください。入力データは同梱していません。
+
 詳細な実行ログ、出力カタログ、イベント別の比較記録はローカルに保存しており、
 公開リポジトリには含めない。本文中の記録への言及は、そのローカル資料を指す。
 
@@ -70,7 +79,7 @@ R・Tでは厳密に7超、U（鉛直、Vとも表記）では35超を採用す�
 python3 tests/build_matrix_audit_probe.py build-clang
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/matrix-audit/cal_ccf_matrix_audit \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/matrix-audit-new --start 2005-03-16 --days 2 --threads 8
 python3 -B tests/analyze_matrix_ratios.py build-clang/matrix-audit-new \
   --output build-clang/matrix-audit-new/ratios.json

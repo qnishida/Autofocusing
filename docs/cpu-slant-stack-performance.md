@@ -1,5 +1,14 @@
 # CPU slant-stack optimization before Metal
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 Detailed benchmark logs and run results are retained locally and are not
 distributed in this repository. References to detailed records below describe
 those local artifacts.
@@ -113,7 +122,7 @@ compiler used for execution. Use a fresh result ID for each run:
 
 ```bash
 AUTOFOCUSING_PROFILE=1 OMP_NUM_THREADS=4 build-clang/src/cal_ccf_clang \
-  2004 tilt_horizontal cpu-check build-gcc/one-day ../moment_loc_76_24 \
+  2004 tilt_horizontal cpu-check build-gcc/one-day "${CMT_CATALOG}" \
   build-clang/performance/results horizontal \
   > build-clang/performance/cpu-check.log 2>&1
 python3 Scripts/compare_profiles.py baseline.log cpu-check.log

@@ -1,5 +1,21 @@
 # Newton iteration precision (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+Historical reproduction requires the saved deterministic audit setup and the
+local `build_probe.py` and `compare_runs.py` under `docs/benchmarks/`. Those scripts
+are not distributed here; the commands below are not a public-source-only recipe.
+
+The FP64 Newton experiment below has been superseded by the
+[FP32 restoration](newton-fp32-rollback-20260917_en.md) adopted in `5153085`.
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 This records the type-only experiment. The subsequent
 [roundoff termination study](newton-roundoff-20260917_en.md) addresses the
 selected-event loss identified here; the original comparison is retained.
@@ -102,7 +118,7 @@ The existing deterministic audit setup is required:
 python3 -B docs/benchmarks/newton-precision-20260917/build_probe.py
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/newton-double-probe/cal_ccf_newton \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/newton-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
 python3 -B docs/benchmarks/newton-precision-20260917/compare_runs.py
 ```

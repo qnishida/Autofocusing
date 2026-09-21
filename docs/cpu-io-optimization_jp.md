@@ -1,5 +1,14 @@
 # 共通 CPU I/O 最適化
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
+`${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで
+`export HINET_ROOT="/path/to/hdf5"` と
+`export CMT_CATALOG="/path/to/catalog"` を設定してください。入力データは同梱していません。
+
 詳細なbenchmarkログと実行結果はローカルに保存しており、公開リポジトリには
 含めない。本文中の詳細記録への言及は、そのローカル資料を指す。
 
@@ -99,7 +108,7 @@ SSD 接続後の計測例（`test_io` は両ブランチにある）：
 
 ```bash
 python3 tests/benchmark_io.py build-io/test_io \
-  /Volumes/Seismic_Data/hdf5/Hi-net_tilt/2004/0101/20040010000.h5 \
+  "${HINET_ROOT}/2004/0101/20040010000.h5" \
   docs/benchmarks/cpu-io-2004001.json
 ```
 
@@ -123,8 +132,8 @@ python3 tests/build_io_probe.py build-io
 python3 tests/run_io_events.py \
   build-io/io-fixed-reference/cal_ccf_io_probe \
   build-io/io-fixed-current/cal_ccf_io_probe \
-  /Volumes/Seismic_Data/hdf5/Hi-net_tilt \
-  ../moment_loc_76_24 build-io/io-events-cpu
+  "${HINET_ROOT}" \
+  "${CMT_CATALOG}" build-io/io-events-cpu
 ```
 
 Metal ではビルドパスを置き換え、実行に `--backend metal` を追加する。

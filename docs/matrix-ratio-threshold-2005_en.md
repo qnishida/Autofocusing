@@ -1,5 +1,14 @@
 # Spectral-matrix ratios after event selection — 2026-09-16
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 Detailed run logs, output catalogs and per-event comparison records are retained
 locally and are not distributed in this repository. References to these records
 below describe local artifacts.
@@ -76,7 +85,7 @@ Example, using fresh output directories and the existing documented build:
 python3 tests/build_matrix_audit_probe.py build-clang
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/matrix-audit/cal_ccf_matrix_audit \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/matrix-audit-new --start 2005-03-16 --days 2 --threads 8
 python3 -B tests/analyze_matrix_ratios.py build-clang/matrix-audit-new \
   --output build-clang/matrix-audit-new/ratios.json

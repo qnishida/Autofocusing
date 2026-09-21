@@ -1,13 +1,22 @@
 # Horizontal-only implementation and verification
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 Verified 2026-09-08 on branch `feature/horizontal-two-component`, based on
 `149995f`. Verification was performed before committing the changes.
 No full-archive analysis was started.
 
 ## Input contract and local workspace
 
-- Waveforms: `/Volumes/Seismic_Data/hdf5/Hi-net_tilt/YYYY/MMDD/*.h5`.
-- CMT: `../moment_loc_76_24`, supplied by the user, outside the source repository.
+- Waveforms: `${HINET_ROOT}/YYYY/MMDD/*.h5`.
+- CMT: `${CMT_CATALOG}`, supplied by the user, outside the source repository.
 - The user confirmed that the data are velocity converted from tilt, still in
   sensor coordinates. Apply the HDF5 `cmpaz` rotation once, after the FFT.
 - On January 1 of 2004, 2014 and 2024, both N.AGMH and N.AGWH have LE/LN,
@@ -86,7 +95,7 @@ scratch input location; final verification used the Clang executable:
 
 ```bash
 OMP_NUM_THREADS=4 bin/cal_ccf_clang 2004 tilt_horizontal final-verification \
-  build-gcc/one-day ../moment_loc_76_24 build-clang/one-day-results horizontal
+  build-gcc/one-day "${CMT_CATALOG}" build-clang/one-day-results horizontal
 ```
 
 The process exited 0, loaded 653 stations, and accepted 47, 19, 26 and 42

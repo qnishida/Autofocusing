@@ -1,5 +1,22 @@
 # Parameter covariance precision (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+The standalone covariance regression uses public source. The historical real-data
+comparison additionally requires the saved peak-search probe and its audit inputs,
+and the covariance-only source revision before later bootstrap changes. Its probe
+commands are not a recipe for substituting the latest checkout into that comparison.
+
+The FP64 covariance correction is retained in `5153085`. Newton fitting now uses
+the [restored FP32 path](newton-fp32-rollback-20260917_en.md).
+
+Input paths: `${HINET_ROOT}` is the external waveform root for the components and
+period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
+In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
+and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
+
 This follows the [peak-search validation](peak-search-validation-20260917_en.md).
 The changes are included on `test/peak-search-boundaries`, based on `485d761`. Main, the remote and the installed binary have not been updated.
 
@@ -100,7 +117,7 @@ Local commands after building the saved peak-search audit setup:
 python3 -B tests/build_covariance_probe.py build-clang
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/covariance-double-probe/cal_ccf_covariance \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/covariance-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
 python3 -B tests/compare_covariance_runs.py \
   build-clang/peak-search-mar15-17-fixed build-clang/covariance-double-mar15-17 \

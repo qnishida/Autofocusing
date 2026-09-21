@@ -1,5 +1,10 @@
 # Configurable frequency band — verification, 2026-09-16
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+> The exact tested commit is not identified in this record.
+
 `cal_ccf` accepts `AUTOFOCUSING_FREQ_MIN` / `AUTOFOCUSING_FREQ_MAX` in Hz,
 with defaults 0.1 / 0.25. Experiment configuration is recorded by the runner,
 which queries `--frequency-info` before allocating output to reject invalid
@@ -57,4 +62,6 @@ QC/stability bands and thresholds, 0.03 Hz high-pass preprocessing and earthquak
 exclusion remain unchanged; changing frequency does not retune them. Existing
 experiment configs were preserved and need explicit frequency settings.
 `cal_ccf_eq` is unchanged. The separate slowness peak-selection issues recorded
-in [slowness-seed-selection.md](slowness-seed-selection.md) were not modified.
+in the [earlier inspection](peak-search-validation-20260917_en.md#earlier-inspection-2026-09-16)
+were not modified by the frequency-band change; that record also describes their
+subsequent correction.

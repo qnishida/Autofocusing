@@ -1,5 +1,21 @@
 # Newton法の倍精度化（2026-09-17）
 
+> 記録の位置づけ：本文の版・ブランチ・インストール状況と検証結果は、記録当時の作業を示します。
+> [現行仕様](../README.md#current-behavior-and-limits)と
+> [再現に必要な条件](../README.md#reading-the-validation-records)も参照してください。
+
+当時の再現には、保存済みの乱数・FFT条件を固定した検証環境と、`docs/benchmarks/` 配下の
+ローカルな `build_probe.py`・`compare_runs.py` が必要です。これらのスクリプトは同梱しておらず、
+以下のコマンドを公開ソースだけで実行することはできません。
+
+以下の倍精度Newtonの試行後、`5153085` で
+[単精度版への復元](newton-fp32-rollback-20260917_jp.md)を採用しました。
+
+入力パス：`${HINET_ROOT}` はこの記録で使用した成分・期間に対応する波形ルート、
+`${CMT_CATALOG}` は外部の震源カタログです。コマンド例を実行するシェルで
+`export HINET_ROOT="/path/to/hdf5"` と
+`export CMT_CATALOG="/path/to/catalog"` を設定してください。入力データは同梱していません。
+
 本資料は型だけを変更した比較を記録する。そこで見つかった選別イベントの欠落への対応は、
 後続の[丸め精度での終了判定の検討](newton-roundoff-20260917_jp.md)に記録する。
 元の比較結果はそのまま維持する。
@@ -91,7 +107,7 @@ max/MADは約25.40。このため、既存の検証条件に通るだけでは�
 python3 -B docs/benchmarks/newton-precision-20260917/build_probe.py
 python3 -B tests/run_matrix_audit_events.py \
   build-clang/newton-double-probe/cal_ccf_newton \
-  /Volumes/Seismic_Data/hdf5/Hi-net ../moment_loc_76_24 \
+  "${HINET_ROOT}" "${CMT_CATALOG}" \
   build-clang/newton-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
 python3 -B docs/benchmarks/newton-precision-20260917/compare_runs.py
 ```

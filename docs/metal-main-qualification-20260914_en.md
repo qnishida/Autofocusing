@@ -1,5 +1,12 @@
 # Metal: strict five-day comparison and single-thread performance validation
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+
+The qualified implementation was integrated into main in `9d7091a`. The measurements
+below remain the recorded comparison, not a requalification of later revisions.
+
 Detailed benchmark logs and run results are retained locally and are not
 distributed in this repository. References to detailed records below describe
 those local artifacts.
@@ -90,7 +97,7 @@ for all 14 event files.
 
 ## Reproduction
 
-In each checkout, build using the existing [configuration with Apple Clang](gpu-metal-verification-20260914.md),
+In each checkout, build using the existing [configuration with Apple Clang](../manual.md#9-macos-with-homebrew-libraries),
 then generate a driver with fixed settings using `python3 tests/build_io_probe.py build`.
 `BEFORE_PROBE` points to the driver for `6a7a4bd`, and `CURRENT_PROBE` to the driver for `7de4c22`.
 Run the following from the current checkout root, using output paths that do not yet exist.
@@ -117,3 +124,31 @@ This record completes the two requested checks for horizontal data.
 It does not generalize the results to real three-component data, the full archive, or other hardware.
 It can be reviewed together with the earlier [16-thread speedup and comparison against the version before CPU optimization](metal-cpu-parallel-performance-20260914_en.md).
 Integration into `main` is a separate task after the user reviews the results.
+
+## Earlier integration-branch check, 2026-09-14
+
+A preceding functionality check used unmodified `dabb03727454421f4fbb0b42a61604539fe99a6d`
+on Apple M4 Max, macOS 26.6.2, with 16 OpenMP threads. All 7 CTests passed after
+using the [Apple Objective-C++ build configuration](../manual.md#9-macos-with-homebrew-libraries),
+restoring Git metadata required by that historical launcher, and running outside
+the sandbox for Metal and resource timing. These were environment failures,
+not source fixes; the historical Git-metadata requirement does not describe the current runner.
+
+- Slant stacking passed 32 synthetic horizontal/3c cases: maximum scaled error
+  `5.04548961e-6`, maximum relative L2 error `3.46418047e-6`, zero peak mismatches.
+- Power passed 216 synthetic cases and batching/chunk-boundary checks: maximum
+  scaled error `1.7298449269270586e-4`, with threshold `5e-4`.
+- Fixed FFTW planning and bootstrap seeds were used for horizontal input on
+  2004-01-01–03. CPU/off and Metal off/bootstrap/grid/all each produced 20 events.
+  CPU versus Metal/off passed the existing comparison excluding bootstrap.
+  All Metal modes retained initial choices and accepted windows; non-bootstrap
+  fields matched Metal/off with residual absolute tolerance `1e-12`.
+  Maximum bootstrap relative difference was approximately `2.87e-5`, below `1e-3`.
+- Single-run wall times were CPU/off 64.872 s, Metal/off 34.749 s,
+  Metal/bootstrap 13.249 s, Metal/grid 34.434 s and Metal/all 13.108 s.
+  These were functionality-check timings, not repeated performance qualification.
+
+That check did not cover real 3c data, five days or paired pre/post-change
+performance. The five-day and single-thread comparisons above supplied the
+later horizontal qualification. Raw logs and deterministic drivers remain local;
+replaying the earlier check requires its source revision and matching external inputs.

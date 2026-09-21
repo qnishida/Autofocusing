@@ -1,5 +1,10 @@
 # Optional early event selection (2026-09-17)
 
+> Record scope: revisions, branch/install status and results below describe the recorded work.
+> See [current behavior](../README.md#current-behavior-and-limits) and
+> [reproduction requirements](../README.md#reading-the-validation-records).
+> The exact tested commit is not identified in this record.
+
 Status: the measurements below use the earlier FP64 Newton implementation.
 The subsequent [FP32 Newton restoration](newton-fp32-rollback-20260917_en.md)
 retains this feature and rechecks `all` / `selected` equivalence. Its CPU test

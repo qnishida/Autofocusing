@@ -172,6 +172,12 @@ or starting the GPU. The frequency environment variables also work for direct
 cal_ccf_<compiler> YYYY <param-id> <git-version> <hinet-root> <cmt-catalog> [output-root] [3c|horizontal] [START_DATE END_DATE]
 ```
 
+The positional name `<git-version>` is retained for compatibility, but its value
+is an output-directory label, such as `example-run`; no Git lookup is required.
+Use a new label for each direct run and record the source release or commit
+separately, including when using a source ZIP. See the
+[direct invocation example](README.md#run).
+
 Omitting the optional arguments retains `output/` and `3c`. The parent launcher
 uses `horizontal` and a separate result directory by default. `cal_ccf_eq` has
 not been extended with horizontal mode.
@@ -293,6 +299,16 @@ Apple's Objective-C++ compiler is used for the Metal implementation to match
 the installed Apple SDK/linker; C/C++ use Homebrew LLVM for OpenMP support.
 When changing compilers, use a fresh build directory or configure with
 `cmake --fresh` (CMake 3.24+) rather than retaining stale compiler/library paths.
+
+In the September 2026 checks, using Homebrew LLVM 23.1.1 for Objective-C++
+produced unresolved class-selector symbols, including
+`_objc_msgSendClass$new$_OBJC_CLASS_$_MTLCompileOptions` and
+`_objc_msgSendClass$stringWithUTF8String:$_OBJC_CLASS_$_NSString`.
+The Apple Objective-C++ compiler selection above resolved the link failure.
+A separate stale cache referenced a removed LLVM 22.1.5 OpenMP library; fresh
+configuration with LLVM 23.1.1 resolved that failure without source changes.
+GPU and resource-timing checks need an environment that permits Metal access
+and `/usr/bin/time -l`; sandbox restrictions caused failures in those checks.
 
 The synthetic regression check can additionally compare the current 3c loader
 against a specified Git revision:
@@ -490,8 +506,10 @@ Check `git rev-parse --show-toplevel` and `git status` before Git operations.
 Preserve unfinished changes before switching branches or updating. Fetch to
 inspect upstream changes, and use fast-forward-only pulls when ready. A
 divergence needs deliberate integration; do not reset or force-push to make
-the checkouts appear synchronized. Branches `main`, `metal` and `cuda` remain
-separate until explicitly integrated.
+the checkouts appear synchronized. CPU, Metal and CUDA support are integrated in
+`main` as of `5153085`; use a chosen release or source commit and select the
+backend through the documented build/runtime settings. Historical development
+branches can remain on older code and are not needed to select a backend.
 
 For an SSH remote, `git ls-remote --heads origin` checks read access without
 changing the checkout. `Permission denied (publickey)` indicates an SSH
