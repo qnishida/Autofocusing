@@ -5,6 +5,7 @@ authors:
   - family-names: "Nishida"
     given-names: "Kiwamu"
 version: "1.1.0"
+date-released: "2026-09-21"
 license: "GPL-2.0-or-later"
 doi: "10.5281/zenodo.20742021"
 repository-code: "https://github.com/qnishida/Autofocusing"

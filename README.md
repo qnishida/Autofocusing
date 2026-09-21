@@ -208,14 +208,13 @@ checks, tests, and remaining limitations.
 ## Citation
 
 If you use this software, please cite the released version you used. For example,
-for version 1.0.0:
+for version 1.1.0:
 
-> Nishida, K. (2026). Autofocusing (Version 1.0.0) [Software].
+> Nishida, K. (2026). Autofocusing (Version 1.1.0) [Software].
 > https://doi.org/10.5281/zenodo.20742021
 
-The DOI above refers to all versions. Citation metadata in `CITATION.cff` are
-being prepared for version 1.1.0, which has not yet been released. Set
-`date-released` to the actual publication date when preparing the release.
+The DOI above refers to all versions. Citation metadata for version 1.1.0 are
+provided in `CITATION.cff`.
 
 ## License and Attribution
 
