@@ -34,6 +34,7 @@ See the [project overview](../README.md) and
 | Metal slant stacking | [Performance](metal-slant-stack-performance.md) |
 | Metal objective evaluation | [English](metal-power-optimization_en.md) / [日本語](metal-power-optimization_jp.md) |
 | CUDA | [Implementation and validation](cuda-performance.md) |
+| hiyodori GPU and OpenMP measurements, 2026-10-22 | [日本語](hiyodori-performance-20261022_jp.md) / [Summary JSON](hiyodori-performance-20261022.json) |
 | Metal integration-branch check | [Recorded check](metal-main-qualification-20260914_en.md#earlier-integration-branch-check-2026-09-14) |
 | CPU parallelism with Metal | [English](metal-cpu-parallel-performance-20260914_en.md) / [日本語](metal-cpu-parallel-performance-20260914_jp.md) |
 | Metal five-day and single-thread checks | [English](metal-main-qualification-20260914_en.md) / [日本語](metal-main-qualification-20260914_jp.md) |
