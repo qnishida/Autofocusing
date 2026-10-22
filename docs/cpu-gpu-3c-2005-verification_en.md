@@ -1,13 +1,9 @@
 # CPU / Metal agreement for real three-component data
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 > The exact tested commit is not identified in this record.
-
-Detailed run logs, output catalogs and per-event comparison records are retained
-locally and are not distributed in this repository. References to these records
-below describe local artifacts.
 
 Verified 2026-09-17 on Apple M4 Max. For 2005-03-15 through 2005-03-17,
 CPU and Metal produced the same 60 events, fitted parameters, bootstrap fields,

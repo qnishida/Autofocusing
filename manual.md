@@ -300,15 +300,10 @@ the installed Apple SDK/linker; C/C++ use Homebrew LLVM for OpenMP support.
 When changing compilers, use a fresh build directory or configure with
 `cmake --fresh` (CMake 3.24+) rather than retaining stale compiler/library paths.
 
-In the September 2026 checks, using Homebrew LLVM 23.1.1 for Objective-C++
-produced unresolved class-selector symbols, including
-`_objc_msgSendClass$new$_OBJC_CLASS_$_MTLCompileOptions` and
-`_objc_msgSendClass$stringWithUTF8String:$_OBJC_CLASS_$_NSString`.
-The Apple Objective-C++ compiler selection above resolved the link failure.
-A separate stale cache referenced a removed LLVM 22.1.5 OpenMP library; fresh
-configuration with LLVM 23.1.1 resolved that failure without source changes.
-GPU and resource-timing checks need an environment that permits Metal access
-and `/usr/bin/time -l`; sandbox restrictions caused failures in those checks.
+Mixing compiler and library versions can cause Objective-C++ link failures or
+stale OpenMP-library references. Select Apple Clang for Objective-C++ as shown
+above and configure a fresh build after changing toolchains. GPU and resource-
+timing checks require access to Metal and `/usr/bin/time -l`.
 
 The synthetic regression check can additionally compare the current 3c loader
 against a specified Git revision:

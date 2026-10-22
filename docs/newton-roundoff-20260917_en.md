@@ -1,6 +1,6 @@
 # Newton termination at objective roundoff (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 > The exact tested commit is not identified in this record.
@@ -112,19 +112,16 @@ curvature or statistical uncertainty.
 
 ## Reproduction and status
 
+The restricted FP64 roundoff fallback was an experimental configuration and was
+superseded by the FP32 restoration. It is not a current production stopping rule.
+Its dedicated historical test target is not part of the current build.
+
+For current synthetic Newton recovery:
+
 ```bash
-cmake -S . -B build-clang -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build build-clang --target test_newton_roundoff --parallel 4
-ctest --test-dir build-clang -R '^newton_roundoff_convergence$' --output-on-failure
+cmake --build build --target test_newton_fit -j 2
+ctest --test-dir build -R '^newton_wavefront_recovery$' --output-on-failure
 ```
 
-The local probe builder and detailed records are retained under
-`docs/benchmarks/newton-roundoff-20260917/`, ignored by Git. They require the
-saved deterministic Newton-double audit setup. Before building, the builder
-reverses the fallback changes and verifies the exact prior production-source
-SHA-256; its full probe changes no other numerical behavior. Both full runs use
-fixed bootstrap seeds, FFTW ESTIMATE | UNALIGNED, three components, 0.1–0.25 Hz,
-±0.165 s/km, dp=0.005 s/km and eight CPU threads.
-
-The implementation, regression tests and validation notes are included on
-`test/peak-search-boundaries`. Main, remote and installed binaries are unchanged.
+Historical FP64 replay requires its matching revision, frozen inputs and controls.
+Those machine-specific replay materials are maintained outside the public source.

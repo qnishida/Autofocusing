@@ -1,6 +1,6 @@
 # Metal slant-stack backend
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -9,16 +9,11 @@ period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
 In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
 and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
 
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
-
 Implemented on `metal`, based on CPU commit `51f60a7`. The default runtime
 backend remains double/OpenMP CPU. `AUTOFOCUSING_BACKEND=metal` selects float
 GPU slant stacking for either horizontal or three-component spectra. Loading,
 rotation, FFT/QC and subsequent fitting retain their existing double CPU paths.
-The installed `bin/cal_ccf_clang` includes both backends. Parent workspace
-configuration was not changed; enable Metal explicitly as described in
+A Metal-enabled build includes both backends; enable Metal explicitly as described in
 [the manual](../manual.md#11-metal-gpu-slant-stacking).
 
 ## Implementation
@@ -96,7 +91,7 @@ For the wider 201×201 grid, a separate CPU/GPU pair processed the same day:
 | Candidate search/fitting | 1.817 s | 1.790 s | — |
 | Total segment processing | 77.229 s | 5.805 s | 13.30× |
 
-This wider-grid GPU run used the installed executable. It has about nine
+The wider-grid GPU comparison used the same executable. It has about nine
 times as many cells as the default grid, yet its slant-stack time is below
 the default-grid CPU time. Fitting times differ between grids because the
 candidate sets differ; compare backends within each grid, not across grids.
@@ -131,7 +126,7 @@ both metrics, with a 1e-30 absolute floor on maximum error.
 - Existing CTest suite: 3/3 passed with Metal compiled and with
   `DELTAP_ENABLE_METAL=OFF`. The CPU-only executable clearly rejects Metal.
   This is a macOS CPU-only build check, not an Ubuntu build measurement.
-- Installed binary: real wide-grid GPU run and parent-launcher fixture passed.
+- Executable integration: real wide-grid GPU run and parent-launcher fixture passed.
   The launcher fixture runs from another working directory with an empty
   archive; the real-day verification separately exercises actual GPU stacks.
 
@@ -144,8 +139,7 @@ event counts even with identical CPU/GPU results at a given grid.
 
 ## Reproducing
 
-Build/install as in the manual. Run GPU tests outside a sandbox that denies
-Metal device access:
+Build as in the manual. GPU tests require access to the Metal device:
 
 ```bash
 ctest --test-dir build-clang --output-on-failure
@@ -157,14 +151,14 @@ build-clang/test_metal_slant_stack 650 100 16 5 .0025
 ```
 
 For a real day, first create a bounded `HINET_ROOT/YYYY/MMDD/` input tree.
-The local `build-gcc/one-day` directory is only such a symlink tree; its name
-has no relation to the compiler used. Use unique result IDs on every run:
+Use unique result IDs on every run:
 
 ```bash
+mkdir -p ../results/metal-verification
 AUTOFOCUSING_BACKEND=metal AUTOFOCUSING_PROFILE=1 OMP_NUM_THREADS=16 \
   build-clang/src/cal_ccf_clang 2004 tilt_horizontal metal-check \
-  build-gcc/one-day "${CMT_CATALOG}" build-clang/metal-verification/results \
-  horizontal > build-clang/metal-verification/metal-check.log 2>&1
+  "${HINET_ROOT}" "${CMT_CATALOG}" ../results/metal-verification/events \
+  horizontal > ../results/metal-verification/metal-check.log 2>&1
 ```
 
 Repeat with `AUTOFOCUSING_BACKEND=cpu` and a different result ID/log. Add

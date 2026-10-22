@@ -1,6 +1,6 @@
 # Optional early event selection (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 > The exact tested commit is not identified in this record.
@@ -37,8 +37,7 @@ later re-selection, and the output columns and numerical estimators are unchange
 All 17 registered CTests pass, including new strict-threshold/finite-input tests,
 real executable configuration and manifest checks, rejection of old binaries,
 and the existing peak, covariance, fitting, parallelism and workspace checks.
-An existing test's `/usr/bin/time -l` needs OS access unavailable in the sandbox;
-its targeted rerun outside the sandbox passed without changing the test.
+Resource-timing tests require OS access to `/usr/bin/time -l`.
 
 Real-data comparisons use March 15–17, 2005, CPU, three components, 0.1–0.25 Hz,
 ±0.165 s/km, dp=0.005 s/km, eight threads. A generated test binary fixes Bootstrap
@@ -67,9 +66,9 @@ random samples; the exact comparisons above require the deterministic test
 controls. Full-precision cutoff handling is covered by boundary tests, while
 the real-data selected subset is sufficiently far from rounding ambiguities.
 
-## Three-day timing of the installed executable
+## Three-day timing with production settings
 
-March 15–17, 2005 was measured with the installed production executable,
+March 15–17, 2005 was measured with the production executable,
 Apple M4 Max, Metal slant stack, CPU fitting/Bootstrap, and 12 OpenMP threads.
 The three-component band/grid and cutoffs are as above; `AUTOFOCUSING_GPU_POWER`
 is `off`. Production `FFTW_MEASURE` and time-derived Bootstrap seeds are retained.
@@ -145,23 +144,3 @@ byte-for-byte. Candidate counts and accepted waveform windows agree in every
 pair. The eliminated work includes fitting and matrix calculation as well as
 Bootstrap. This is a one-day, three-pair comparison on this host; CUDA was not
 measured. The speed benefit depends on how many candidates fail the cutoffs.
-
-## Local evidence
-
-Detailed source/build hashes, generated probe sources, catalogs, seed traces and
-timing logs are retained locally under
-`docs/benchmarks/early-event-selection-20260917/` and
-`build-clang/event-selection-probe/`, both excluded from Git.
-The local `build_probe.py` builds from the configured compilation database;
-`run_checks.py accuracy` repeats the data comparisons, and `run_checks.py timing`
-runs the paired timing protocol. The waveform and source catalog remain external.
-
-The installed-executable three-day timing, catalogs, comparison scripts and the
-repeatability exception are retained under
-`docs/benchmarks/event-selection-mar15-17-20260917/` (Git-ignored).
-Run `run_benchmark.py` there for the paired protocol and `analyze_outputs.py` for
-the common-event and missing-event comparisons. Metal execution requires access
-to the GPU outside the macOS sandbox.
-The fixed-control three-day Metal replay is saved separately under
-`docs/benchmarks/event-selection-mar15-17-controlled-20260917/`; its
-`run_check.py` verifies the complete selected output and candidate traces.

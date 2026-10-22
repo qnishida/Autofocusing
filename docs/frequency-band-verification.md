@@ -1,6 +1,6 @@
 # Configurable frequency band — verification, 2026-09-16
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 > The exact tested commit is not identified in this record.
@@ -50,9 +50,8 @@ All 9 CTest entries passed:
   The workspace tests also cover config precedence, frequency metadata and an
   unsupported binary being rejected without starting an analysis.
 
-Installed the tested executable with `cmake --install build-clang`. The installed
-`bin/cal_ccf_clang --frequency-info`, with 0.05/0.1 supplied in the environment,
-returned the expected bins and effective endpoints. `git diff --check` passed.
+The frequency-info interface returned the expected bins and effective endpoints
+for the primary band. This check does not qualify real primary-microseism data.
 
 ## Limits
 

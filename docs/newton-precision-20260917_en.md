@@ -1,12 +1,10 @@
 # Newton iteration precision (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
-Historical reproduction requires the saved deterministic audit setup and the
-local `build_probe.py` and `compare_runs.py` under `docs/benchmarks/`. Those scripts
-are not distributed here; the commands below are not a public-source-only recipe.
+Historical reproduction requires external inputs and the matching deterministic audit setup.
 
 The FP64 Newton experiment below has been superseded by the
 [FP32 restoration](newton-fp32-rollback-20260917_en.md) adopted in `5153085`.
@@ -110,19 +108,9 @@ fragility exposed by different arithmetic, not evidence of a grossly displaced
 double solution. A small-step or roundoff-aware convergence policy would need
 its own criteria and tests; none is implicitly enabled by this experiment.
 
-## Local reproduction and records
+## Reproduction and scope
 
-The existing deterministic audit setup is required:
-
-```bash
-python3 -B docs/benchmarks/newton-precision-20260917/build_probe.py
-python3 -B tests/run_matrix_audit_events.py \
-  build-clang/newton-double-probe/cal_ccf_newton \
-  "${HINET_ROOT}" "${CMT_CATALOG}" \
-  build-clang/newton-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
-python3 -B docs/benchmarks/newton-precision-20260917/compare_runs.py
-```
-
-Raw logs, catalogs, generated source, comparison details and hashes are kept
-locally in `docs/benchmarks/newton-precision-20260917/`, ignored by Git. The combined implementation and validation notes are included on the test
-branch; main, remote and installed binaries are not updated.
+The FP64 experiment is historical and is not the current Newton configuration.
+Replaying it requires its exact source revision, deterministic controls and external
+waveforms. Current synthetic recovery is checked by `newton_wavefront_recovery`.
+Detailed traces and experimental driver changes are maintained separately.

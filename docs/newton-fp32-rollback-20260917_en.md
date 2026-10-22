@@ -1,6 +1,6 @@
 # Interim restoration of FP32 Newton fitting (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -70,12 +70,10 @@ checks parameter recovery and negative final curvature, and rejects zero power
 and an invalid initial distance. Retain the independent covariance-overflow
 regression test.
 
-All 17 CTests pass after rebuilding. The timing-tool test requires an
-unsandboxed retry because macOS `/usr/bin/time -l` is restricted in the sandbox;
-the other 16 pass there directly. This test uses stub drivers and is not a GPU
-hardware validation.
+All 17 CTests passed in the recorded build. The timing-tool test uses stub
+drivers and requires OS resource-timing access; it is not GPU hardware validation.
 
-## Installed executable with production settings
+## Validation with production settings
 
 Rebuild and install `bin/cal_ccf_clang`, then rerun all three days in `selected`
 mode using its unmodified measured FFT policy and time-derived bootstrap seeds.
@@ -108,11 +106,8 @@ cmake --build build-clang --parallel 4
 ctest --test-dir build-clang --output-on-failure
 ```
 
-Detailed build/run/summary scripts, input hashes, catalogs and logs remain local
-under `docs/benchmarks/newton-fp32-rollback-20260917/`; generated validation code
-and binaries are under `build-clang/newton-fp32-rollback/`. Both are Git-ignored.
-The adopted source is checked against the tested proposal, apart from its
-documentation comment.
+Historical real-data replay also requires the matching deterministic driver and
+external inputs. Machine-specific build/run records are maintained separately.
 
 This validates the tested CPU data and settings, not every date, frequency
 band, platform or GPU input. Revisit FP64 Newton stopping separately, using

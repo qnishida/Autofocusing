@@ -1,6 +1,6 @@
 # Parameter covariance precision (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -18,7 +18,8 @@ In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
 and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
 
 This follows the [peak-search validation](peak-search-validation-20260917_en.md).
-The changes are included on `test/peak-search-boundaries`, based on `485d761`. Main, the remote and the installed binary have not been updated.
+The covariance-only experiment was based on `485d761`; its historical results
+should be distinguished from the later adopted precision configuration.
 
 This records the covariance-only precision change. The subsequent
 [Newton precision change](newton-precision-20260917_en.md) is evaluated separately;
@@ -111,23 +112,9 @@ old function matches the baseline and that peak search is unchanged.
 optimizer records, selection, and every non-covariance catalog column; it
 requires the corrected run to pass the existing audit checks.
 
-Local commands after building the saved peak-search audit setup:
-
-```bash
-python3 -B tests/build_covariance_probe.py build-clang
-python3 -B tests/run_matrix_audit_events.py \
-  build-clang/covariance-double-probe/cal_ccf_covariance \
-  "${HINET_ROOT}" "${CMT_CATALOG}" \
-  build-clang/covariance-double-mar15-17 --start 2005-03-15 --days 3 --threads 8
-python3 -B tests/compare_covariance_runs.py \
-  build-clang/peak-search-mar15-17-fixed build-clang/covariance-double-mar15-17 \
-  build-clang/covariance-double-comparison.json
-```
-
-Raw catalogs, logs, generated probe source, build commands and hashes are
-retained locally under `docs/benchmarks/parameter-covariance-precision-20260917/`,
-which is ignored by Git. The original failed float run remains in the separate
-peak-search records.
+Historical real-data replay additionally requires its matching peak-search
+audit baseline and fixed seed/FFTW controls. Keep catalogs, generated probe
+source and traces in an external analysis/result directory.
 
 ## Clarification: matrices, signs and CPU precision
 

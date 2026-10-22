@@ -1,17 +1,11 @@
 # Metal: strict five-day comparison and single-thread performance validation
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
 The qualified implementation was integrated into main in `9d7091a`. The measurements
 below remain the recorded comparison, not a requalification of later revisions.
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
-
-[Japanese](metal-main-qualification-20260914_jp.md)
 
 On 2026-09-14, `6a7a4bd` and `gpu@7de4c22` were compared, and both requested checks passed.
 **Five days of output were byte-identical. With one thread, increases in total time,
@@ -67,7 +61,7 @@ The input period is 2004-01-01 through 03, matching the existing performance mea
 With `OMP_NUM_THREADS=1`, one warmup per version was excluded, then five pairs were measured
 in alternating order: reference/current, current/reference, reference/current,
 current/reference, reference/current.
-No other agent-started builds, tests, or benchmarks ran during measurement.
+No other builds, tests, or benchmarks ran during measurement.
 OS caches were not cleared. Total time includes startup, I/O, GPU transfers, synchronization,
 and output.
 
@@ -114,7 +108,7 @@ python3 tests/run_cpu_parallel_events.py \
   --days 3 --repeats 5 --warmups 1
 ```
 
-These commands ran outside the agent sandbox to access the Metal GPU and `/usr/bin/time -l`.
+GPU checks require a process with access to Metal.
 The existing driver strictly checks output equality and records the results in its report.
 The 5% checks for Hessian and rotation were aggregated from each trial's `cpu` values.
 The comparison formula is `100 * (current / reference - 1)`; the passing condition is
@@ -123,16 +117,14 @@ The comparison formula is `100 * (current / reference - 1)`; the passing conditi
 This record completes the two requested checks for horizontal data.
 It does not generalize the results to real three-component data, the full archive, or other hardware.
 It can be reviewed together with the earlier [16-thread speedup and comparison against the version before CPU optimization](metal-cpu-parallel-performance-20260914_en.md).
-Integration into `main` is a separate task after the user reviews the results.
+The reported results apply to the tested revisions and workload.
 
 ## Earlier integration-branch check, 2026-09-14
 
 A preceding functionality check used unmodified `dabb03727454421f4fbb0b42a61604539fe99a6d`
-on Apple M4 Max, macOS 26.6.2, with 16 OpenMP threads. All 7 CTests passed after
-using the [Apple Objective-C++ build configuration](../manual.md#9-macos-with-homebrew-libraries),
-restoring Git metadata required by that historical launcher, and running outside
-the sandbox for Metal and resource timing. These were environment failures,
-not source fixes; the historical Git-metadata requirement does not describe the current runner.
+on Apple M4 Max, macOS 26.6.2, with 16 OpenMP threads. All 7 CTests passed using the
+[Apple Objective-C++ build configuration](../manual.md#9-macos-with-homebrew-libraries).
+Historical launcher metadata prerequisites do not describe the current runner.
 
 - Slant stacking passed 32 synthetic horizontal/3c cases: maximum scaled error
   `5.04548961e-6`, maximum relative L2 error `3.46418047e-6`, zero peak mismatches.

@@ -1,6 +1,6 @@
 # Peak-search handoff and validation (2026-09-17)
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -12,11 +12,8 @@ The peak-search fixes are retained in `5153085`. The failed covariance case belo
 was addressed by the [FP64 covariance correction](parameter-covariance-precision-20260917_en.md);
 the original failed comparison remains part of this record.
 
-The agreed initial-seed selection changes are implemented on
-`test/peak-search-boundaries`, based on main `485d761`. The implementation,
-regression tests and these validation notes are included in the test-branch
-change set; no installed binary, main branch or remote was updated. The earlier bias fix
-is already on main. No covariance or convergence change is included here.
+The peak-only experiment was based on `485d761`. Its comparison excludes the
+subsequent covariance and convergence changes, which have separate records.
 
 This report records the peak-only comparison. The subsequent
 [covariance precision correction](parameter-covariance-precision-20260917_en.md)
@@ -126,12 +123,8 @@ cmake --build build-clang --target test_peak_search --parallel 4
 ctest --test-dir build-clang -R '^peak_search_boundaries$' --output-on-failure
 ```
 
-`tests/build_peak_search_probe.py` reuses the local deterministic audit controls;
-see its prerequisites. After the covariance change, pass `--source` with the saved
-`docs/benchmarks/peak-search-boundaries-20260917/peak-only-production.cpp` to
-reproduce this historical comparison. Its hash matches the original provenance.
-`tests/compare_peak_search_runs.py` compares complete
-baseline/fixed runs and records added/lost seeds and failed audit checks.
-Detailed logs, catalogs, source/build hashes, before-test failures and covariance
-replay are retained locally in `docs/benchmarks/peak-search-boundaries-20260917/`,
-which is ignored by Git. They are not intended for publication.
+The public probe/comparison helpers require an external deterministic audit
+baseline. Historical peak-only replay additionally requires the corresponding
+pre-covariance source snapshot. Do not substitute a later production function
+and interpret that as the original comparison. Keep generated source, traces
+and event catalogs outside the source checkout.

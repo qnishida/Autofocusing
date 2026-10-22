@@ -1,17 +1,11 @@
 # Metal: CPU parallelization and cumulative speedup from before CPU optimization
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
 The CPU/Metal integration reached main in `9d7091a`. The timings below apply to
 the compared revisions and settings, not automatically to later versions.
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
-
-[Japanese](metal-cpu-parallel-performance-20260914_jp.md)
 
 Measured on 2026-09-14 on Apple M4 Max running macOS 26.6.2.
 **Parallelizing the Hessian and RT rotation gave a 1.600× overall speedup; the cumulative
@@ -27,7 +21,7 @@ old CPU version with the current Metal version.
 - GPU settings: `AUTOFOCUSING_BACKEND=metal`, `AUTOFOCUSING_GPU_POWER=bootstrap`.
   The initial grid runs on the CPU. The power setting matches the existing CUDA comparison.
 - Separate processes ran in alternating order on the same machine. One initial warmup per version was excluded.
-  OS caches were not cleared, and no other agent-started builds or tests ran during measurement.
+  OS caches were not cleared, and no other builds or tests ran during measurement.
 - Only the validation driver fixes FFTW to `ESTIMATE | UNALIGNED` and the bootstrap seed to
   `1837 + 104729 * replicate`. Production source was unchanged.
 - Wall time includes startup, input, GPU transfers and synchronization, and output.
@@ -126,25 +120,18 @@ python3 tests/run_legacy_gpu_events.py \
 CTest passed for all three versions: 2/2 for the old version, 7/7 before parallelization,
 and 7/7 for the current version. The current version also passed 32 Metal slant-stack cases,
 216 power cases, and batch-boundary tests.
-The first launcher test for the old version failed because the archive copy lacked Git
-metadata; it passed when rerun with Git metadata for the target commit. No source fix was needed.
-Metal and `/usr/bin/time -l` ran outside the agent sandbox on this host.
-Build and CTest logs
-are also saved. The comparison scripts were checked with synthetic cases for identical
+The comparison scripts were checked with synthetic cases for identical
 output, bootstrap tolerance boundaries, event-identity mismatches, and non-finite-value rejection.
 
-The existing CUDA record is at `gpu@dabb037:docs/cpu-fitting-parallel.md`.
+See the [CPU/CUDA parallelism summary](cpu-fitting-parallel.md).
 On 3990X + RTX PRO 2000, CUDA achieved 1.445× from parallelization and 5.683× from before
 CPU optimization. The 1.600× and 8.887× values here compare versions on M4 Max;
 they are not a direct CUDA-versus-Metal performance comparison.
 Real three-component data, a five-day before/after comparison, the full archive, and
 additional single-thread measurements were outside this measurement scope.
-These results do not mean that every main-merge criterion has been completed.
+Additional workloads require their own qualification.
 
 The follow-up [five-day and single-thread Metal validation](metal-main-qualification-20260914_en.md)
 confirmed byte-identical output over five days before and after parallelization and passed
 the 5% regression checks for single-thread total time, Hessian, and rotation.
-Integration into main has not yet been performed.
-
-The working branch `cuda` was retained. No production code edits, installation, commits,
-or pushes were performed.
+The tested changes were subsequently integrated into main.

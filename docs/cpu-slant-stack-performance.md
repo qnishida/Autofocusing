@@ -1,6 +1,6 @@
 # CPU slant-stack optimization before Metal
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -8,10 +8,6 @@ Input paths: `${HINET_ROOT}` is the external waveform root for the components an
 period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
 In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
 and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
 
 Implemented on `perf/cpu-slant-stack`, based on `393a93e`. These measurements were made before creating a `metal` branch. Slant-stack arithmetic stays double/complex<double>;
 FFT/QC, nonlinear fitting and bootstrap still run on the existing CPU paths.
@@ -115,25 +111,21 @@ was checked in a static-scheduling experiment, with exact cell agreement and
 roughly four times the runtime as expected from the cell count. This does not
 change the production grid.
 
-For a bounded real run, create an input tree containing only the day being
-measured. The local verification tree `build-gcc/one-day/` contains one
-read-only symlink to the original HDF5 file; its name does not indicate the
-compiler used for execution. Use a fresh result ID for each run:
+For a bounded real run, set `HINET_ROOT` to an external input tree containing
+only the dates being measured. Use a fresh result ID for each run:
 
 ```bash
+mkdir -p ../results/cpu-performance
 AUTOFOCUSING_PROFILE=1 OMP_NUM_THREADS=4 build-clang/src/cal_ccf_clang \
-  2004 tilt_horizontal cpu-check build-gcc/one-day "${CMT_CATALOG}" \
-  build-clang/performance/results horizontal \
-  > build-clang/performance/cpu-check.log 2>&1
-python3 Scripts/compare_profiles.py baseline.log cpu-check.log
+  2004 tilt_horizontal cpu-check "${HINET_ROOT}" "${CMT_CATALOG}" \
+  ../results/cpu-performance/events horizontal \
+  > ../results/cpu-performance/cpu-check.log 2>&1
+python3 Scripts/compare_profiles.py baseline.log ../results/cpu-performance/cpu-check.log
 python3 tests/compare_event_results.py baseline.dat cpu-check.dat
 ```
 
-The parent launcher also inherits `AUTOFOCUSING_PROFILE` and `OMP_NUM_THREADS`.
-Its normal archive path scans the full configured period, so use the bounded
-input tree for benchmarking. The optimized executable has been installed to
-`bin/cal_ccf_clang` during verification. The parent configuration was unchanged;
-the CPU changes were subsequently approved for merging into local `main`.
+The launcher inherits profiling and OpenMP settings. Bound the input dates
+explicitly when measuring performance; a full archive run is a different workload.
 
 ## Deferred work and decisions
 

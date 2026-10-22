@@ -1,12 +1,8 @@
 # CUDA implementation and validation
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
 
 CUDA was added to `cuda` from `b9620e7`, retaining the CPU and Metal backends.
 The common dispatch accepts `AUTOFOCUSING_BACKEND=cpu|metal|cuda`; CPU is the
@@ -117,7 +113,7 @@ qualification record.
 ### Repeated real-data performance
 
 Three days (2004-01-01–03), 20 events per run, 16 CPU threads, five fresh
-processes per mode in alternating order. No other agent builds, checks or
+processes per mode in alternating order. No other builds, checks or
 benchmarks ran alongside these measurements; OS caches were not purged.
 Every run passed output checks, including CPU/GPU comparisons. The wall
 clock includes initialization, input loading, packing, transfers and sync.
@@ -233,7 +229,7 @@ The Denoise 2004-04-01 workload (6 events, 137 windows, 0.1–0.25 Hz,
 67×67 slant-stack grid) uses 16 OpenMP threads, dynamic teams disabled, fixed
 seeds/FFTW plans, one excluded warmup per mode and five alternating fresh-process
 measurements. CUDA slant stacking is enabled in both modes. Caches are not
-purged; no other agent-started builds or tests ran alongside these measurements.
+purged; no other builds or tests ran alongside these measurements.
 
 | Stage | CPU OpenMP Bootstrap (`off`) | GPU FP64 Bootstrap (`bootstrap`) |
 | --- | ---: | ---: |

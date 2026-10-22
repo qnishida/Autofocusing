@@ -1,6 +1,6 @@
 # Shared CPU I/O optimization
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -8,12 +8,6 @@ Input paths: `${HINET_ROOT}` is the external waveform root for the components an
 period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
 In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
 and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
-
-[Japanese](cpu-io-optimization_jp.md)
 
 ## Implementation (2026-09-12)
 
@@ -114,7 +108,7 @@ Example measurement after connecting the SSD (`test_io` exists in both branches)
 ```bash
 python3 tests/benchmark_io.py build-io/test_io \
   "${HINET_ROOT}/2004/0101/20040010000.h5" \
-  docs/benchmarks/cpu-io-2004001.json
+  ../results/cpu-io-2004001.json
 ```
 
 The script first compares all waveforms, then measures each implementation five times
@@ -147,50 +141,12 @@ for only three days and runs each version twice, in before/after and after/befor
 It checks for 20 events, 12 segments, matching accepted-window counts and all output bytes
 including bootstrap results, and no more than a 5% increase in total time.
 Run logs, event files, and `report.json` remain in the specified output directory.
-Save important aggregates in `docs/benchmarks/`.
+Keep machine-specific aggregates in the separate analysis workspace.
 
-## TODO: next-day prefetching (deferred, 2026-09-12)
+## Next-day prefetching
 
-At the user's direction, further prefetch optimization is deferred because current I/O
-performance is sufficient. Cached input and preprocessing currently take approximately
-1.08 seconds per day with 16 threads. Reassess with new measurements if NAS use, larger
-datasets, or faster computation makes input waiting a significant share of total time.
-
-The current `prefetchFile()` requests OS prefetching on Ubuntu/Linux through
-`posix_fadvise(..., POSIX_FADV_WILLNEED)`.
-That call is compiled out in the current macOS build, which only opens and closes the
-next day's file. It was not removed by the CPU/I/O optimization.
-macOS also provides `fcntl(..., F_RDADVISE, ...)`, but the current code does not implement it.
-Neither OS hint manages completion of next-day waveform decompression and filtering.
-
-- [ ] When work resumes, consider a mechanism shared by CPU and Metal that overlaps the current day's analysis with the next day's loading and preprocessing.
-- [ ] With sufficient RAM in the current environment, first consider keeping one next-day dataset in RAM.
-  Allocate capacity according to actual data rather than fixing it at 1 GB, and manage both retained dataset count and memory limits.
-  Current compressed files are approximately 0.5 GB/day; expanded horizontal waveforms are approximately 0.9 GB/day, plus working memory.
-- [ ] Separate daily shared state such as station-center coordinates, and avoid concurrent calls to non-thread-safe HDF5 functions.
-  Limit and measure prefetch CPU usage to assess contention with the current day's analysis.
-- [ ] Across multiple consecutive days, compare waveform and event-output equality, startup and steady-state timing, and peak RAM.
-  Distinguish cache conditions when measuring NAS performance.
-
-Temporary storage on a local SSD is an alternative when RAM is constrained or when
-avoiding another transfer for later reanalysis. It has not been judged faster than RAM
-prefetching under the current conditions with sufficient RAM.
-This TODO records considerations only; no prefetch code has been changed.
-
-## Branch integration
-
-Fast-forward `main` to the shared I/O commits that passed real-data validation, then
-reapply the existing Metal development commits on that head.
-Align `perf/cpu-io` with `main` and `test/metal-cpu-io` with `metal`.
-Preserve the old `metal` (`27fccd3`) as `backup/metal-before-cpu-io-20260912`.
-Do not push or install binaries.
-
-```text
-51f60a7  CPU slant-stack optimization
-  └─ Shared CPU I/O optimization and validation  (main, perf/cpu-io)
-       └─ Metal backend                         (metal, test/metal-cpu-io)
-```
-
-Investigation materials are saved at `dd8bc8c` on the original
-`investigate/metal-float-candidates` branch.
-Code used only for GPU/FP32 investigation was not incorporated into the CPU branch.
+The existing `prefetchFile()` issues a best-effort OS read-ahead hint on supported
+platforms. Success does not establish that the next file has been fully read or
+that HDF5 decoding and filtering are ready. There is no asynchronous next-day
+load/decode/filter pipeline in this implementation. Any proposed prefetch change
+requires separate timing, memory-use and numerical-regression qualification.

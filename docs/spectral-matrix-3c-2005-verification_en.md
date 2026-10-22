@@ -1,6 +1,6 @@
 # Three-component spectral-matrix validation, 2005 data — 2026-09-16
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
 
@@ -11,12 +11,6 @@ Input paths: `${HINET_ROOT}` is the external waveform root for the components an
 period in this record; `${CMT_CATALOG}` is the external earthquake catalog.
 In the shell running the examples, set `export HINET_ROOT="/path/to/hdf5"`
 and `export CMT_CATALOG="/path/to/catalog"`. These inputs are not distributed here.
-
-Detailed run logs, output catalogs and per-event comparison records are retained
-locally and are not distributed in this repository. References to these records
-below describe local artifacts.
-
-[Japanese](spectral-matrix-3c-2005-verification_jp.md)
 
 For the later R/T > 7 and U > 35 max/MAD selection, January extension, and
 catalog-guided March dates, see the [thresholded ratio follow-up](matrix-ratio-threshold-2005_en.md).
@@ -181,8 +175,7 @@ The evidence qualifies this matrix correction on these three days; it does
 not validate all modeling assumptions, the full archive, GPU arithmetic, or
 the separate slowness-selection issues. Correctly self-term-subtracted
 matrices need not be positive semidefinite for finite data.
-These runs were performed on the test branch without replacing the installed
-binary, merging, or pushing. The adoption decision is recorded below.
+The adopted formula and its interpretation are described below.
 
 ## Interpretation of the real-only subtraction (2026-09-17 clarification)
 

@@ -1,14 +1,8 @@
 # Metal power-evaluation optimization
 
-> Record scope: revisions, branch/install status and results below describe the recorded work.
+> Scope: historical results apply only to the stated revisions and conditions.
 > See [current behavior](../README.md#current-behavior-and-limits) and
 > [reproduction requirements](README.md#reading-the-validation-records).
-
-Detailed benchmark logs and run results are retained locally and are not
-distributed in this repository. References to detailed records below describe
-those local artifacts.
-
-[Japanese](metal-power-optimization_jp.md)
 
 ## Scope and usage
 
@@ -106,10 +100,10 @@ For grid-only evaluation with synthetic data, the standard 75 candidates yielded
 1.61–1.91×, and with 7500 candidates it was 2.38–2.45×.
 Every case selected the same candidate as the CPU. The GPU is not necessarily faster
 for every small input. This expanded evaluation uses synthetic data; changes to real-data
-search settings require separate validation. See the expanded-grid JSON.
+search settings require separate validation. Detailed synthetic trials are maintained separately.
 
-Both candidates are selected for adoption and integration into `metal`. The default remains `off`.
-Leave `main`, the prefetch TODO, and installed binaries unchanged; do not push.
+The recorded changes passed their adoption criteria. GPU power remains opt-in;
+the default is `off`.
 
 ## Validation records
 
