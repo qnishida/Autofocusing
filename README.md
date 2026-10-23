@@ -47,6 +47,10 @@ Required libraries:
 - HDF5
 - OpenMP
 
+The CPU Hessian supports up to 32 workers, subject to the window count and
+OpenMP thread limit. See [Hessian scratch storage](docs/cpu-fitting-parallel.md#hessian-scratch-storage)
+for the optional padding setting.
+
 If a dependency is installed in a non-standard location, pass its prefix or
 specific CMake cache variables at configure time, for example:
 

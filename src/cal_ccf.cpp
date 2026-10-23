@@ -1674,9 +1674,13 @@ static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
     explicit Window(int bins) : phi(bins), dphi(4, bins),
         ddphi(boost::extents[4][4][bins]) {}
   };
-  const int slots = std::min(16, num_ss);
-
-
+  const int slots = std::min(32, std::min(num_ss, omp_get_max_threads()));
+  // Padding changes the physical row stride, never the active frequency range.
+#ifdef AUTOFOCUSING_HESSIAN_PADDING
+  constexpr int scratch_padding = AUTOFOCUSING_HESSIAN_PADDING;
+#else
+  constexpr int scratch_padding = 0;
+#endif
   const double p = prm.p;
   const double ex = cos(prm.θ);
   const double ey = sin(prm.θ);
@@ -1742,7 +1746,7 @@ static double cal_HessianS(const PARAM prm, const array3c &buf_spec,
 
   std::vector<std::unique_ptr<Window>> scratch;
   for (int j = 0; j < slots; ++j)
-    scratch.emplace_back(new Window(STATION::if2 + 1));
+    scratch.emplace_back(new Window(STATION::if2 + 1 + scratch_padding));
   auto stack_window = [&](int ibuf, Window &window) {
     auto &phi = window.phi;
     auto &dphi = window.dphi;

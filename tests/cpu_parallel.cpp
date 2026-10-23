@@ -178,6 +178,14 @@ int main(int argc,char **argv) try {
       omp_set_num_threads(threads); compare(f); rotation_check(f);
     }
   }
+  // Exercise full and partial batches around the 32-window Hessian limit.
+  for (int windows : {24, 32, 33}) for (bool coherent : {false, true}) {
+    Fixture f(windows, 31, 155, coherent);
+    for (int threads : {16, 24, 32}) {
+      omp_set_num_threads(threads);
+      compare(f);
+    }
+  }
   // Concurrent outer callers must use local scratch without nested teams.
   Fixture nested(17,31,31,true);
   double actual[8][23], expected[8][23];

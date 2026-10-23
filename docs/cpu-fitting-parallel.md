@@ -6,7 +6,8 @@ The CPU fitting kernels are shared by CPU, CUDA and Metal builds. See
 ## Implementation and invariants
 
 The Hessian distributes independent time-window stacks over OpenMP workers.
-It retains at most 16 windows of intermediate results, then accumulates them
+It retains at most `min(32, window_count, omp_get_max_threads())` windows of
+intermediate results, then accumulates them
 serially in the original window/frequency/component order. Station order,
 phase recurrence and double-precision accumulation are unchanged. One-thread,
 fewer-than-two-window and already-parallel callers use the original serial kernel.
@@ -24,12 +25,24 @@ to validation drivers. The adopted Newton iteration uses FP32 4x4 operations,
 while the covariance inverse uses FP64; see the
 [precision record](newton-fp32-rollback-20260917_en.md).
 
+## Hessian scratch storage
+
+`DELTAP_ENABLE_HESSIAN_PADDING` defaults to `ON` on Linux and `OFF` on other
+platforms. It adds 31 unused frequency elements to each parallel Hessian scratch
+row. Active bins, arithmetic and accumulation order are unchanged. Use
+`-DDELTAP_ENABLE_HESSIAN_PADDING=OFF` to retain the unpadded layout.
+
+Hessian's limit is an upper bound, not a fixed team size. A 24-window Hessian
+can use 24 workers when `OMP_NUM_THREADS` permits it, while smaller teams reserve
+only their needed scratch slots. CPU Bootstrap remains capped at 16 workers.
+The build uses the system allocator on all platforms.
+
 ## Verification protocol
 
 `test_cpu_parallel` compares objectives, gradients, Hessians, rotated spectra
 and weights against independently frozen serial kernels. Coverage includes
 zero/nonuniform weights, coherent/random data, horizontal/3c modes, partial
-batches and already-parallel callers. The componentwise bound is
+batches, 24/32-thread Hessians and already-parallel callers. The componentwise bound is
 `1e-12 * abs(reference) + 1e-30`; exact equality is additionally reported.
 
 `AUTOFOCUSING_PROFILE=1` reports inclusive objective, Hessian, rotation and

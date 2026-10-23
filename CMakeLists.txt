@@ -12,6 +12,22 @@ endif()
 option(DELTAP_ENABLE_NATIVE_ARCH "Build with -march=native on compilers that support it" OFF)
 option(DELTAP_ENABLE_METAL "Build the optional Apple Metal slant-stack backend" ${APPLE})
 option(DELTAP_ENABLE_CUDA "Build the optional NVIDIA CUDA GPU backend" OFF)
+
+set(_deltap_hessian_padding_default OFF)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(_deltap_hessian_padding_default ON)
+endif()
+option(DELTAP_ENABLE_HESSIAN_PADDING
+    "Add 31 inactive frequency elements to Hessian scratch arrays"
+    ${_deltap_hessian_padding_default})
+add_library(deltap_hessian_options INTERFACE)
+if(DELTAP_ENABLE_HESSIAN_PADDING)
+    target_compile_definitions(deltap_hessian_options INTERFACE AUTOFOCUSING_HESSIAN_PADDING=31)
+else()
+    target_compile_definitions(deltap_hessian_options INTERFACE AUTOFOCUSING_HESSIAN_PADDING=0)
+endif()
+message(STATUS "Hessian scratch padding: ${DELTAP_ENABLE_HESSIAN_PADDING}")
+
 add_library(slant_stack_backend STATIC src/slant_stack_backend.cpp src/metal_power.cpp src/power.cpp)
 if(DELTAP_ENABLE_CUDA)
     if(CMAKE_VERSION VERSION_LESS 3.18)
@@ -85,6 +101,7 @@ set(DELTAP_INCLUDE_DIRS
 )
 
 set(DELTAP_LIBS
+    deltap_hessian_options
     slant_stack_backend
     Boost::filesystem
     Boost::date_time
